@@ -2,6 +2,7 @@
   
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
+import AuthPage from "./pages/SignUp";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
 export default App;
 
 
-
+        <Route path="/login" element={<AuthPage />} />
         {/* //<Route path="/login" element={<# />} />
         //<Route path="/signup" element={<# />} /> 
         

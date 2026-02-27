@@ -698,7 +698,7 @@ function HeroSection() {
             <span className="moon">
               <i className="fa-regular fa-moon"></i>
             </span>
-            <a href="#" className="signin">
+            <a href="" className="signin">
               Sign In
             </a>
             <button className="get-started-nav">

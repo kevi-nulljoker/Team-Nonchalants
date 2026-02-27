@@ -1,0 +1,12 @@
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
+python-multipart
+pytesseract
+Pillow
+scikit-learn
+joblib
+motor>=3.3
+python-jose[cryptography]>=3.3
+passlib[bcrypt]>=1.7
+python-dotenv>=1.0
+email-validator>=2.0

@@ -20,6 +20,7 @@ DB_NAME = os.getenv('DB_NAME', 'Users')
 JWT_SECRET = os.getenv('JWT_SECRET_KEY', 'c84d3aa356344f5e0b93915b9d16b073f')
 JWT_ALGORITHM = 'HS256'
 TOKEN_EXPIRE_DAYS = 7
+INITIAL_USER_POINTS = 100
 
 # MongoDB client setup (lazy network checks in request flow)
 client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)
@@ -94,6 +95,7 @@ def register():
             'email': email,
             'hashed_password': hash_password(password),
             'name': name,
+            'points': INITIAL_USER_POINTS,
             'created_at': datetime.utcnow(),
         }
         result = users_collection.insert_one(user)
@@ -111,6 +113,7 @@ def register():
             'user_id': user_id,
             'email': email,
             'name': name,
+            'points': INITIAL_USER_POINTS,
             'access_token': token,
             'token_type': 'bearer',
         }

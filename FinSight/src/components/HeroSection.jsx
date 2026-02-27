@@ -21,7 +21,7 @@ body {
   background: #edf3f2;
   color: var(--text);
   font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  width: 100%;
+  width: 100vw;
   overflow-x: hidden;
 }
 
@@ -32,13 +32,13 @@ a {
 
 .page {
   min-height: 100vh;
-  width: 100%;
+  width: 100vw;
   display: flex;
   flex-direction: column;
 }
 
 .top-border {
-  height: 6px;
+  height: 5px;
   background: #6195ff;
   width: 100%;
 }
@@ -51,10 +51,10 @@ a {
 
 .nav {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1100px;
   margin: 0 auto;
-  height: 74px;
-  padding: 0 32px;
+  height: 58px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -63,44 +63,45 @@ a {
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-weight: 800;
-  font-size: 30px;
+  font-size: 24px;
 }
 
 .brand-mark {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
   background: #0ea67f;
   color: white;
   display: grid;
   place-items: center;
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .nav-links {
   display: flex;
-  gap: 38px;
+  gap: 28px;
   color: #4f5f7c;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .signin {
   font-weight: 700;
   color: #162445;
+  font-size: 13px;
 }
 
 .moon {
   color: #26344f;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .get-started-nav {
@@ -108,10 +109,11 @@ a {
   background: #08a878;
   color: #fff;
   border-radius: 999px;
-  padding: 13px 24px;
+  padding: 10px 18px;
   font-weight: 700;
+  font-size: 13px;
   cursor: pointer;
-  box-shadow: 0 7px 18px rgba(5, 156, 121, 0.25);
+  box-shadow: 0 5px 14px rgba(5, 156, 121, 0.25);
 }
 
 .hero-bg {
@@ -122,31 +124,31 @@ a {
 
 .hero {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 56px 32px 0;
+  padding: 42px 24px 0;
   text-align: center;
 }
 
 .pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   border-radius: 999px;
-  padding: 10px 20px;
+  padding: 8px 16px;
   background: #c9f4e2;
   color: #167e66;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.04em;
 }
 
 .hero h1 {
-  margin: 30px auto 18px;
-  font-size: 64px;
+  margin: 24px auto 14px;
+  font-size: 48px;
   line-height: 1.04;
   letter-spacing: -0.03em;
-  max-width: 940px;
+  max-width: 740px;
   font-weight: 900;
 }
 
@@ -155,19 +157,19 @@ a {
 }
 
 .sub {
-  max-width: 760px;
+  max-width: 600px;
   margin: 0 auto;
   color: #70809a;
-  font-size: 28px;
+  font-size: 20px;
   line-height: 1.45;
   font-weight: 600;
 }
 
 .hero-btns {
-  margin-top: 40px;
+  margin-top: 30px;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 .btn-main {
@@ -175,11 +177,11 @@ a {
   background: #06a878;
   color: #fff;
   border-radius: 999px;
-  height: 58px;
-  padding: 0 34px;
-  font-size: 24px;
+  height: 46px;
+  padding: 0 26px;
+  font-size: 18px;
   font-weight: 800;
-  box-shadow: 0 12px 28px rgba(5, 166, 126, 0.28);
+  box-shadow: 0 10px 22px rgba(5, 166, 126, 0.28);
   cursor: pointer;
 }
 
@@ -188,16 +190,16 @@ a {
   background: #fff;
   color: #1f2e4d;
   border-radius: 999px;
-  height: 58px;
-  padding: 0 32px;
-  font-size: 24px;
+  height: 46px;
+  padding: 0 24px;
+  font-size: 18px;
   font-weight: 800;
   cursor: pointer;
 }
 
 .dashboard-wrap {
-  margin-top: 40px;
-  padding-bottom: 54px;
+  margin-top: 30px;
+  padding-bottom: 40px;
   position: relative;
   width: 100%;
 }
@@ -205,44 +207,45 @@ a {
 .dashboard {
   position: relative;
   margin: 0 auto;
-  width: min(1130px, calc(100vw - 64px));
+  width: min(900px, calc(100vw - 48px));
   background: #fff;
   border: 1px solid #e4ebf3;
-  border-radius: 18px;
-  box-shadow: 0 22px 40px rgba(20, 44, 84, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 18px 32px rgba(20, 44, 84, 0.12);
   overflow: hidden;
 }
 
 .dash-url {
-  height: 52px;
+  height: 40px;
   border-bottom: 1px solid #edf1f6;
   display: grid;
   place-items: center;
   color: #98a5bb;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
 }
 
+
 .dash-content {
-  padding: 30px;
+  padding: 22px;
 }
 
 .dash-title-sm {
   color: #9eb0c9;
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.06em;
 }
 
 .dash-title {
-  margin-top: 6px;
-  font-size: 34px;
+  margin-top: 4px;
+  font-size: 24px;
   font-weight: 900;
 }
 
 .switches {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   justify-content: flex-end;
 }
 
@@ -250,9 +253,9 @@ a {
   border-radius: 999px;
   border: 1px solid #dbe3ef;
   background: #fff;
-  padding: 6px 16px;
+  padding: 4px 12px;
   color: #55688b;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -263,41 +266,41 @@ a {
 }
 
 .chart-grid {
-  margin-top: 18px;
+  margin-top: 14px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 14px;
 }
 
 .panel {
   border: 1px solid #edf1f6;
-  border-radius: 14px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 16px;
 }
 
 .panel-title {
   color: #8695ad;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .panel-amount {
-  margin-top: 4px;
-  font-size: 30px;
+  margin-top: 3px;
+  font-size: 22px;
   font-weight: 900;
 }
 
 .bars {
-  margin-top: 22px;
+  margin-top: 16px;
   display: flex;
   align-items: flex-end;
-  gap: 8px;
-  height: 108px;
+  gap: 6px;
+  height: 80px;
 }
 
 .bar {
   flex: 1;
-  border-radius: 4px 4px 0 0;
+  border-radius: 3px 3px 0 0;
   background: #e9eef5;
 }
 
@@ -309,14 +312,14 @@ a {
 
 .ring-wrap {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   align-items: center;
   height: 100%;
 }
 
 .ring {
-  width: 120px;
-  height: 120px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background: conic-gradient(#08a97e 0 46%, #17a8db 46% 70%, #b8d0f6 70% 100%);
   position: relative;
@@ -325,55 +328,57 @@ a {
 .ring::after {
   content: "Categories";
   position: absolute;
-  inset: 16px;
+  inset: 12px;
   background: #fff;
   border-radius: 50%;
   display: grid;
   place-items: center;
   color: #8b9ab1;
-  font-size: 12px;
+  font-size: 9px;
   font-weight: 700;
 }
 
 .legend {
   display: grid;
-  gap: 10px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 12px;
   color: #576a8d;
   font-weight: 700;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   display: inline-block;
-  margin-right: 8px;
+  margin-right: 6px;
 }
 
 .recent {
-  margin-top: 16px;
+  margin-top: 14px;
   border: 1px solid #edf1f6;
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
 }
 
 .recent-head {
-  height: 48px;
+  height: 36px;
   border-bottom: 1px solid #edf1f6;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 14px;
   color: #334566;
   font-weight: 800;
+  font-size: 12px;
 }
 
 .item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px;
+  padding: 10px 14px;
   border-bottom: 1px solid #f1f4f8;
+  font-size: 12px;
 }
 
 .item:last-child {
@@ -383,16 +388,16 @@ a {
 .item-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .item-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
   display: grid;
   place-items: center;
-  font-size: 14px;
+  font-size: 10px;
 }
 
 .item-icon.orange { background: #ffe9d6; color: #f27621; }
@@ -401,10 +406,11 @@ a {
 .item-name {
   font-weight: 800;
   color: #243455;
+  font-size: 12px;
 }
 
 .item-meta {
-  font-size: 12px;
+  font-size: 10px;
   color: #93a2b8;
   font-weight: 700;
 }
@@ -412,38 +418,39 @@ a {
 .item-amt {
   font-weight: 800;
   color: #223454;
+  font-size: 12px;
 }
 
 .float-card {
   position: absolute;
   background: #fff;
   border: 1px solid #e8edf4;
-  border-radius: 12px;
-  box-shadow: 0 14px 24px rgba(25, 49, 91, 0.14);
+  border-radius: 10px;
+  box-shadow: 0 12px 20px rgba(25, 49, 91, 0.14);
 }
 
 .budget {
-  width: 180px;
-  left: -70px;
-  top: 72px;
-  padding: 14px;
+  width: 140px;
+  left: -50px;
+  top: 54px;
+  padding: 12px;
 }
 
 .budget-title {
   color: #7f90aa;
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 800;
 }
 
 .budget-value {
-  margin: 10px 0 6px;
+  margin: 6px 0 4px;
   color: #06a87a;
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 900;
 }
 
 .budget-bar {
-  height: 8px;
+  height: 6px;
   border-radius: 999px;
   background: #dfe8f2;
   overflow: hidden;
@@ -457,46 +464,48 @@ a {
 }
 
 .dining {
-  width: 210px;
-  right: -68px;
-  top: 172px;
-  padding: 14px;
+  width: 160px;
+  right: -50px;
+  top: 130px;
+  padding: 12px;
 }
 
 .dining-mini {
   color: #95a4b9;
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 800;
 }
 
 .dining-name {
-  margin-top: 3px;
+  margin-top: 2px;
   color: #1e2f4d;
   font-weight: 900;
+  font-size: 13px;
 }
 
 .dining-note {
   margin-top: 2px;
   color: #32a9f0;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
 }
 
 .dining-foot {
-  margin-top: 8px;
+  margin-top: 6px;
   font-weight: 900;
   color: #1f304f;
+  font-size: 14px;
 }
 
 .shared {
-  width: 180px;
+  width: 140px;
   left: 58%;
   transform: translateX(-50%);
-  bottom: -24px;
-  padding: 10px 12px;
+  bottom: -18px;
+  padding: 8px 10px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .avatar-stack {
@@ -504,11 +513,11 @@ a {
 }
 
 .avatar {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 2px solid #fff;
-  margin-right: -7px;
+  margin-right: -6px;
 }
 
 .avatar.one { background: #6e78ff; }
@@ -516,7 +525,7 @@ a {
 
 .shared-text {
   color: #7e8da6;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 800;
 }
 
@@ -524,28 +533,28 @@ a {
   background: #f9fbff;
   border-top: 1px solid #e5ebf3;
   border-bottom: 1px solid #e5ebf3;
-  padding: 90px 32px;
+  padding: 60px 24px;
   width: 100%;
 }
 
 .features-inner {
-  max-width: 1400px;
+  max-width: 1050px;
   margin: 0 auto;
   width: 100%;
 }
 
 .features h2 {
   text-align: center;
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 900;
 }
 
 .features p {
-  margin: 14px auto 46px;
+  margin: 10px auto 32px;
   text-align: center;
-  max-width: 740px;
+  max-width: 560px;
   color: #6f7e97;
-  font-size: 24px;
+  font-size: 18px;
   line-height: 1.4;
   font-weight: 600;
 }
@@ -553,25 +562,25 @@ a {
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 18px;
   width: 100%;
 }
 
 .card {
   background: #f3f6fb;
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 30px;
+  border-radius: 14px;
+  padding: 22px;
 }
 
 .iconbox {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
-  font-size: 22px;
-  margin-bottom: 18px;
+  font-size: 18px;
+  margin-bottom: 14px;
 }
 
 .iconbox.blue { background: #dce8ff; color: #4b82ff; }
@@ -579,27 +588,27 @@ a {
 .iconbox.purple { background: #efdeff; color: #9a57ff; }
 
 .card h3 {
-  font-size: 30px;
-  margin-bottom: 10px;
+  font-size: 22px;
+  margin-bottom: 8px;
 }
 
 .card p {
   margin: 0;
   text-align: left;
-  font-size: 22px;
+  font-size: 16px;
   max-width: none;
 }
 
 .footer {
   background: #f8fbff;
-  padding: 22px 32px;
+  padding: 18px 24px;
   width: 100%;
 }
 
 .footer-inner {
-  max-width: 1400px;
+  max-width: 1050px;
   margin: 0 auto;
-  height: 70px;
+  height: 50px;
   border-top: 1px solid #e6ebf3;
   display: flex;
   align-items: center;
@@ -607,16 +616,18 @@ a {
   color: #7a8aa5;
   font-weight: 700;
   width: 100%;
+  font-size: 12px;
 }
 
 .footer-center {
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .footer-icons {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   color: #91a1ba;
+  font-size: 14px;
 }
 
 @media (max-width: 980px) {
@@ -625,17 +636,18 @@ a {
   }
 
   .hero h1 {
-    font-size: 44px;
+    font-size: 36px;
   }
 
   .sub {
-    font-size: 20px;
+    font-size: 16px;
   }
 
   .btn-main,
   .btn-ghost {
-    font-size: 22px;
-    height: 52px;
+    font-size: 16px;
+    height: 40px;
+    padding: 0 18px;
   }
 
   .chart-grid {
@@ -651,8 +663,8 @@ a {
   }
 
   .nav, .hero, .features-inner, .footer-inner {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
 `;

@@ -23,6 +23,7 @@ body {
 .auth-left {
   position: relative;
   padding: 120px;
+  
   color: #ffffff;
   background:
     linear-gradient(180deg, rgba(3, 81, 60, 0.25), rgba(1, 52, 39, 0.65)),

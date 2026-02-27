@@ -8,8 +8,8 @@ function Home() {
   return (
     <>
       {/* <HeroSection/> */}
-      {/* <AuthPage/> */}
-      <Dashboard/>
+      <AuthPage/>
+      {/* <Dashboard/> */}
     </>
   )
 }

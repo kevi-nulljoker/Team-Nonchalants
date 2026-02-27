@@ -504,34 +504,75 @@ body {
 }
 `;
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+const CONFIGURED_API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/$/, "");
+const DIRECT_API_BASE_URL = (import.meta.env.VITE_API_TARGET || "http://127.0.0.1:8001").replace(/\/$/, "");
+const API_BASE_URLS = Array.from(new Set([CONFIGURED_API_BASE_URL, DIRECT_API_BASE_URL].filter(Boolean)));
 
-const getErrorMessage = (data, fallback) => {
+const getErrorMessage = (data, fallback, rawText = "") => {
   if (data && typeof data.detail === "string") {
     return data.detail;
   }
+
+  if (Array.isArray(data?.detail) && data.detail.length > 0) {
+    const firstDetail = data.detail[0];
+    if (typeof firstDetail === "string") return firstDetail;
+    if (firstDetail && typeof firstDetail.msg === "string") return firstDetail.msg;
+  }
+
+  if (data && typeof data.message === "string") {
+    return data.message;
+  }
+
+  if (typeof rawText === "string" && rawText.trim()) {
+    return rawText.trim().slice(0, 240);
+  }
+
   return fallback;
 };
 
 const postJson = async (path, payload, fallbackMessage) => {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  for (const baseUrl of API_BASE_URLS) {
+    let response;
 
-  let data = null;
-  try {
-    data = await response.json();
-  } catch {
-    data = null;
+    try {
+      response = await fetch(`${baseUrl}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch {
+      continue;
+    }
+
+    const rawText = await response.text();
+    let data = null;
+    if (rawText) {
+      try {
+        data = JSON.parse(rawText);
+      } catch {
+        data = null;
+      }
+    }
+
+    if (!response.ok) {
+      const shouldTryFallback =
+        baseUrl.startsWith("/") &&
+        API_BASE_URLS.length > 1 &&
+        [404, 502, 503].includes(response.status);
+
+      if (shouldTryFallback) {
+        continue;
+      }
+
+      throw new Error(getErrorMessage(data, fallbackMessage, rawText));
+    }
+
+    return data || {};
   }
 
-  if (!response.ok) {
-    throw new Error(getErrorMessage(data, fallbackMessage));
-  }
-
-  return data;
+  throw new Error(
+    `Cannot reach auth server. Tried ${API_BASE_URLS.join(", ")}. Start backend/auth_server.py on http://127.0.0.1:8001.`
+  );
 };
 
 function AuthPage() {
@@ -623,8 +664,10 @@ function AuthPage() {
     try {
       const normalizedEmail = formData.email.trim().toLowerCase();
 
+      let authData = null;
+
       if (isSignup) {
-        await postJson(
+        const registerData = await postJson(
           "/register",
           {
             name: formData.name.trim(),
@@ -634,20 +677,38 @@ function AuthPage() {
           },
           "Sign up failed"
         );
+
+        authData = registerData?.access_token
+          ? registerData
+          : await postJson(
+              "/login",
+              {
+                email: normalizedEmail,
+                password: formData.password,
+              },
+              "Authentication failed"
+            );
+      } else {
+        authData = await postJson(
+          "/login",
+          {
+            email: normalizedEmail,
+            password: formData.password,
+          },
+          "Authentication failed"
+        );
       }
 
-      const loginData = await postJson(
-        "/login",
-        {
-          email: normalizedEmail,
-          password: formData.password,
-        },
-        "Authentication failed"
-      );
+      if (!authData?.access_token) {
+        throw new Error("Authentication token missing in server response");
+      }
 
-      localStorage.setItem("auth_token", loginData.access_token);
-      localStorage.setItem("auth_user_id", loginData.user_id);
+      localStorage.setItem("auth_token", authData.access_token);
+      localStorage.setItem("auth_user_id", authData.user_id || authData.id || "");
       localStorage.setItem("auth_email", normalizedEmail);
+      if (isSignup) {
+        localStorage.setItem("auth_name", formData.name.trim());
+      }
 
       navigate("/dashboard");
     } catch (error) {

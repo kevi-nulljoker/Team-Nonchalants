@@ -1,21 +1,25 @@
-import React from "react"
-import HeroSection from "../components/HeroSection"
-import AuthPage from "./SignUp"
-import Dashboard from "./Dashboard"
-import LearningSection from "./Learning"
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import AuthPage from "./SignUp";
+import Transactions from "./Transactions";
 
 
 function Home() {
+  const { isAuthenticated, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    return <AuthPage />;
+  }
+
   return (
     <>
-      {/* <HeroSection/> */}
-      {/* <AuthPage/> */}
-      <Dashboard/>
-      {/* <LearningSection/> */}
-      
-      
+      <Transactions />
     </>
-  )
+  );
 }
 
-export default Home
+export default Home;

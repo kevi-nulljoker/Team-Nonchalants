@@ -506,7 +506,10 @@ body {
 
 const CONFIGURED_API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/$/, "");
 const DIRECT_API_BASE_URL = (import.meta.env.VITE_API_TARGET || "http://127.0.0.1:8001").replace(/\/$/, "");
-const API_BASE_URLS = Array.from(new Set([CONFIGURED_API_BASE_URL, DIRECT_API_BASE_URL].filter(Boolean)));
+const TXN_BACKEND_FALLBACK_URL = (import.meta.env.VITE_TXN_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+const API_BASE_URLS = Array.from(
+  new Set([CONFIGURED_API_BASE_URL, DIRECT_API_BASE_URL, TXN_BACKEND_FALLBACK_URL].filter(Boolean))
+);
 
 const getErrorMessage = (data, fallback, rawText = "") => {
   if (data && typeof data.detail === "string") {
@@ -571,7 +574,7 @@ const postJson = async (path, payload, fallbackMessage) => {
   }
 
   throw new Error(
-    `Cannot reach auth server. Tried ${API_BASE_URLS.join(", ")}. Start backend/auth_server.py on http://127.0.0.1:8001.`
+    `Cannot reach auth server. Tried ${API_BASE_URLS.join(", ")}. Ensure your backend is running.`
   );
 };
 
@@ -704,13 +707,15 @@ function AuthPage() {
       }
 
       localStorage.setItem("auth_token", authData.access_token);
+      localStorage.setItem("token", authData.access_token);
       localStorage.setItem("auth_user_id", authData.user_id || authData.id || "");
       localStorage.setItem("auth_email", normalizedEmail);
+      localStorage.setItem("userEmail", normalizedEmail);
       if (isSignup) {
         localStorage.setItem("auth_name", formData.name.trim());
       }
 
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       setSubmitError(error.message || "Network error. Please try again.");
     } finally {

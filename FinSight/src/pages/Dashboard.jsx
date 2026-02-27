@@ -3,8 +3,8 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
-import { awardPoints, getPointTransactions, getPointsSummary, getStoredPoints } from "../services/pointsApi";
 
+// ─── DESIGN TOKENS ───────────────────────────────────────────────────────────
 const P = {
   bg: "#E9EEF6", card: "#FFFFFF", navy: "#0B1B35", navyMid: "#1C304F",
   blue: "#1A56E8", blueLight: "#EBF0FE", teal: "#0D9488", tealLight: "#ECFDF5",
@@ -70,10 +70,10 @@ const TRANSACTIONS = RAW.map((r,i)=>({
 }));
 
 const GOALS = [
-  {id:1,label:"Emergency Fund",target:150000,saved:62000,icon:"🛡",color:P.teal,term:"short"},
-  {id:2,label:"Goa Trip Fund", target:40000, saved:28500,icon:"🏖",color:P.amber,term:"short"},
-  {id:3,label:"New Laptop", target:80000, saved:45000,icon:"💻",color:P.blue,term:"mid"},
-  {id:4,label:"Annual SIP Goal",target:60000,saved:36000,icon:"📈",color:P.purple,term:"long"},
+  {id:1,label:"Emergency Fund",target:150000,saved:62000,icon:"🛡",color:P.teal},
+  {id:2,label:"Goa Trip Fund", target:40000, saved:28500,icon:"🏖",color:P.amber},
+  {id:3,label:"New Laptop", target:80000, saved:45000,icon:"💻",color:P.blue},
+  {id:4,label:"Annual SIP Goal",target:60000,saved:36000,icon:"📈",color:P.purple},
 ];
 
 // Learning modules
@@ -101,45 +101,240 @@ const INITIAL_LEARNING_DAYS = new Set([1,3,5,6,8,10,11,13,14,16,17]);
 const INITIAL_COMPLETED_MODULES = { 1: ["budgeting","investing"], 3: ["tax"], 5: ["budgeting"], 6: ["debt"], 8: ["investing","credit"], 10: ["emergency"], 11: ["tax","budgeting"], 13: ["debt"], 14: ["investing"], 16: ["credit"], 17: ["emergency","tax"] };
 const TODAY = 18; // Oct 18
 
-const STYLES = `
+// ─── STATIC STYLES (CSS classes) ─────────────────────────────────────────────
+const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  ::-webkit-scrollbar{width:4px;height:4px}
-  ::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:99px}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes popIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
-  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-  @keyframes pointsBurst{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(1.4)}}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-  @keyframes glow{0%,100%{box-shadow:0 0 8px rgba(245,158,11,.4)}50%{box-shadow:0 0 20px rgba(245,158,11,.8)}}
-  .au{animation:fadeUp .38s cubic-bezier(.4,0,.2,1) both}
-  .card-hover{transition:box-shadow .18s,transform .18s}
-  .card-hover:hover{box-shadow:0 8px 24px rgba(11,27,53,.10);transform:translateY(-1px)}
-  .txn-row{transition:background .12s}
-  .txn-row:hover{background:#F8FAFC}
-  .cal-day{cursor:pointer;border-radius:8px;transition:all .15s}
-  .cal-day:hover{transform:scale(1.08)}
-  .module-btn{cursor:pointer;border:none;border-radius:12px;padding:12px;transition:all .2s;text-align:left}
-  .module-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,86,232,.15)}
-  .streak-flame{animation:pulse 2s infinite}
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #E9EEF6;
+    font-family: 'Manrope', 'DM Sans', 'Segoe UI', sans-serif;
+    color: #0B1B35;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.7); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  @keyframes pointsBurst {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-40px) scale(1.4); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+    50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.8); }
+  }
+
+  /* Utility classes */
+  .fade-up { animation: fadeUp 0.38s cubic-bezier(0.4, 0, 0.2, 1) both; }
+  .pop-in { animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  .streak-flame { animation: pulse 2s infinite; }
+
+  /* Card styles */
+  .card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 1px 4px rgba(11, 27, 53, 0.06);
+  }
+  .card-hover {
+    transition: box-shadow 0.18s, transform 0.18s;
+  }
+  .card-hover:hover {
+    box-shadow: 0 8px 24px rgba(11, 27, 53, 0.10);
+    transform: translateY(-1px);
+  }
+
+  /* Transaction row */
+  .txn-row {
+    transition: background 0.12s;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 6px;
+    border-radius: 9px;
+  }
+  .txn-row:hover { background: #F8FAFC; }
+
+  /* Calendar day */
+  .cal-day {
+    height: 30px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    border: 2px solid transparent;
+  }
+  .cal-day:hover { transform: scale(1.08); }
+
+  /* Module button */
+  .module-btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    transition: all 0.2s;
+    text-align: left;
+    background: #F1F5F9;
+    border: 1.5px solid #E2E8F0;
+  }
+  .module-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26, 86, 232, 0.15);
+  }
+  .module-btn:disabled {
+    opacity: 1;
+    cursor: default;
+    background: linear-gradient(135deg, #EBF0FE 15%, #F5F3FF 10%);
+    border: 1.5px solid #1A56E8;
+  }
+
+  /* Labels */
+  .label-container { margin-bottom: 14px; }
+  .label-main {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0B1B35;
+    margin: 0;
+  }
+  .label-sub {
+    font-size: 11px;
+    color: #94A3B8;
+    margin: 2px 0 0;
+  }
+
+  /* Progress bar */
+  .progress-bg {
+    background: #F1F5F9;
+    border-radius: 99px;
+    height: 5px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s ease;
+  }
+
+  /* Points burst */
+  .points-burst {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    pointer-events: none;
+    animation: pointsBurst 1.2s ease-out forwards;
+    font-size: 28px;
+    font-weight: 800;
+    color: #F59E0B;
+    text-shadow: 0 2px 12px rgba(245, 158, 11, 0.6);
+  }
+
+  /* Nav button */
+  .nav-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .nav-btn.active {
+    background: #0B1B35;
+    color: #fff;
+  }
+  .nav-btn:not(.active) {
+    background: transparent;
+    color: #64748B;
+  }
+
+  /* Check-in button */
+  .checkin-btn {
+    padding: 8px 14px;
+    border-radius: 99px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #0D9488, #0f766e);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(13, 148, 136, 0.35);
+    transition: all 0.15s;
+  }
+  .checkin-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0D9488;
+    background: #ECFDF5;
+    padding: 6px 12px;
+    border-radius: 99px;
+  }
+
+  /* Stats grid */
+  .stat-box {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 9px;
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .stat-label {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.35);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .stat-value {
+    font-size: 13px;
+    font-weight: 800;
+  }
 `;
 
-const Card = ({children, style={}}) => (
-  <div style={{background:P.card,borderRadius:16,border:`1px solid ${P.border}`,boxShadow:"0 1px 4px rgba(11,27,53,.06)",...style}}>
+// ─── HELPER COMPONENTS ───────────────────────────────────────────────────────
+const Card = ({ children, style = {}, className = "" }) => (
+  <div className={`card ${className}`} style={style}>
     {children}
   </div>
 );
 
-const Lbl = ({text, sub}) => (
-  <div style={{marginBottom:14}}>
-    <p style={{fontSize:13,fontWeight:700,color:P.navy,margin:0}}>{text}</p>
-    {sub && <p style={{fontSize:11,color:P.muted,margin:"2px 0 0"}}>{sub}</p>}
+const Lbl = ({ text, sub }) => (
+  <div className="label-container">
+    <p className="label-main">{text}</p>
+    {sub && <p className="label-sub">{sub}</p>}
   </div>
 );
 
-const PBar = ({v, color, h=5}) => (
-  <div style={{background:P.borderSoft,borderRadius:99,height:h,overflow:"hidden"}}>
-    <div style={{height:"100%",width:`${Math.min(v,100)}%`,background:color,borderRadius:99,transition:"width 1s ease"}}/>
+const PBar = ({ v, color, h = 5 }) => (
+  <div className="progress-bg" style={{ height: h }}>
+    <div
+      className="progress-fill"
+      style={{ width: `${Math.min(v, 100)}%`, backgroundColor: color }}
+    />
   </div>
 );
 
@@ -153,63 +348,60 @@ const NavIcons = {
   book: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
 };
 
-const ChartTip = ({active, payload, label}) => {
+const ChartTip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{background:P.card,border:`1px solid ${P.border}`,borderRadius:10,padding:"10px 13px",boxShadow:"0 6px 20px rgba(0,0,0,.09)",fontSize:12}}>
-      {label && <p style={{fontWeight:700,color:P.navy,marginBottom:5}}>{label}</p>}
-      {payload.map((p,i) => (
-        <p key={i} style={{display:"flex",alignItems:"center",gap:6,margin:"2px 0"}}>
-          <span style={{width:7,height:7,borderRadius:"50%",background:p.color||P.blue}}/>
-          <span style={{color:P.muted}}>{p.name}:</span>
-          <strong style={{color:P.navy}}>₹{Number(p.value).toLocaleString("en-IN")}</strong>
+    <div style={{
+      background: P.card,
+      border: `1px solid ${P.border}`,
+      borderRadius: 10,
+      padding: "10px 13px",
+      boxShadow: "0 6px 20px rgba(0,0,0,.09)",
+      fontSize: 12
+    }}>
+      {label && <p style={{ fontWeight: 700, color: P.navy, marginBottom: 5 }}>{label}</p>}
+      {payload.map((p, i) => (
+        <p key={i} style={{ display: "flex", alignItems: "center", gap: 6, margin: "2px 0" }}>
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: p.color || P.blue }} />
+          <span style={{ color: P.muted }}>{p.name}:</span>
+          <strong style={{ color: P.navy }}>₹{Number(p.value).toLocaleString("en-IN")}</strong>
         </p>
       ))}
     </div>
   );
 };
 
-// ─── Points Burst Animation ───────────────────────────────────────────────────
-function PointsBurst({ points, visible }) {
+const PointsBurst = ({ points, visible }) => {
   if (!visible) return null;
-  return (
-    <div style={{
-      position:"fixed", top:"50%", left:"50%", transform:"translate(-50%,-50%)",
-      zIndex:9999, pointerEvents:"none", animation:"pointsBurst 1.2s ease-out forwards",
-      fontSize:28, fontWeight:800, color:P.gold,
-      textShadow:"0 2px 12px rgba(245,158,11,.6)",
-    }}>
-      +{points} pts ✨
-    </div>
-  );
-}
+  return <div className="points-burst">+{points} pts ✨</div>;
+};
 
-// ─── Learning Calendar Component ─────────────────────────────────────────────
-function LearningCalendar({ loginDays, learningDays, completedModules, onDayClick, today }) {
+const LearningCalendar = ({ loginDays, learningDays, completedModules, onDayClick, today }) => {
   const [hoveredDay, setHoveredDay] = useState(null);
   const daysOfWeek = ["Su","Mo","Tu","We","Th","Fr","Sa"];
-  // Oct 2024 starts on Tuesday (index 2)
-  const startOffset = 2;
+  const startOffset = 2; // Oct 2024 starts on Tuesday
   const totalDays = 31;
 
   return (
     <div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2,marginBottom:4}}>
-        {daysOfWeek.map(d=>(
-          <div key={d} style={{textAlign:"center",fontSize:9,fontWeight:700,color:P.muted,padding:"2px 0"}}>{d}</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 2, marginBottom: 4 }}>
+        {daysOfWeek.map(d => (
+          <div key={d} style={{ textAlign: "center", fontSize: 9, fontWeight: 700, color: P.muted, padding: "2px 0" }}>
+            {d}
+          </div>
         ))}
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3}}>
-        {Array.from({length: startOffset}).map((_,i)=>(
-          <div key={`empty-${i}`} style={{height:30}}/>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 3 }}>
+        {Array.from({ length: startOffset }).map((_, i) => (
+          <div key={`empty-${i}`} style={{ height: 30 }} />
         ))}
-        {Array.from({length:totalDays},(_,i)=>{
-          const d = i+1;
+        {Array.from({ length: totalDays }, (_, i) => {
+          const d = i + 1;
           const isLogin = loginDays.has(d);
           const isLearning = learningDays.has(d);
           const isToday = d === today;
           const isFuture = d > today;
-          const modCount = (completedModules[d]||[]).length;
+          const modCount = (completedModules[d] || []).length;
 
           let bg = P.borderSoft;
           let textColor = P.muted;
@@ -217,77 +409,68 @@ function LearningCalendar({ loginDays, learningDays, completedModules, onDayClic
 
           if (isFuture) { bg = P.borderSoft; textColor = P.faint; }
           else if (isLearning) { bg = `linear-gradient(135deg,${P.blue},${P.purple})`; textColor = "#fff"; }
-          else if (isLogin) { bg = P.tealLight; textColor = P.teal; borderColor = P.teal+"44"; }
-
-          if (isToday) { borderColor = P.gold; }
+          else if (isLogin) { bg = P.tealLight; textColor = P.teal; borderColor = P.teal + "44"; }
 
           return (
             <div
               key={d}
               className="cal-day"
-              title={isFuture ? "" : `Oct ${d}: ${isLearning?"✓ Learned":"Login only"} ${modCount>0?`(${modCount} modules)`:""}`}
-              onClick={()=>!isFuture && onDayClick(d)}
-              onMouseEnter={()=>setHoveredDay(d)}
-              onMouseLeave={()=>setHoveredDay(null)}
+              title={isFuture ? "" : `Oct ${d}: ${isLearning ? "✓ Learned" : "Login only"} ${modCount > 0 ? `(${modCount} modules)` : ""}`}
+              onClick={() => !isFuture && onDayClick(d)}
+              onMouseEnter={() => setHoveredDay(d)}
+              onMouseLeave={() => setHoveredDay(null)}
               style={{
-                height:30, position:"relative",
                 background: bg,
-                border:`2px solid ${isToday?P.gold:borderColor}`,
-                borderRadius:7,
-                display:"flex",alignItems:"center",justifyContent:"center",
-                cursor:isFuture?"default":"pointer",
-                boxShadow: isToday ? "0 0 0 2px rgba(245,158,11,.3)" : "none",
+                borderColor: isToday ? P.gold : borderColor,
               }}
             >
-              <span style={{fontSize:10.5,fontWeight:isToday?800:600,color:textColor}}>{d}</span>
+              <span style={{ fontSize: 10.5, fontWeight: isToday ? 800 : 600, color: textColor }}>{d}</span>
               {isLearning && modCount > 0 && (
                 <span style={{
-                  position:"absolute",top:-3,right:-3,
-                  width:13,height:13,borderRadius:"50%",
-                  background:P.gold,color:"#fff",
-                  fontSize:7,fontWeight:800,
-                  display:"flex",alignItems:"center",justifyContent:"center",
-                  border:`1.5px solid ${P.card}`,
-                }}>{modCount}</span>
+                  position: "absolute", top: -3, right: -3,
+                  width: 13, height: 13, borderRadius: "50%",
+                  background: P.gold, color: "#fff",
+                  fontSize: 7, fontWeight: 800,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  border: `1.5px solid ${P.card}`,
+                }}>
+                  {modCount}
+                </span>
               )}
               {isToday && !isLearning && (
                 <span style={{
-                  position:"absolute",bottom:-3,left:"50%",transform:"translateX(-50%)",
-                  width:5,height:5,borderRadius:"50%",background:P.gold,
-                }}/>
+                  position: "absolute", bottom: -3, left: "50%", transform: "translateX(-50%)",
+                  width: 5, height: 5, borderRadius: "50%", background: P.gold,
+                }} />
               )}
             </div>
           );
         })}
       </div>
       {/* Legend */}
-      <div style={{display:"flex",gap:12,marginTop:10,flexWrap:"wrap"}}>
+      <div style={{ display: "flex", gap: 12, marginTop: 10, flexWrap: "wrap" }}>
         {[
-          {bg:`linear-gradient(135deg,${P.blue},${P.purple})`,label:"Learned"},
-          {bg:P.tealLight,border:`1px solid ${P.teal}44`,label:"Login only"},
-          {bg:P.borderSoft,label:"No activity"},
-          {bg:P.borderSoft,border:`2px solid ${P.gold}`,label:"Today"},
-        ].map(l=>(
-          <div key={l.label} style={{display:"flex",alignItems:"center",gap:5}}>
-            <div style={{width:12,height:12,borderRadius:3,background:l.bg,border:l.border||"none"}}/>
-            <span style={{fontSize:9.5,color:P.muted}}>{l.label}</span>
+          { bg: `linear-gradient(135deg,${P.blue},${P.purple})`, label: "Learned" },
+          { bg: P.tealLight, border: `1px solid ${P.teal}44`, label: "Login only" },
+          { bg: P.borderSoft, label: "No activity" },
+          { bg: P.borderSoft, border: `2px solid ${P.gold}`, label: "Today" },
+        ].map(l => (
+          <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <div style={{ width: 12, height: 12, borderRadius: 3, background: l.bg, border: l.border || "none" }} />
+            <span style={{ fontSize: 9.5, color: P.muted }}>{l.label}</span>
           </div>
         ))}
       </div>
     </div>
   );
-}
+};
 
-// ─── Main Dashboard ───────────────────────────────────────────────────────────
+// ─── MAIN DASHBOARD ───────────────────────────────────────────────────────────
 export default function Dashboard() {
-  const userId = localStorage.getItem("auth_user_id") || "";
   const [activeNav, setActiveNav] = useState("dashboard");
   const [showAll, setShowAll] = useState(false);
-  const [apiPoints, setApiPoints] = useState(() => getStoredPoints(userId));
-  const [pointHistory, setPointHistory] = useState([]);
-  const [goals, setGoals] = useState(() => GOALS.map((g) => ({ ...g, completed: false })));
 
-  // ── Gamification State ──
+  // Gamification State
   const [loginDays, setLoginDays] = useState(INITIAL_LOGIN_DAYS);
   const [learningDays, setLearningDays] = useState(INITIAL_LEARNING_DAYS);
   const [completedModules, setCompletedModules] = useState(INITIAL_COMPLETED_MODULES);
@@ -297,10 +480,10 @@ export default function Dashboard() {
   const [burstPoints, setBurstPoints] = useState(0);
   const [selectedCalDay, setSelectedCalDay] = useState(null);
 
-  // Legacy demo points calculation (retained for non-auth demo mode)
-  const legacyPoints = useMemo(() => {
+  // Calculate total points
+  const totalPoints = useMemo(() => {
     let pts = 0;
-    loginDays.forEach(d => { pts += 5; }); // 5 pts per login
+    loginDays.forEach(d => { pts += 5; });
     Object.entries(completedModules).forEach(([d, mods]) => {
       mods.forEach(mid => {
         const mod = LEARNING_MODULES.find(m => m.id === mid);
@@ -314,38 +497,6 @@ export default function Dashboard() {
     });
     return pts;
   }, [loginDays, completedModules, todayLoggedIn, todayLearnedModules]);
-  const totalPoints = apiPoints ?? legacyPoints;
-
-  useEffect(() => {
-    if (!userId) return;
-    let alive = true;
-
-    Promise.all([getPointsSummary(userId), getPointTransactions(userId, 8)])
-      .then(([summary, history]) => {
-        if (!alive) return;
-        if (typeof summary?.total_points === "number") setApiPoints(summary.total_points);
-        if (Array.isArray(history?.transactions)) setPointHistory(history.transactions);
-      })
-      .catch(() => {});
-
-    const onPointsUpdated = (event) => {
-      const detail = event.detail || {};
-      if (detail.userId === userId && typeof detail.totalPoints === "number") {
-        setApiPoints(detail.totalPoints);
-      }
-      getPointTransactions(userId, 8)
-        .then((history) => {
-          if (alive && Array.isArray(history?.transactions)) setPointHistory(history.transactions);
-        })
-        .catch(() => {});
-    };
-
-    window.addEventListener("finsight:points-updated", onPointsUpdated);
-    return () => {
-      alive = false;
-      window.removeEventListener("finsight:points-updated", onPointsUpdated);
-    };
-  }, [userId]);
 
   // Streak calculation
   const streak = useMemo(() => {
@@ -371,7 +522,7 @@ export default function Dashboard() {
   }, [learningDays, todayLearnedModules]);
 
   // Current tier
-  const currentTier = TIERS.find(t => totalPoints >= t.min && totalPoints < t.max) || TIERS[TIERS.length-1];
+  const currentTier = TIERS.find(t => totalPoints >= t.min && totalPoints < t.max) || TIERS[TIERS.length - 1];
   const nextTier = TIERS[TIERS.indexOf(currentTier) + 1];
   const tierProgress = nextTier ? Math.round(((totalPoints - currentTier.min) / (nextTier.min - currentTier.min)) * 100) : 100;
 
@@ -397,90 +548,41 @@ export default function Dashboard() {
     setLearningDays(prev => new Set([...prev, TODAY]));
     setCompletedModules(prev => ({
       ...prev,
-      [TODAY]: [...(prev[TODAY]||[]), moduleId],
+      [TODAY]: [...(prev[TODAY] || []), moduleId],
     }));
     triggerBurst(mod.points);
-  };
-
-  const handleCreateGoal = async () => {
-    if (!userId) return;
-    const goalId = Date.now();
-    setGoals((prev) => [
-      ...prev,
-      {
-        id: goalId,
-        label: `New Goal ${prev.length + 1}`,
-        target: 25000,
-        saved: 0,
-        icon: "🎯",
-        color: P.blue,
-        term: "short",
-        completed: false,
-      },
-    ]);
-    try {
-      const res = await awardPoints(userId, "goal_created", { metadata: { goal_id: goalId } });
-      if (typeof res?.total_points === "number") {
-        setApiPoints(res.total_points);
-        triggerBurst(50);
-      }
-      const history = await getPointTransactions(userId, 8);
-      if (Array.isArray(history?.transactions)) setPointHistory(history.transactions);
-    } catch {
-      // Keep dashboard interactive even if backend is unreachable.
-    }
-  };
-
-  const handleCompleteGoal = async (goal) => {
-    if (!userId || goal.completed) return;
-    setGoals((prev) => prev.map((g) => (g.id === goal.id ? { ...g, completed: true, saved: g.target } : g)));
-    try {
-      const res = await awardPoints(userId, "goal_completed", {
-        goal_term: goal.term,
-        metadata: { goal_id: goal.id, goal_label: goal.label, goal_term: goal.term },
-      });
-      const burst = goal.term === "long" ? 1000 : goal.term === "mid" ? 500 : 200;
-      if (typeof res?.total_points === "number") {
-        setApiPoints(res.total_points);
-        triggerBurst(burst);
-      }
-      const history = await getPointTransactions(userId, 8);
-      if (Array.isArray(history?.transactions)) setPointHistory(history.transactions);
-    } catch {
-      // Keep UI responsive in offline mode.
-    }
   };
 
   // Finance data
   const transactions = TRANSACTIONS;
   const income = INCOME;
-  const totalExp = useMemo(() => transactions.reduce((s,t) => s+t.amount, 0), [transactions]);
+  const totalExp = useMemo(() => transactions.reduce((s, t) => s + t.amount, 0), [transactions]);
   const savings = income - totalExp;
-  const savRate = Math.max(0, Math.round((savings/income)*100));
+  const savRate = Math.max(0, Math.round((savings / income) * 100));
   const catTotals = useMemo(() => {
     const m = {};
-    transactions.forEach(t => { m[t.cat] = (m[t.cat]||0) + t.amount; });
+    transactions.forEach(t => { m[t.cat] = (m[t.cat] || 0) + t.amount; });
     return m;
   }, [transactions]);
   const catList = useMemo(() =>
     Object.entries(catTotals)
-      .map(([k,v]) => ({key:k, name:CATS[k]?.label||k, value:v, color:CATS[k]?.color||P.muted, icon:CATS[k]?.icon||"📦"}))
-      .sort((a,b) => b.value-a.value),
+      .map(([k, v]) => ({ key: k, name: CATS[k]?.label || k, value: v, color: CATS[k]?.color || P.muted, icon: CATS[k]?.icon || "📦" }))
+      .sort((a, b) => b.value - a.value),
     [catTotals]
   );
   const dailyData = useMemo(() => {
     const m = {};
-    transactions.forEach(t => { m[t.day] = (m[t.day]||0) + t.amount; });
+    transactions.forEach(t => { m[t.day] = (m[t.day] || 0) + t.amount; });
     let cum = 0;
-    return Array.from({length:30}, (_,i) => {
-      const d = i+1;
-      cum += (m[d]||0);
-      return {d, label: (d===1||d%5===0) ? `${d}` : "", daily:m[d]||0, cum};
+    return Array.from({ length: 30 }, (_, i) => {
+      const d = i + 1;
+      cum += (m[d] || 0);
+      return { d, label: (d === 1 || d % 5 === 0) ? `${d}` : "", daily: m[d] || 0, cum };
     });
   }, [transactions]);
   const topCat = catList[0];
-  const recent = useMemo(() => [...transactions].sort((a,b) => b.day-a.day).slice(0, showAll ? 16 : 6), [transactions, showAll]);
-  const fmtK = (n) => n>=100000 ? `₹${(n/100000).toFixed(1)}L` : n>=1000 ? `₹${(n/1000).toFixed(1)}k` : `₹${n}`;
+  const recent = useMemo(() => [...transactions].sort((a, b) => b.day - a.day).slice(0, showAll ? 16 : 6), [transactions, showAll]);
+  const fmtK = (n) => n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : n >= 1000 ? `₹${(n / 1000).toFixed(1)}k` : `₹${n}`;
 
   // Selected day details
   const selectedDayInfo = selectedCalDay ? {
@@ -489,374 +591,512 @@ export default function Dashboard() {
   } : null;
 
   return (
-    <div style={{minHeight:"100vh",background:P.bg,fontFamily:"'Manrope','DM Sans','Segoe UI',sans-serif",padding:"24px 24px 48px",color:P.navy}}>
-      <style>{STYLES}</style>
-      <PointsBurst points={burstPoints} visible={showBurst}/>
+    <>
+    <div style={{ display: "grid", gridTemplateColumns: "1.2fr 2.5fr 1.2fr", gap: 16, width: "100vw"}}></div>
+      <style>{styles}</style>
+      <div style={{ minHeight: "100vh", background: P.bg, padding: "24px 24px 48px" }}>
+        <PointsBurst points={burstPoints} visible={showBurst} />
 
-      {/* NAV */}
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24,padding:"0 4px"}}>
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:36,height:36,borderRadius:10,background:`linear-gradient(135deg,${P.blue},${P.teal})`,display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <NavIcons.trend/>
-          </div>
-          <div><p style={{fontSize:14,fontWeight:800,color:P.navy,lineHeight:1.1,letterSpacing:-.3}}>FinSight</p><p style={{fontSize:9.5,color:P.muted,fontWeight:500,letterSpacing:.5}}>SMART FINANCE</p></div>
-        </div>
-        <div style={{display:"flex",alignItems:"center",gap:8,background:P.card,borderRadius:99,padding:"8px 10px",border:`1px solid ${P.border}`,boxShadow:"0 2px 8px rgba(11,27,53,.06)"}}>
-          {[
-            {id:"dashboard", label:"Dashboard", Icon:NavIcons.grid},
-            {id:"insights", label:"Insights", Icon:NavIcons.bar},
-            {id:"goals", label:"Goals", Icon:NavIcons.target},
-            {id:"learning", label:"Learning", Icon:NavIcons.book},
-            {id:"invest", label:"Investment", Icon:NavIcons.trend},
-            {id:"profile", label:"Profile", Icon:NavIcons.user},
-          ].map(({id, label, Icon}) => (
-            <button key={id} title={label} onClick={() => setActiveNav(id)}
-              style={{width:42,height:42,borderRadius:"50%",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",background:activeNav===id?P.navy:"transparent",color:activeNav===id?"#fff":P.slate,transition:"all .15s"}}>
-              <Icon/>
-            </button>
-          ))}
-        </div>
-        {/* Points badge in nav */}
-        <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{
-            display:"flex",alignItems:"center",gap:6,
-            background:`linear-gradient(135deg,${P.gold}18,${P.goldLight})`,
-            border:`1px solid ${P.gold}44`,
-            borderRadius:99,padding:"6px 12px",
-          }}>
-            <span style={{fontSize:14}}>{currentTier.icon}</span>
+        {/* NAV */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, padding: "0 4px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 10,
+              background: `linear-gradient(135deg,${P.blue},${P.teal})`,
+              display: "flex", alignItems: "center", justifyContent: "center"
+            }}>
+              <NavIcons.trend />
+            </div>
             <div>
-              <p style={{fontSize:11,fontWeight:800,color:P.navy,lineHeight:1}}>{totalPoints.toLocaleString()} pts</p>
-              <p style={{fontSize:9,color:P.muted,lineHeight:1}}>{currentTier.name}</p>
+              <p style={{ fontSize: 14, fontWeight: 800, color: P.navy, lineHeight: 1.1, letterSpacing: -0.3 }}>FinSight</p>
+              <p style={{ fontSize: 9.5, color: P.muted, fontWeight: 500, letterSpacing: 0.5 }}>SMART FINANCE</p>
             </div>
           </div>
-          <div style={{position:"relative",width:42,height:42,borderRadius:"50%",background:P.card,border:`1px solid ${P.border}`,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:P.slate}}>
-            <NavIcons.bell/>
-            <span style={{position:"absolute",top:8,right:8,width:8,height:8,borderRadius:"50%",background:P.red,border:`2px solid ${P.card}`}}/>
+          <div style={{
+            display: "flex", alignItems: "center", gap: 8,
+            background: P.card, borderRadius: 99, padding: "8px 10px",
+            border: `1px solid ${P.border}`, boxShadow: "0 2px 8px rgba(11,27,53,.06)"
+          }}>
+            {[
+              { id: "dashboard", label: "Dashboard", Icon: NavIcons.grid },
+              { id: "insights", label: "Insights", Icon: NavIcons.bar },
+              { id: "goals", label: "Goals", Icon: NavIcons.target },
+              { id: "learning", label: "Learning", Icon: NavIcons.book },
+              { id: "invest", label: "Investment", Icon: NavIcons.trend },
+              { id: "profile", label: "Profile", Icon: NavIcons.user },
+            ].map(({ id, label, Icon }) => (
+              <button
+                key={id}
+                title={label}
+                onClick={() => setActiveNav(id)}
+                className={`nav-btn ${activeNav === id ? "active" : ""}`}
+              >
+                <Icon />
+              </button>
+            ))}
           </div>
-          <div style={{width:42,height:42,borderRadius:"50%",background:`linear-gradient(135deg,${P.blue},${P.purple})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15,color:"white",fontWeight:700,cursor:"pointer"}}>A</div>
-        </div>
-      </div>
-
-      {/* MAIN GRID */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 2fr 1fr",gap:16}}>
-
-        {/* LEFT */}
-        <div style={{display:"flex",flexDirection:"column",gap:14}}>
-          <Card style={{padding:"20px",background:`linear-gradient(135deg,${P.navy},#162B4F)`,border:"none"}}>
-            <p style={{fontSize:11,color:"rgba(255,255,255,.45)",fontWeight:600,textTransform:"uppercase",marginBottom:8}}>October 2024</p>
-            <h2 style={{fontSize:20,fontWeight:800,color:"#fff",lineHeight:1.2,marginBottom:4}}>Welcome back, Arjun 👋</h2>
-            <p style={{fontSize:11.5,color:"rgba(255,255,255,.55)",marginBottom:16}}>Here's your financial snapshot</p>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-              {[{l:"Income",v:`₹${(income/1000).toFixed(0)}k`,c:"rgba(255,255,255,.9)"},{l:"Spent",v:fmtK(totalExp),c:"#FCA5A5"},{l:"Saved",v:fmtK(Math.max(0,savings)),c:"#6EE7B7"},{l:"Rate",v:`${savRate}%`,c:savRate>=30?"#6EE7B7":"#FCD34D"}].map(s=>(
-                <div key={s.l} style={{background:"rgba(255,255,255,.07)",borderRadius:10,padding:"9px 11px",border:"1px solid rgba(255,255,255,.08)"}}>
-                  <p style={{fontSize:9.5,color:"rgba(255,255,255,.4)",fontWeight:600,textTransform:"uppercase",marginBottom:3}}>{s.l}</p>
-                  <p style={{fontSize:14,fontWeight:800,color:s.c}}>{s.v}</p>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-            <Card style={{padding:"14px"}}><div style={{fontSize:32,marginBottom:8}}>💰</div><p style={{fontSize:11,color:P.muted}}>Net Savings</p><p style={{fontSize:17,fontWeight:800,color:P.navy}}>{fmtK(Math.max(0,savings))}</p></Card>
-            <Card style={{padding:"14px"}}><div style={{fontSize:32,marginBottom:8}}>📊</div><p style={{fontSize:11,color:P.muted}}>Savings Rate</p><p style={{fontSize:17,fontWeight:800,color:P.navy}}>{savRate}%</p></Card>
-          </div>
-
-          <Card style={{padding:"18px"}}><Lbl text="Top Spending" sub="by category"/><div style={{display:"flex",flexDirection:"column",gap:10}}>{catList.slice(0,5).map(c=><div key={c.key}><div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span>{c.icon} {c.name}</span><span style={{color:P.slate}}>{fmtK(c.value)}</span></div><PBar v={Math.round((c.value/totalExp)*100)} color={c.color}/></div>)}</div></Card>
-
-          <Card style={{padding:"18px"}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:14}}><Lbl text="Recent Transactions" sub={`${transactions.length} total`}/><button onClick={()=>setShowAll(v=>!v)} style={{fontSize:11,fontWeight:700,color:P.blue,background:"transparent",border:"none",cursor:"pointer"}}>{showAll?"Less":"All →"}</button></div>
-            <div style={{display:"flex",flexDirection:"column",gap:1}}>{recent.map((t)=><div key={t.id} style={{display:"flex",alignItems:"center",gap:9,padding:"8px 6px",borderRadius:9}}><div style={{width:30,height:30,borderRadius:9,background:(t.meta?.color||P.muted)+"18",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>{t.meta?.icon||"💳"}</div><div style={{flex:1,minWidth:0}}><p style={{fontSize:11.5,fontWeight:600,color:P.navy,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{t.desc}</p><p style={{fontSize:10,color:P.muted}}>{t.date}</p></div><span style={{fontSize:12,fontWeight:700,color:P.navy}}>-₹{t.amount.toLocaleString("en-IN")}</span></div>)}</div>
-          </Card>
-        </div>
-
-        {/* CENTER */}
-        <div style={{display:"flex",flexDirection:"column",gap:14}}>
-          <Card style={{padding:"20px 20px 14px"}}>
-            <div style={{marginBottom:16}}><p style={{fontSize:13,fontWeight:700,color:P.navy}}>Spending Trend</p><p style={{fontSize:11,color:P.muted}}>Daily & cumulative · October 2024</p></div>
-            <ResponsiveContainer width="100%" height={190}>
-              <AreaChart data={dailyData}>
-                <defs><linearGradient id="gBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={P.blue} stopOpacity={0.15}/><stop offset="100%" stopColor={P.blue} stopOpacity={0}/></linearGradient></defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false}/>
-                <XAxis dataKey="label" tick={{fill:P.muted,fontSize:10}}/>
-                <YAxis tick={{fill:P.muted,fontSize:10}} tickFormatter={v=>`₹${(v/1000).toFixed(0)}k`}/>
-                <Tooltip content={<ChartTip/>}/>
-                <Area type="monotone" dataKey="cum" name="Cumulative" stroke={P.blue} strokeWidth={2} fill="url(#gBlue)" dot={false}/>
-                <Area type="monotone" dataKey="daily" name="Daily" stroke={P.teal} strokeWidth={1.5} dot={false} strokeDasharray="4 3"/>
-              </AreaChart>
-            </ResponsiveContainer>
-          </Card>
-
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14}}>
-            <Card style={{padding:"18px"}}><Lbl text="Category Split" sub="October 2024"/><div style={{height:150}}><ResponsiveContainer><PieChart><Pie data={catList} cx="50%" cy="50%" innerRadius={44} outerRadius={70} paddingAngle={2} dataKey="value">{catList.map((e,i)=><Cell key={i} fill={e.color}/>)}</Pie></PieChart></ResponsiveContainer></div></Card>
-            <Card style={{padding:"18px"}}><Lbl text="Budget Status" sub="Category overview"/><div style={{display:"flex",flexDirection:"column",gap:8}}>{catList.slice(0,4).map(c=>{const pct=Math.round((c.value/(CATS[c.key]?.budget||50000))*100);return <div key={c.key}><div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}><span style={{fontSize:10.5,fontWeight:600,color:P.navy}}>{c.icon} {c.name.split(" ")[0]}</span><span style={{fontSize:10,fontWeight:700,color:pct>100?P.red:pct>80?P.amber:P.teal}}>{pct}%</span></div><PBar v={pct} color={pct>100?P.red:pct>80?P.amber:c.color} h={4}/></div>})}</div></Card>
-          </div>
-
-          <Card style={{padding:"20px"}}>
-            <Lbl text="Income vs Expenses" sub="Monthly financial health"/>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
-              {[{l:"Income",v:income,c:P.teal,icon:"💵"},{l:"Expenses",v:totalExp,c:P.red,icon:"💸"},{l:"Savings",v:Math.max(0,savings),c:P.blue,icon:"💰"}].map(row=>(
-                <div key={row.l} style={{background:"#F8FAFC",borderRadius:12,padding:"14px"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8}}><span style={{fontSize:15}}>{row.icon}</span><span style={{fontSize:11,fontWeight:600,color:P.slate}}>{row.l}</span></div>
-                  <p style={{fontSize:16,fontWeight:800,color:P.navy,marginBottom:6}}>{fmtK(row.v)}</p>
-                  <PBar v={Math.round((row.v/income)*100)} color={row.c} h={4}/>
-                  <p style={{fontSize:9.5,color:P.muted,marginTop:3,textAlign:"right"}}>{Math.round((row.v/income)*100)}%</p>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          {/* ── LEARNING CALENDAR ── */}
-          <Card style={{padding:"20px"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
+          {/* Points badge in nav */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: 6,
+              background: `linear-gradient(135deg,${P.gold}18,${P.goldLight})`,
+              border: `1px solid ${P.gold}44`,
+              borderRadius: 99, padding: "6px 12px",
+            }}>
+              <span style={{ fontSize: 14 }}>{currentTier.icon}</span>
               <div>
-                <p style={{fontSize:13,fontWeight:700,color:P.navy,margin:0}}>Learning Calendar</p>
-                <p style={{fontSize:11,color:P.muted,margin:"2px 0 0"}}>October 2024 · click a day to see activity</p>
-              </div>
-              <div style={{display:"flex",gap:8}}>
-                <div style={{
-                  background:`linear-gradient(135deg,#FF6B35,#F59E0B)`,
-                  borderRadius:10,padding:"6px 10px",
-                  display:"flex",alignItems:"center",gap:5,
-                }}>
-                  <span className="streak-flame" style={{fontSize:14}}>🔥</span>
-                  <div>
-                    <p style={{fontSize:11,fontWeight:800,color:"#fff",lineHeight:1}}>{learningStreak}d</p>
-                    <p style={{fontSize:8.5,color:"rgba(255,255,255,.7)",lineHeight:1}}>streak</p>
-                  </div>
-                </div>
+                <p style={{ fontSize: 11, fontWeight: 800, color: P.navy, lineHeight: 1 }}>{totalPoints.toLocaleString()} pts</p>
+                <p style={{ fontSize: 9, color: P.muted, lineHeight: 1 }}>{currentTier.name}</p>
               </div>
             </div>
-
-            <LearningCalendar
-              loginDays={new Set([...loginDays, ...(todayLoggedIn ? [TODAY] : [])])}
-              learningDays={new Set([...learningDays, ...(todayLearnedModules.length > 0 ? [TODAY] : [])])}
-              completedModules={{...completedModules, ...(todayLearnedModules.length > 0 ? {[TODAY]: todayLearnedModules} : {})}}
-              onDayClick={setSelectedCalDay}
-              today={TODAY}
-            />
-
-            {/* Selected day info popup */}
-            {selectedCalDay && (
-              <div style={{
-                marginTop:12,padding:"12px",borderRadius:12,
-                background:P.borderSoft,border:`1px solid ${P.border}`,
-                animation:"fadeUp .2s ease",
-              }}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-                  <p style={{fontSize:12,fontWeight:700,color:P.navy}}>Oct {selectedCalDay}</p>
-                  <button onClick={()=>setSelectedCalDay(null)} style={{background:"none",border:"none",cursor:"pointer",color:P.muted,fontSize:14}}>✕</button>
-                </div>
-                <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                  {selectedDayInfo?.login && (
-                    <span style={{fontSize:10.5,fontWeight:600,padding:"3px 8px",borderRadius:99,background:P.tealLight,color:P.teal}}>✓ Logged in (+5 pts)</span>
-                  )}
-                  {selectedDayInfo?.modules?.length > 0 ? selectedDayInfo.modules.map(mid => {
-                    const mod = LEARNING_MODULES.find(m=>m.id===mid);
-                    return mod ? <span key={mid} style={{fontSize:10.5,fontWeight:600,padding:"3px 8px",borderRadius:99,background:P.blueLight,color:P.blue}}>{mod.icon} {mod.title} (+{mod.points} pts)</span> : null;
-                  }) : (
-                    <span style={{fontSize:10.5,color:P.muted}}>No learning sessions</span>
-                  )}
-                </div>
-              </div>
-            )}
-          </Card>
-
-          {/* ── DAILY LOGIN + LEARNING MODULES ── */}
-          <Card style={{padding:"20px"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-              <div>
-                <p style={{fontSize:13,fontWeight:700,color:P.navy,margin:0}}>Today's Learning</p>
-                <p style={{fontSize:11,color:P.muted,margin:"2px 0 0"}}>Oct {TODAY} · Earn points for each module</p>
-              </div>
-              {!todayLoggedIn ? (
-                <button
-                  onClick={handleDailyLogin}
-                  style={{
-                    padding:"8px 14px",borderRadius:99,border:"none",cursor:"pointer",
-                    background:`linear-gradient(135deg,${P.teal},#0f766e)`,
-                    color:"#fff",fontSize:11,fontWeight:700,
-                    boxShadow:"0 3px 10px rgba(13,148,136,.35)",
-                    transition:"all .15s",
-                  }}
-                >
-                  ✅ Check In +5pts
-                </button>
-              ) : (
-                <span style={{fontSize:11,fontWeight:700,color:P.teal,background:P.tealLight,padding:"6px 12px",borderRadius:99}}>
-                  ✓ Checked In
-                </span>
-              )}
+            <div style={{
+              position: "relative", width: 42, height: 42, borderRadius: "50%",
+              background: P.card, border: `1px solid ${P.border}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", color: P.slate
+            }}>
+              <NavIcons.bell />
+              <span style={{
+                position: "absolute", top: 8, right: 8, width: 8, height: 8,
+                borderRadius: "50%", background: P.red, border: `2px solid ${P.card}`
+              }} />
             </div>
-
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
-              {LEARNING_MODULES.map(mod => {
-                const done = todayLearnedModules.includes(mod.id);
-                return (
-                  <button
-                    key={mod.id}
-                    className="module-btn"
-                    onClick={() => handleCompleteModule(mod.id)}
-                    disabled={done}
-                    style={{
-                      background: done
-                        ? `linear-gradient(135deg,${P.blue}15,${P.purple}10)`
-                        : P.borderSoft,
-                      border: done
-                        ? `1.5px solid ${P.blue}44`
-                        : `1.5px solid ${P.border}`,
-                      opacity: done ? 1 : 1,
-                      cursor: done ? "default" : "pointer",
-                    }}
-                  >
-                    <div style={{fontSize:20,marginBottom:6}}>{mod.icon}</div>
-                    <p style={{fontSize:10.5,fontWeight:700,color:done?P.blue:P.navy,marginBottom:2,lineHeight:1.2}}>{mod.title}</p>
-                    <p style={{fontSize:9.5,color:P.muted,marginBottom:6,lineHeight:1.3}}>{mod.desc}</p>
-                    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                      <span style={{fontSize:9,color:P.muted}}>{mod.duration}</span>
-                      <span style={{
-                        fontSize:9.5,fontWeight:800,
-                        padding:"2px 6px",borderRadius:99,
-                        background: done ? P.blueLight : P.goldLight,
-                        color: done ? P.blue : P.gold,
-                      }}>
-                        {done ? "✓ Done" : `+${mod.points}pts`}
-                      </span>
-                    </div>
-                  </button>
-                );
-              })}
+            <div style={{
+              width: 42, height: 42, borderRadius: "50%",
+              background: `linear-gradient(135deg,${P.blue},${P.purple})`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 15, color: "white", fontWeight: 700, cursor: "pointer"
+            }}>
+              A
             </div>
-          </Card>
+          </div>
         </div>
 
-        {/* RIGHT */}
-        <div style={{display:"flex",flexDirection:"column",gap:14}}>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-            <Card style={{padding:"16px"}}><p style={{fontSize:28,fontWeight:800,color:P.navy,lineHeight:1}}>{transactions.length}</p><p style={{fontSize:11,color:P.muted,marginTop:4}}>Transactions</p></Card>
-            <Card style={{padding:"16px",background:`linear-gradient(135deg,${P.blue}10,${P.blueLight})`}}><p style={{fontSize:28,fontWeight:800,color:P.blue,lineHeight:1}}>{Object.keys(catTotals).length}</p><p style={{fontSize:11,color:P.slate,marginTop:4}}>Categories</p></Card>
-          </div>
-
-          {/* ── POINTS & TIER CARD ── */}
-          <Card style={{padding:"18px",background:`linear-gradient(135deg,#0B1B35,#1C2E50)`,border:"none",position:"relative",overflow:"hidden"}}>
-            {/* decorative circles */}
-            <div style={{position:"absolute",top:-20,right:-20,width:80,height:80,borderRadius:"50%",background:`${P.gold}15`}}/>
-            <div style={{position:"absolute",bottom:-10,left:-10,width:50,height:50,borderRadius:"50%",background:`${P.purple}20`}}/>
-
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14,position:"relative"}}>
-              <div>
-                <p style={{fontSize:9.5,color:"rgba(255,255,255,.4)",fontWeight:600,textTransform:"uppercase",marginBottom:4}}>Reward Points</p>
-                <p style={{fontSize:28,fontWeight:800,color:P.gold,lineHeight:1}}>{totalPoints.toLocaleString()}</p>
-                <p style={{fontSize:10.5,color:"rgba(255,255,255,.5)",marginTop:2}}>points earned</p>
-              </div>
-              <div style={{textAlign:"center"}}>
-                <div style={{fontSize:28}}>{currentTier.icon}</div>
-                <p style={{fontSize:11,fontWeight:700,color:currentTier.color,marginTop:2}}>{currentTier.name}</p>
-              </div>
-            </div>
-
-            {nextTier && (
-              <div style={{position:"relative"}}>
-                <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
-                  <span style={{fontSize:9.5,color:"rgba(255,255,255,.4)"}}>Progress to {nextTier.icon} {nextTier.name}</span>
-                  <span style={{fontSize:9.5,fontWeight:700,color:P.gold}}>{tierProgress}%</span>
-                </div>
-                <div style={{background:"rgba(255,255,255,.1)",borderRadius:99,height:5}}>
-                  <div style={{height:"100%",width:`${tierProgress}%`,background:`linear-gradient(90deg,${P.gold},#FDE68A)`,borderRadius:99,transition:"width 1s ease"}}/>
-                </div>
-                <p style={{fontSize:9,color:"rgba(255,255,255,.3)",marginTop:4}}>{nextTier.min - totalPoints} pts to next tier</p>
-              </div>
-            )}
-
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginTop:14}}>
-              {[
-                {l:"Login streak",v:`${streak}d 🔥`,c:"#FCD34D"},
-                {l:"Learn streak",v:`${learningStreak}d 📚`,c:"#6EE7B7"},
-                {l:"Days logged in",v:`${loginDays.size + (todayLoggedIn?1:0)}d`,c:"rgba(255,255,255,.8)"},
-                {l:"Sessions done",v:`${Object.values({...completedModules,...(todayLearnedModules.length?{[TODAY]:todayLearnedModules}:{})}).flat().length}`,c:"rgba(255,255,255,.8)"},
-              ].map(s=>(
-                <div key={s.l} style={{background:"rgba(255,255,255,.05)",borderRadius:9,padding:"8px 10px",border:"1px solid rgba(255,255,255,.06)"}}>
-                  <p style={{fontSize:9,color:"rgba(255,255,255,.35)",fontWeight:600,textTransform:"uppercase",marginBottom:3}}>{s.l}</p>
-                  <p style={{fontSize:13,fontWeight:800,color:s.c}}>{s.v}</p>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          {/* ── TIER ROADMAP ── */}
-          <Card style={{padding:"18px"}}>
-            <Lbl text="Tier Roadmap" sub="Your progression path"/>
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {TIERS.map((tier,i)=>{
-                const isActive = tier.name === currentTier.name;
-                const isPast = totalPoints >= tier.max;
-                return (
-                  <div key={tier.name} style={{
-                    display:"flex",alignItems:"center",gap:10,
-                    padding:"8px 12px",borderRadius:10,
-                    background: isActive ? `${tier.color}12` : isPast ? "#F0FDF4" : P.borderSoft,
-                    border: isActive ? `1.5px solid ${tier.color}44` : `1.5px solid transparent`,
+        {/* MAIN GRID */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr", gap: 16 }}>
+          {/* LEFT COLUMN */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {/* Welcome card */}
+            <Card style={{ padding: "20px", background: `linear-gradient(135deg,${P.navy},#162B4F)`, border: "none" }}>
+              <p style={{ fontSize: 11, color: "rgba(255,255,255,.45)", fontWeight: 600, textTransform: "uppercase", marginBottom: 8 }}>
+                October 2024
+              </p>
+              <h2 style={{ fontSize: 20, fontWeight: 800, color: "#fff", lineHeight: 1.2, marginBottom: 4 }}>
+                Welcome back, Arjun 👋
+              </h2>
+              <p style={{ fontSize: 11.5, color: "rgba(255,255,255,.55)", marginBottom: 16 }}>
+                Here's your financial snapshot
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                {[
+                  { l: "Income", v: `₹${(income / 1000).toFixed(0)}k`, c: "rgba(255,255,255,.9)" },
+                  { l: "Spent", v: fmtK(totalExp), c: "#FCA5A5" },
+                  { l: "Saved", v: fmtK(Math.max(0, savings)), c: "#6EE7B7" },
+                  { l: "Rate", v: `${savRate}%`, c: savRate >= 30 ? "#6EE7B7" : "#FCD34D" }
+                ].map(s => (
+                  <div key={s.l} style={{
+                    background: "rgba(255,255,255,.07)", borderRadius: 10, padding: "9px 11px",
+                    border: "1px solid rgba(255,255,255,.08)"
                   }}>
-                    <span style={{fontSize:16}}>{tier.icon}</span>
-                    <div style={{flex:1}}>
-                      <p style={{fontSize:11,fontWeight:700,color:isActive?tier.color:isPast?P.teal:P.slate}}>{tier.name}</p>
-                      <p style={{fontSize:9.5,color:P.muted}}>{tier.min.toLocaleString()}{tier.max<Infinity?`–${tier.max.toLocaleString()}`:"+"} pts</p>
+                    <p style={{ fontSize: 9.5, color: "rgba(255,255,255,.4)", fontWeight: 600, textTransform: "uppercase", marginBottom: 3 }}>
+                      {s.l}
+                    </p>
+                    <p style={{ fontSize: 14, fontWeight: 800, color: s.c }}>{s.v}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Quick stats */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <Card style={{ padding: "14px" }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>💰</div>
+                <p style={{ fontSize: 11, color: P.muted }}>Net Savings</p>
+                <p style={{ fontSize: 17, fontWeight: 800, color: P.navy }}>{fmtK(Math.max(0, savings))}</p>
+              </Card>
+              <Card style={{ padding: "14px" }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>📊</div>
+                <p style={{ fontSize: 11, color: P.muted }}>Savings Rate</p>
+                <p style={{ fontSize: 17, fontWeight: 800, color: P.navy }}>{savRate}%</p>
+              </Card>
+            </div>
+
+            {/* Top spending */}
+            <Card style={{ padding: "18px" }}>
+              <Lbl text="Top Spending" sub="by category" />
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {catList.slice(0, 5).map(c => (
+                  <div key={c.key}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span>{c.icon} {c.name}</span>
+                      <span style={{ color: P.slate }}>{fmtK(c.value)}</span>
                     </div>
-                    {isPast && !isActive && <span style={{fontSize:12}}>✅</span>}
-                    {isActive && <span style={{fontSize:9.5,fontWeight:700,color:tier.color,background:`${tier.color}15`,padding:"2px 7px",borderRadius:99}}>Current</span>}
+                    <PBar v={Math.round((c.value / totalExp) * 100)} color={c.color} />
                   </div>
-                );
-              })}
-            </div>
-          </Card>
+                ))}
+              </div>
+            </Card>
 
-          <Card style={{padding:"18px"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-              <Lbl text="Savings Goals" sub={`${goals.length} active goals`}/>
-              <button onClick={handleCreateGoal} style={{fontSize:10.5,fontWeight:700,color:"#fff",background:P.blue,border:"none",borderRadius:999,padding:"6px 10px",cursor:"pointer"}}>+ Create Goal</button>
-            </div>
-            <div style={{display:"flex",flexDirection:"column",gap:12}}>
-              {goals.map(g=>{const pct=Math.round((g.saved/g.target)*100);return <div key={g.id} style={{padding:"11px 13px",borderRadius:11,border:`1px solid ${P.border}`}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:7}}><div style={{display:"flex",alignItems:"center",gap:8}}><div style={{width:28,height:28,borderRadius:8,background:g.color+"18",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>{g.icon}</div><div><p style={{fontSize:11.5,fontWeight:700,color:P.navy,marginBottom:1}}>{g.label}</p><p style={{fontSize:10,color:P.muted}}>₹{g.saved.toLocaleString("en-IN")} / ₹{g.target.toLocaleString("en-IN")} · {g.term}</p></div></div><div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:12,fontWeight:800,color:g.color}}>{pct}%</span><button disabled={g.completed} onClick={()=>handleCompleteGoal(g)} style={{fontSize:10,fontWeight:700,color:g.completed?P.muted:"#fff",background:g.completed?P.borderSoft:P.teal,border:"none",borderRadius:999,padding:"5px 8px",cursor:g.completed?"default":"pointer"}}>{g.completed?"Completed":"Complete"}</button></div></div><PBar v={pct} color={g.color} h={4}/></div>})}
-            </div>
-          </Card>
-
-          <Card style={{padding:"18px"}}>
-            <Lbl text="Point History" sub="Latest transactions"/>
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {pointHistory.length === 0 && <p style={{fontSize:11,color:P.muted}}>No point transactions yet.</p>}
-              {pointHistory.map((tx) => (
-                <div key={tx.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"7px 9px",borderRadius:9,border:`1px solid ${P.borderSoft}`}}>
-                  <div style={{minWidth:0}}>
-                    <p style={{fontSize:11,fontWeight:700,color:P.navy,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{tx.action}</p>
-                    <p style={{fontSize:9.5,color:P.muted}}>Balance: {tx.balance_after}</p>
+            {/* Recent transactions */}
+            <Card style={{ padding: "18px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14 }}>
+                <Lbl text="Recent Transactions" sub={`${transactions.length} total`} />
+                <button
+                  onClick={() => setShowAll(v => !v)}
+                  style={{ fontSize: 11, fontWeight: 700, color: P.blue, background: "transparent", border: "none", cursor: "pointer" }}
+                >
+                  {showAll ? "Less" : "All →"}
+                </button>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                {recent.map(t => (
+                  <div key={t.id} className="txn-row">
+                    <div style={{
+                      width: 30, height: 30, borderRadius: 9,
+                      background: (t.meta?.color || P.muted) + "18",
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13
+                    }}>
+                      {t.meta?.icon || "💳"}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 11.5, fontWeight: 600, color: P.navy, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {t.desc}
+                      </p>
+                      <p style={{ fontSize: 10, color: P.muted }}>{t.date}</p>
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: P.navy }}>-₹{t.amount.toLocaleString("en-IN")}</span>
                   </div>
-                  <span style={{fontSize:11,fontWeight:800,color:tx.change >= 0 ? P.teal : P.red}}>{tx.change >= 0 ? "+" : ""}{tx.change}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
+                ))}
+              </div>
+            </Card>
+          </div>
 
-          <Card style={{padding:"18px",background:`linear-gradient(135deg,${P.navyMid},#0F2547)`,border:"none"}}>
-            <p style={{fontSize:9.5,color:"rgba(255,255,255,.4)",fontWeight:600,textTransform:"uppercase",marginBottom:10}}>Monthly Insight</p>
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {[
-                {l:"Top category",v:`${topCat?.icon||""} ${topCat?.name||"—"}`,c:"rgba(255,255,255,.85)"},
-                {l:"Savings target",v:savRate>=30?"✓ Met — great job!":"✗ Below 30% target",c:savRate>=30?"#6EE7B7":"#FCD34D"},
-                {l:"Learning rank",v:`${currentTier.icon} ${currentTier.name}`,c:currentTier.color},
-              ].map(s=>(
-                <div key={s.l} style={{display:"flex",justifyContent:"space-between",padding:"7px 0",borderBottom:"1px solid rgba(255,255,255,.05)"}}>
-                  <span style={{fontSize:10.5,color:"rgba(255,255,255,.4)"}}>{s.l}</span>
-                  <span style={{fontSize:11,fontWeight:700,color:s.c}}>{s.v}</span>
+          {/* CENTER COLUMN */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            
+
+            {/* Category split and budget status */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <Card style={{ padding: "18px" }}>
+                <Lbl text="Category Split" sub="October 2024" />
+                <div style={{ height: 150 }}>
+                  <ResponsiveContainer>
+                    <PieChart>
+                      <Pie data={catList} cx="50%" cy="50%" innerRadius={44} outerRadius={70} paddingAngle={2} dataKey="value">
+                        {catList.map((e, i) => <Cell key={i} fill={e.color} />)}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
-              ))}
+              </Card>
+              <Card style={{ padding: "18px" }}>
+                <Lbl text="Budget Status" sub="Category overview" />
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {catList.slice(0, 4).map(c => {
+                    const pct = Math.round((c.value / (CATS[c.key]?.budget || 50000)) * 100);
+                    return (
+                      <div key={c.key}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                          <span style={{ fontSize: 10.5, fontWeight: 600, color: P.navy }}>
+                            {c.icon} {c.name.split(" ")[0]}
+                          </span>
+                          <span style={{ fontSize: 10, fontWeight: 700, color: pct > 100 ? P.red : pct > 80 ? P.amber : P.teal }}>
+                            {pct}%
+                          </span>
+                        </div>
+                        <PBar v={pct} color={pct > 100 ? P.red : pct > 80 ? P.amber : c.color} h={4} />
+                      </div>
+                    );
+                  })}
+                </div>
+              </Card>
             </div>
-          </Card>
+
+            {/* Income vs expenses */}
+            <Card style={{ padding: "20px" }}>
+              <Lbl text="Income vs Expenses" sub="Monthly financial health" />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                {[
+                  { l: "Income", v: income, c: P.teal, icon: "💵" },
+                  { l: "Expenses", v: totalExp, c: P.red, icon: "💸" },
+                  { l: "Savings", v: Math.max(0, savings), c: P.blue, icon: "💰" },
+                ].map(row => (
+                  <div key={row.l} style={{ background: "#F8FAFC", borderRadius: 12, padding: "14px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+                      <span style={{ fontSize: 15 }}>{row.icon}</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: P.slate }}>{row.l}</span>
+                    </div>
+                    <p style={{ fontSize: 16, fontWeight: 800, color: P.navy, marginBottom: 6 }}>{fmtK(row.v)}</p>
+                    <PBar v={Math.round((row.v / income) * 100)} color={row.c} h={4} />
+                    <p style={{ fontSize: 9.5, color: P.muted, marginTop: 3, textAlign: "right" }}>
+                      {Math.round((row.v / income) * 100)}%
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Learning Calendar */}
+            <Card style={{ padding: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+                <div>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: P.navy, margin: 0 }}>Learning Calendar</p>
+                  <p style={{ fontSize: 11, color: P.muted, margin: "2px 0 0" }}>October 2024 · click a day to see activity</p>
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{
+                    background: `linear-gradient(135deg,#FF6B35,#F59E0B)`,
+                    borderRadius: 10, padding: "6px 10px",
+                    display: "flex", alignItems: "center", gap: 5,
+                  }}>
+                    <span className="streak-flame" style={{ fontSize: 14 }}>🔥</span>
+                    <div>
+                      <p style={{ fontSize: 11, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{learningStreak}d</p>
+                      <p style={{ fontSize: 8.5, color: "rgba(255,255,255,.7)", lineHeight: 1 }}>streak</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <LearningCalendar
+                loginDays={new Set([...loginDays, ...(todayLoggedIn ? [TODAY] : [])])}
+                learningDays={new Set([...learningDays, ...(todayLearnedModules.length > 0 ? [TODAY] : [])])}
+                completedModules={{ ...completedModules, ...(todayLearnedModules.length > 0 ? { [TODAY]: todayLearnedModules } : {}) }}
+                onDayClick={setSelectedCalDay}
+                today={TODAY}
+              />
+
+              {selectedCalDay && (
+                <div style={{
+                  marginTop: 12, padding: "12px", borderRadius: 12,
+                  background: P.borderSoft, border: `1px solid ${P.border}`,
+                  animation: "fadeUp .2s ease",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <p style={{ fontSize: 12, fontWeight: 700, color: P.navy }}>Oct {selectedCalDay}</p>
+                    <button onClick={() => setSelectedCalDay(null)} style={{ background: "none", border: "none", cursor: "pointer", color: P.muted, fontSize: 14 }}>
+                      ✕
+                    </button>
+                  </div>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {selectedDayInfo?.login && (
+                      <span style={{ fontSize: 10.5, fontWeight: 600, padding: "3px 8px", borderRadius: 99, background: P.tealLight, color: P.teal }}>
+                        ✓ Logged in (+5 pts)
+                      </span>
+                    )}
+                    {selectedDayInfo?.modules?.length > 0 ? (
+                      selectedDayInfo.modules.map(mid => {
+                        const mod = LEARNING_MODULES.find(m => m.id === mid);
+                        return mod ? (
+                          <span key={mid} style={{ fontSize: 10.5, fontWeight: 600, padding: "3px 8px", borderRadius: 99, background: P.blueLight, color: P.blue }}>
+                            {mod.icon} {mod.title} (+{mod.points} pts)
+                          </span>
+                        ) : null;
+                      })
+                    ) : (
+                      <span style={{ fontSize: 10.5, color: P.muted }}>No learning sessions</span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </Card>
+
+            {/* Today's Learning Modules */}
+            <Card style={{ padding: "20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                <div>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: P.navy, margin: 0 }}>Today's Learning</p>
+                  <p style={{ fontSize: 11, color: P.muted, margin: "2px 0 0" }}>Oct {TODAY} · Earn points for each module</p>
+                </div>
+                {!todayLoggedIn ? (
+                  <button onClick={handleDailyLogin} className="checkin-btn">
+                    ✅ Check In +5pts
+                  </button>
+                ) : (
+                  <span className="checkin-badge">✓ Checked In</span>
+                )}
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+                {LEARNING_MODULES.map(mod => {
+                  const done = todayLearnedModules.includes(mod.id);
+                  return (
+                    <button
+                      key={mod.id}
+                      className="module-btn"
+                      onClick={() => handleCompleteModule(mod.id)}
+                      disabled={done}
+                      style={{
+                        background: done
+                          ? `linear-gradient(135deg,${P.blue}15,${P.purple}10)`
+                          : P.borderSoft,
+                        border: done ? `1.5px solid ${P.blue}44` : `1.5px solid ${P.border}`,
+                      }}
+                    >
+                      <div style={{ fontSize: 20, marginBottom: 6 }}>{mod.icon}</div>
+                      <p style={{ fontSize: 10.5, fontWeight: 700, color: done ? P.blue : P.navy, marginBottom: 2, lineHeight: 1.2 }}>
+                        {mod.title}
+                      </p>
+                      <p style={{ fontSize: 9.5, color: P.muted, marginBottom: 6, lineHeight: 1.3 }}>{mod.desc}</p>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <span style={{ fontSize: 9, color: P.muted }}>{mod.duration}</span>
+                        <span style={{
+                          fontSize: 9.5, fontWeight: 800, padding: "2px 6px", borderRadius: 99,
+                          background: done ? P.blueLight : P.goldLight,
+                          color: done ? P.blue : P.gold,
+                        }}>
+                          {done ? "✓ Done" : `+${mod.points}pts`}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </Card>
+          </div>
+
+          {/* RIGHT COLUMN */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {/* Stats */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <Card style={{ padding: "16px" }}>
+                <p style={{ fontSize: 28, fontWeight: 800, color: P.navy, lineHeight: 1 }}>{transactions.length}</p>
+                <p style={{ fontSize: 11, color: P.muted, marginTop: 4 }}>Transactions</p>
+              </Card>
+              <Card style={{ padding: "16px", background: `linear-gradient(135deg,${P.blue}10,${P.blueLight})` }}>
+                <p style={{ fontSize: 28, fontWeight: 800, color: P.blue, lineHeight: 1 }}>{Object.keys(catTotals).length}</p>
+                <p style={{ fontSize: 11, color: P.slate, marginTop: 4 }}>Categories</p>
+              </Card>
+            </div>
+
+            {/* Points & Tier Card */}
+            <Card style={{ padding: "18px", background: `linear-gradient(135deg,#0B1B35,#1C2E50)`, border: "none", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: -20, right: -20, width: 80, height: 80, borderRadius: "50%", background: `${P.gold}15` }} />
+              <div style={{ position: "absolute", bottom: -10, left: -10, width: 50, height: 50, borderRadius: "50%", background: `${P.purple}20` }} />
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14, position: "relative" }}>
+                <div>
+                  <p style={{ fontSize: 9.5, color: "rgba(255,255,255,.4)", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>
+                    Reward Points
+                  </p>
+                  <p style={{ fontSize: 28, fontWeight: 800, color: P.gold, lineHeight: 1 }}>{totalPoints.toLocaleString()}</p>
+                  <p style={{ fontSize: 10.5, color: "rgba(255,255,255,.5)", marginTop: 2 }}>points earned</p>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 28 }}>{currentTier.icon}</div>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: currentTier.color, marginTop: 2 }}>{currentTier.name}</p>
+                </div>
+              </div>
+
+              {nextTier && (
+                <div style={{ position: "relative" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                    <span style={{ fontSize: 9.5, color: "rgba(255,255,255,.4)" }}>Progress to {nextTier.icon} {nextTier.name}</span>
+                    <span style={{ fontSize: 9.5, fontWeight: 700, color: P.gold }}>{tierProgress}%</span>
+                  </div>
+                  <div style={{ background: "rgba(255,255,255,.1)", borderRadius: 99, height: 5 }}>
+                    <div style={{
+                      height: "100%", width: `${tierProgress}%`,
+                      background: `linear-gradient(90deg,${P.gold},#FDE68A)`,
+                      borderRadius: 99, transition: "width 1s ease"
+                    }} />
+                  </div>
+                  <p style={{ fontSize: 9, color: "rgba(255,255,255,.3)", marginTop: 4 }}>
+                    {nextTier.min - totalPoints} pts to next tier
+                  </p>
+                </div>
+              )}
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 14 }}>
+                {[
+                  { l: "Login streak", v: `${streak}d 🔥`, c: "#FCD34D" },
+                  { l: "Learn streak", v: `${learningStreak}d 📚`, c: "#6EE7B7" },
+                  { l: "Days logged in", v: `${loginDays.size + (todayLoggedIn ? 1 : 0)}d`, c: "rgba(255,255,255,.8)" },
+                  { l: "Sessions done", v: `${Object.values({ ...completedModules, ...(todayLearnedModules.length ? { [TODAY]: todayLearnedModules } : {}) }).flat().length}`, c: "rgba(255,255,255,.8)" },
+                ].map(s => (
+                  <div key={s.l} className="stat-box">
+                    <p className="stat-label">{s.l}</p>
+                    <p className="stat-value" style={{ color: s.c }}>{s.v}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Tier Roadmap */}
+            <Card style={{ padding: "18px" }}>
+              <Lbl text="Tier Roadmap" sub="Your progression path" />
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {TIERS.map((tier, i) => {
+                  const isActive = tier.name === currentTier.name;
+                  const isPast = totalPoints >= tier.max;
+                  return (
+                    <div
+                      key={tier.name}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 10,
+                        padding: "8px 12px", borderRadius: 10,
+                        background: isActive ? `${tier.color}12` : isPast ? "#F0FDF4" : P.borderSoft,
+                        border: isActive ? `1.5px solid ${tier.color}44` : "1.5px solid transparent",
+                      }}
+                    >
+                      <span style={{ fontSize: 16 }}>{tier.icon}</span>
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontSize: 11, fontWeight: 700, color: isActive ? tier.color : isPast ? P.teal : P.slate }}>
+                          {tier.name}
+                        </p>
+                        <p style={{ fontSize: 9.5, color: P.muted }}>
+                          {tier.min.toLocaleString()}{tier.max < Infinity ? `–${tier.max.toLocaleString()}` : "+"} pts
+                        </p>
+                      </div>
+                      {isPast && !isActive && <span style={{ fontSize: 12 }}>✅</span>}
+                      {isActive && (
+                        <span style={{ fontSize: 9.5, fontWeight: 700, color: tier.color, background: `${tier.color}15`, padding: "2px 7px", borderRadius: 99 }}>
+                          Current
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+
+            {/* Savings Goals */}
+            <Card style={{ padding: "18px" }}>
+              <Lbl text="Savings Goals" sub="4 active goals" />
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {GOALS.map(g => {
+                  const pct = Math.round((g.saved / g.target) * 100);
+                  return (
+                    <div key={g.id} style={{ padding: "11px 13px", borderRadius: 11, border: `1px solid ${P.border}` }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 7 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <div style={{ width: 28, height: 28, borderRadius: 8, background: g.color + "18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>
+                            {g.icon}
+                          </div>
+                          <div>
+                            <p style={{ fontSize: 11.5, fontWeight: 700, color: P.navy, marginBottom: 1 }}>{g.label}</p>
+                            <p style={{ fontSize: 10, color: P.muted }}>₹{g.saved.toLocaleString("en-IN")} / ₹{g.target.toLocaleString("en-IN")}</p>
+                          </div>
+                        </div>
+                        <span style={{ fontSize: 12, fontWeight: 800, color: g.color }}>{pct}%</span>
+                      </div>
+                      <PBar v={pct} color={g.color} h={4} />
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+
+            {/* Monthly Insight */}
+            
+          </div>
         </div>
-      </div>
 
-      <p style={{textAlign:"center",fontSize:10.5,color:P.muted,marginTop:28,letterSpacing:.3}}>
-        FinSight · October 2024 · {transactions.length} transactions · All amounts in INR ₹ · {totalPoints} reward points earned
-      </p>
-    </div>
+        {/* Footer */}
+        <p style={{ textAlign: "center", fontSize: 10.5, color: P.muted, marginTop: 28, letterSpacing: 0.3 }}>
+          FinSight · October 2024 · {transactions.length} transactions · All amounts in INR ₹ · {totalPoints} reward points earned
+        </p>
+      </div>
+    </>
   );
 }

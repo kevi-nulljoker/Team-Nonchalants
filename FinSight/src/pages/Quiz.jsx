@@ -4,6 +4,7 @@
  */
 
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const T = {
@@ -604,7 +605,7 @@ function QuestionCard({ question, selectedValue, onSelect, questionIndex, totalQ
 }
 
 // ─── COMPLETION SCREEN ────────────────────────────────────────────────────────
-function CompletionScreen({ profile }) {
+function CompletionScreen({ profile, onContinue }) {
   const items = useMemo(() => buildSummaryItems(profile), [profile]);
   const situationLabel = {
     student:      "Student",
@@ -723,9 +724,7 @@ function CompletionScreen({ profile }) {
       <button
         className="cta-btn"
         style={{ width: "100%", justifyContent: "center", fontSize: 15.5, padding: "15px" }}
-        onClick={() => {
-          window.dispatchEvent(new CustomEvent("finsight:quiz:complete", { detail: profile }));
-        }}
+        onClick={onContinue}
       >
         Go to my Dashboard
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -763,6 +762,7 @@ function BgOrbs() {
 
 // ─── ROOT COMPONENT ───────────────────────────────────────────────────────────
 export default function FinancialQuiz({ onComplete }) {
+  const navigate = useNavigate();
   const [currentId, setCurrentId]       = useState("situation");
   const [answers, setAnswers]           = useState({});
   const [pendingValue, setPendingValue] = useState(null);
@@ -817,6 +817,13 @@ export default function FinancialQuiz({ onComplete }) {
     setAnimKey(k => k + 1);
   };
 
+  const handleContinue = () => {
+    if (profile) {
+      window.dispatchEvent(new CustomEvent("finsight:quiz:complete", { detail: profile }));
+    }
+    navigate("/dashboard");
+  };
+
   return (
     <>
       <style>{GLOBAL_CSS}</style>
@@ -863,7 +870,7 @@ export default function FinancialQuiz({ onComplete }) {
         {/* ── Content ── */}
         <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 560 }}>
           {done && profile ? (
-            <CompletionScreen profile={profile} key="done" />
+            <CompletionScreen profile={profile} onContinue={handleContinue} key="done" />
           ) : currentQuestion ? (
             <QuestionCard
               key={animKey}
@@ -891,4 +898,3 @@ export default function FinancialQuiz({ onComplete }) {
     </>
   );
 }
-import { useMemo, useState } from "react";

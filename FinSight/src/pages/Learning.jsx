@@ -1,4 +1,10 @@
 ﻿import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  awardPoints,
+  deductPointsForCourse,
+  getPointsSummary,
+  getStoredPoints,
+} from "../services/pointsApi";
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const C = {
@@ -33,6 +39,8 @@ const C = {
   border:     "#D5E8DF",
   borderSoft: "#EAF4EF",
 };
+
+const QUIZ_REWARD_POINTS = 100;
 
 // ─── CURRICULUM DATA ──────────────────────────────────────────────────────────
 const CURRICULUM = [
@@ -579,7 +587,8 @@ function Toast({ msg, type, onDone }) {
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function LearningSection() {
-  const [points, setPoints]     = useState(480);
+  const userId = localStorage.getItem("auth_user_id") || "";
+  const [points, setPoints] = useState(() => getStoredPoints(userId) ?? 480);
   const [progress, setProgress] = useState(initProgress);
   const [unlocked, setUnlocked] = useState(initUnlocked);
   const [view, setView]         = useState("categories"); // categories | detail | lesson
@@ -592,20 +601,59 @@ export default function LearningSection() {
 
   const showToast = (msg, type = "success") => { setToast({ msg, type }); };
 
+  useEffect(() => {
+    const onPointsUpdated = (event) => {
+      const detail = event.detail || {};
+      if (detail.userId === userId && typeof detail.totalPoints === "number") {
+        setPoints(detail.totalPoints);
+      }
+    };
+
+    window.addEventListener("finsight:points-updated", onPointsUpdated);
+    return () => window.removeEventListener("finsight:points-updated", onPointsUpdated);
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+    let alive = true;
+    getPointsSummary(userId)
+      .then((data) => {
+        if (alive && typeof data?.total_points === "number") {
+          setPoints(data.total_points);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [userId]);
+
   // ── Point-based unlock check ──────────────────────────────────────────────
   const canUnlockWithPoints = (cat) =>
     cat.lock.type === "points" && points >= cat.lock.required && !unlocked[cat.id];
 
-  const doPointsUnlock = (cat) => {
-    setPoints(p => p - cat.lock.required);
-    setUnlocked(u => ({ ...u, [cat.id]: true }));
-    showToast(`"${cat.title}" unlocked! 🎉`);
-    setUnlockModal(null);
+  const doPointsUnlock = async (cat) => {
+    const cost = cat.lock.required;
+    if (!userId) {
+      showToast("Please log in to unlock paid courses with points.", "warn");
+      return;
+    }
+
+    try {
+      const res = await deductPointsForCourse(userId, cost, { category_id: cat.id, category_title: cat.title });
+      if (typeof res?.total_points === "number") {
+        setPoints(res.total_points);
+      }
+      setUnlocked((u) => ({ ...u, [cat.id]: true }));
+      showToast(`"${cat.title}" unlocked! -${cost} pts`, "success");
+      setUnlockModal(null);
+    } catch (error) {
+      showToast(error.message || "Unable to unlock course", "warn");
+    }
   };
 
-  const doBuyPoints = (cat, pts) => {
-    setPoints(p => p + pts);
-    showToast(`+${pts} pts added to your account! 💰`);
+  const doBuyPoints = () => {
+    showToast("Buying points is currently disabled. Complete quizzes to earn points.", "warn");
   };
 
   const doPayUnlock = (cat) => {
@@ -790,21 +838,27 @@ export default function LearningSection() {
             const cat = CURRICULUM.find(c => c.id === activeCat.id);
             const course = cat?.courses.find(c => c.id === cid);
             if (!progress[cid].videoWatched && course) {
-              const earn = Math.round(course.pts * 0.4);
               setProgress(p => ({ ...p, [cid]: { ...p[cid], videoWatched: true } }));
-              setPoints(pt => pt + earn);
-              showToast(`+${earn} pts for watching the video! 📹`);
+              showToast("Video completed. Quiz completion awards points.", "success");
             }
           }}
-          onQuizPass={(score) => {
+          onQuizPass={async (score) => {
             const cid = activeCourse.id;
             const cat = CURRICULUM.find(c => c.id === activeCat.id);
             const course = cat?.courses.find(c => c.id === cid);
             if (!progress[cid].passed && course) {
-              const earn = Math.round(course.pts * 0.6);
               setProgress(p => ({ ...p, [cid]: { ...p[cid], quizScore: score, passed: true } }));
-              setPoints(pt => pt + earn);
-              showToast(`Quiz passed! +${earn} pts earned! 🏆`);
+              if (userId) {
+                try {
+                  const res = await awardPoints(userId, "quiz_completed", {
+                    metadata: { course_id: course.id, course_title: course.title, category_id: activeCat.id },
+                  });
+                  if (typeof res?.total_points === "number") setPoints(res.total_points);
+                } catch (error) {
+                  showToast(error.message || "Could not record quiz points", "warn");
+                }
+              }
+              showToast(`Quiz passed! +${QUIZ_REWARD_POINTS} pts earned! 🏆`);
             } else {
               setProgress(p => ({ ...p, [cid]: { ...p[cid], quizScore: score } }));
             }
@@ -826,7 +880,7 @@ export default function LearningSection() {
           points={points}
           canUnlock={canUnlockWithPoints(unlockModal)}
           onUnlock={() => doPointsUnlock(unlockModal)}
-          onBuyPoints={(pts) => { doBuyPoints(unlockModal, pts); }}
+          onBuyPoints={() => { doBuyPoints(); }}
           onPayInstead={() => { setUnlockModal(null); setPayModal(unlockModal); }}
           onClose={() => setUnlockModal(null)}
         />
@@ -1446,7 +1500,7 @@ function LessonView({ cat, course, prog, allCourses, onVideoComplete, onQuizPass
           </span>
         </div>
         <div style={{ marginLeft: "auto" }}>
-          <PtsBadge pts={`${prog.videoWatched ? Math.round(course.pts * 0.4) : 0} + ${prog.passed ? Math.round(course.pts * 0.6) : 0} / ${course.pts}`} />
+          <PtsBadge pts={`${prog.passed ? QUIZ_REWARD_POINTS : 0} / ${QUIZ_REWARD_POINTS}`} />
         </div>
       </div>
 
@@ -1578,15 +1632,15 @@ function LessonView({ cat, course, prog, allCourses, onVideoComplete, onQuizPass
               <div style={{ fontWeight: 700, color: C.navy, fontSize: 13, marginBottom: 6 }}>Points Breakdown for this lesson</div>
               <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
                 <span style={{ fontSize: 12, color: C.slate }}>
-                  🎥 Watch video: <strong style={{ color: C.gold }}>+{Math.round(course.pts * 0.4)} pts</strong>
+                  🎥 Watch video: <strong style={{ color: C.gold }}>+0 pts</strong>
                   {prog.videoWatched ? " ✅" : ""}
                 </span>
                 <span style={{ fontSize: 12, color: C.slate }}>
-                  ✅ Pass quiz: <strong style={{ color: C.gold }}>+{Math.round(course.pts * 0.6)} pts</strong>
+                  ✅ Pass quiz: <strong style={{ color: C.gold }}>+{QUIZ_REWARD_POINTS} pts</strong>
                   {prog.passed ? " ✅" : ""}
                 </span>
                 <span style={{ fontSize: 12, color: C.slate }}>
-                  Total: <strong style={{ color: C.gold }}>{course.pts} pts</strong>
+                  Total: <strong style={{ color: C.gold }}>{QUIZ_REWARD_POINTS} pts</strong>
                 </span>
               </div>
             </div>
@@ -1600,7 +1654,7 @@ function LessonView({ cat, course, prog, allCourses, onVideoComplete, onQuizPass
               color: "white", border: "none", fontWeight: 700, fontSize: 14,
               cursor: "pointer", fontFamily: "inherit",
             }}>
-              Take the Quiz to earn {Math.round(course.pts * 0.6)} pts →
+              Take the Quiz to earn {QUIZ_REWARD_POINTS} pts →
             </button>
           )}
         </div>
@@ -1681,7 +1735,7 @@ function QuizIntro({ course, videoWatched, catColor, onStart, previousScore }) {
       </h2>
       <p style={{ color: C.slate, fontSize: 14, lineHeight: 1.7, maxWidth: 400, margin: "0 auto 20px" }}>
         {course.quiz.length} multiple choice questions. Score at least <strong>{course.minScore}%</strong> to pass
-        and earn <strong style={{ color: C.gold }}>+{Math.round(course.pts * 0.6)} pts</strong>.
+        and earn <strong style={{ color: C.gold }}>+{QUIZ_REWARD_POINTS} pts</strong>.
       </p>
 
       {!videoWatched && (
@@ -1710,7 +1764,7 @@ function QuizIntro({ course, videoWatched, catColor, onStart, previousScore }) {
         {[
           { icon: "❓", val: `${course.quiz.length}`, label: "Questions" },
           { icon: "📊", val: `${course.minScore}%`, label: "Min to Pass" },
-          { icon: "⭐", val: `+${Math.round(course.pts * 0.6)}`, label: "Points" },
+          { icon: "⭐", val: `+${QUIZ_REWARD_POINTS}`, label: "Points" },
         ].map((s, i) => (
           <div key={i} style={{
             background: C.bg, borderRadius: 10, padding: "12px 20px", textAlign: "center",
@@ -1795,7 +1849,7 @@ function QuizPlayer({ course, answers, submitted, revealAns, quizResult, catColo
               borderRadius: 12, padding: "10px 20px", display: "inline-block",
             }}>
               <span style={{ fontWeight: 800, fontSize: 20, color: C.gold }}>
-                +{Math.round(course.pts * 0.6)} pts
+                +{QUIZ_REWARD_POINTS} pts
               </span>
               <span style={{ color: C.gold, fontWeight: 600, marginLeft: 6, fontSize: 13 }}>earned!</span>
             </div>

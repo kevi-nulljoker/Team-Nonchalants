@@ -3,6 +3,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
+import { awardPoints, getPointTransactions, getPointsSummary, getStoredPoints } from "../services/pointsApi";
 
 const P = {
   bg: "#E9EEF6", card: "#FFFFFF", navy: "#0B1B35", navyMid: "#1C304F",
@@ -69,10 +70,10 @@ const TRANSACTIONS = RAW.map((r,i)=>({
 }));
 
 const GOALS = [
-  {id:1,label:"Emergency Fund",target:150000,saved:62000,icon:"🛡",color:P.teal},
-  {id:2,label:"Goa Trip Fund", target:40000, saved:28500,icon:"🏖",color:P.amber},
-  {id:3,label:"New Laptop", target:80000, saved:45000,icon:"💻",color:P.blue},
-  {id:4,label:"Annual SIP Goal",target:60000,saved:36000,icon:"📈",color:P.purple},
+  {id:1,label:"Emergency Fund",target:150000,saved:62000,icon:"🛡",color:P.teal,term:"short"},
+  {id:2,label:"Goa Trip Fund", target:40000, saved:28500,icon:"🏖",color:P.amber,term:"short"},
+  {id:3,label:"New Laptop", target:80000, saved:45000,icon:"💻",color:P.blue,term:"mid"},
+  {id:4,label:"Annual SIP Goal",target:60000,saved:36000,icon:"📈",color:P.purple,term:"long"},
 ];
 
 // Learning modules
@@ -279,8 +280,12 @@ function LearningCalendar({ loginDays, learningDays, completedModules, onDayClic
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function Dashboard() {
+  const userId = localStorage.getItem("auth_user_id") || "";
   const [activeNav, setActiveNav] = useState("dashboard");
   const [showAll, setShowAll] = useState(false);
+  const [apiPoints, setApiPoints] = useState(() => getStoredPoints(userId));
+  const [pointHistory, setPointHistory] = useState([]);
+  const [goals, setGoals] = useState(() => GOALS.map((g) => ({ ...g, completed: false })));
 
   // ── Gamification State ──
   const [loginDays, setLoginDays] = useState(INITIAL_LOGIN_DAYS);
@@ -292,8 +297,8 @@ export default function Dashboard() {
   const [burstPoints, setBurstPoints] = useState(0);
   const [selectedCalDay, setSelectedCalDay] = useState(null);
 
-  // Calculate total points
-  const totalPoints = useMemo(() => {
+  // Legacy demo points calculation (retained for non-auth demo mode)
+  const legacyPoints = useMemo(() => {
     let pts = 0;
     loginDays.forEach(d => { pts += 5; }); // 5 pts per login
     Object.entries(completedModules).forEach(([d, mods]) => {
@@ -309,6 +314,38 @@ export default function Dashboard() {
     });
     return pts;
   }, [loginDays, completedModules, todayLoggedIn, todayLearnedModules]);
+  const totalPoints = apiPoints ?? legacyPoints;
+
+  useEffect(() => {
+    if (!userId) return;
+    let alive = true;
+
+    Promise.all([getPointsSummary(userId), getPointTransactions(userId, 8)])
+      .then(([summary, history]) => {
+        if (!alive) return;
+        if (typeof summary?.total_points === "number") setApiPoints(summary.total_points);
+        if (Array.isArray(history?.transactions)) setPointHistory(history.transactions);
+      })
+      .catch(() => {});
+
+    const onPointsUpdated = (event) => {
+      const detail = event.detail || {};
+      if (detail.userId === userId && typeof detail.totalPoints === "number") {
+        setApiPoints(detail.totalPoints);
+      }
+      getPointTransactions(userId, 8)
+        .then((history) => {
+          if (alive && Array.isArray(history?.transactions)) setPointHistory(history.transactions);
+        })
+        .catch(() => {});
+    };
+
+    window.addEventListener("finsight:points-updated", onPointsUpdated);
+    return () => {
+      alive = false;
+      window.removeEventListener("finsight:points-updated", onPointsUpdated);
+    };
+  }, [userId]);
 
   // Streak calculation
   const streak = useMemo(() => {
@@ -363,6 +400,55 @@ export default function Dashboard() {
       [TODAY]: [...(prev[TODAY]||[]), moduleId],
     }));
     triggerBurst(mod.points);
+  };
+
+  const handleCreateGoal = async () => {
+    if (!userId) return;
+    const goalId = Date.now();
+    setGoals((prev) => [
+      ...prev,
+      {
+        id: goalId,
+        label: `New Goal ${prev.length + 1}`,
+        target: 25000,
+        saved: 0,
+        icon: "🎯",
+        color: P.blue,
+        term: "short",
+        completed: false,
+      },
+    ]);
+    try {
+      const res = await awardPoints(userId, "goal_created", { metadata: { goal_id: goalId } });
+      if (typeof res?.total_points === "number") {
+        setApiPoints(res.total_points);
+        triggerBurst(50);
+      }
+      const history = await getPointTransactions(userId, 8);
+      if (Array.isArray(history?.transactions)) setPointHistory(history.transactions);
+    } catch {
+      // Keep dashboard interactive even if backend is unreachable.
+    }
+  };
+
+  const handleCompleteGoal = async (goal) => {
+    if (!userId || goal.completed) return;
+    setGoals((prev) => prev.map((g) => (g.id === goal.id ? { ...g, completed: true, saved: g.target } : g)));
+    try {
+      const res = await awardPoints(userId, "goal_completed", {
+        goal_term: goal.term,
+        metadata: { goal_id: goal.id, goal_label: goal.label, goal_term: goal.term },
+      });
+      const burst = goal.term === "long" ? 1000 : goal.term === "mid" ? 500 : 200;
+      if (typeof res?.total_points === "number") {
+        setApiPoints(res.total_points);
+        triggerBurst(burst);
+      }
+      const history = await getPointTransactions(userId, 8);
+      if (Array.isArray(history?.transactions)) setPointHistory(history.transactions);
+    } catch {
+      // Keep UI responsive in offline mode.
+    }
   };
 
   // Finance data
@@ -724,7 +810,31 @@ export default function Dashboard() {
             </div>
           </Card>
 
-          <Card style={{padding:"18px"}}><Lbl text="Savings Goals" sub="4 active goals"/><div style={{display:"flex",flexDirection:"column",gap:12}}>{GOALS.map(g=>{const pct=Math.round((g.saved/g.target)*100);return <div key={g.id} style={{padding:"11px 13px",borderRadius:11,border:`1px solid ${P.border}`}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:7}}><div style={{display:"flex",alignItems:"center",gap:8}}><div style={{width:28,height:28,borderRadius:8,background:g.color+"18",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>{g.icon}</div><div><p style={{fontSize:11.5,fontWeight:700,color:P.navy,marginBottom:1}}>{g.label}</p><p style={{fontSize:10,color:P.muted}}>₹{g.saved.toLocaleString("en-IN")} / ₹{g.target.toLocaleString("en-IN")}</p></div></div><span style={{fontSize:12,fontWeight:800,color:g.color}}>{pct}%</span></div><PBar v={pct} color={g.color} h={4}/></div>})}</div></Card>
+          <Card style={{padding:"18px"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+              <Lbl text="Savings Goals" sub={`${goals.length} active goals`}/>
+              <button onClick={handleCreateGoal} style={{fontSize:10.5,fontWeight:700,color:"#fff",background:P.blue,border:"none",borderRadius:999,padding:"6px 10px",cursor:"pointer"}}>+ Create Goal</button>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+              {goals.map(g=>{const pct=Math.round((g.saved/g.target)*100);return <div key={g.id} style={{padding:"11px 13px",borderRadius:11,border:`1px solid ${P.border}`}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:7}}><div style={{display:"flex",alignItems:"center",gap:8}}><div style={{width:28,height:28,borderRadius:8,background:g.color+"18",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>{g.icon}</div><div><p style={{fontSize:11.5,fontWeight:700,color:P.navy,marginBottom:1}}>{g.label}</p><p style={{fontSize:10,color:P.muted}}>₹{g.saved.toLocaleString("en-IN")} / ₹{g.target.toLocaleString("en-IN")} · {g.term}</p></div></div><div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:12,fontWeight:800,color:g.color}}>{pct}%</span><button disabled={g.completed} onClick={()=>handleCompleteGoal(g)} style={{fontSize:10,fontWeight:700,color:g.completed?P.muted:"#fff",background:g.completed?P.borderSoft:P.teal,border:"none",borderRadius:999,padding:"5px 8px",cursor:g.completed?"default":"pointer"}}>{g.completed?"Completed":"Complete"}</button></div></div><PBar v={pct} color={g.color} h={4}/></div>})}
+            </div>
+          </Card>
+
+          <Card style={{padding:"18px"}}>
+            <Lbl text="Point History" sub="Latest transactions"/>
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              {pointHistory.length === 0 && <p style={{fontSize:11,color:P.muted}}>No point transactions yet.</p>}
+              {pointHistory.map((tx) => (
+                <div key={tx.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"7px 9px",borderRadius:9,border:`1px solid ${P.borderSoft}`}}>
+                  <div style={{minWidth:0}}>
+                    <p style={{fontSize:11,fontWeight:700,color:P.navy,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{tx.action}</p>
+                    <p style={{fontSize:9.5,color:P.muted}}>Balance: {tx.balance_after}</p>
+                  </div>
+                  <span style={{fontSize:11,fontWeight:800,color:tx.change >= 0 ? P.teal : P.red}}>{tx.change >= 0 ? "+" : ""}{tx.change}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
 
           <Card style={{padding:"18px",background:`linear-gradient(135deg,${P.navyMid},#0F2547)`,border:"none"}}>
             <p style={{fontSize:9.5,color:"rgba(255,255,255,.4)",fontWeight:600,textTransform:"uppercase",marginBottom:10}}>Monthly Insight</p>

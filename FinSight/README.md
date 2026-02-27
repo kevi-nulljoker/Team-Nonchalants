@@ -41,3 +41,12 @@ FinSight/
 ├── package.json
 ├── requirements.txt
 └── README.md
+
+## ⚙️ Installation
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/kevi-nulljoker/Team-Nonchalants.git
+cd Team-Nonchalants/FinSight
+```

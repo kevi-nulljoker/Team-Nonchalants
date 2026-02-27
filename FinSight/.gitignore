@@ -23,3 +23,28 @@ dist-ssr
 *.sln
 *.sw?
 backend/.env
+
+# Environment files
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+
+# macOS
+__MACOSX/
+.DS_Store
+
+# Build folders
+dist/
+build/
+
+# Node
+node_modules/
+
+# Logs
+*.log

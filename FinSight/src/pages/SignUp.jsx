@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 const authStyles = `
 * {
@@ -503,7 +504,39 @@ body {
 }
 `;
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+
+const getErrorMessage = (data, fallback) => {
+  if (data && typeof data.detail === "string") {
+    return data.detail;
+  }
+  return fallback;
+};
+
+const postJson = async (path, payload, fallbackMessage) => {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  if (!response.ok) {
+    throw new Error(getErrorMessage(data, fallbackMessage));
+  }
+
+  return data;
+};
+
 function AuthPage() {
+  const navigate = useNavigate();
+
   const [mode, setMode] = useState("login"); // "login" or "signup"
   const [formData, setFormData] = useState({
     name: "",
@@ -521,25 +554,21 @@ function AuthPage() {
 
   const isSignup = mode === "signup";
 
-  // Refs for focus management after toggle
   const firstFieldRef = useRef(null);
   const submitButtonRef = useRef(null);
 
-  // Handle input changes
   const handleChange = useCallback((e) => {
     const { id, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
       [id]: type === "checkbox" ? checked : value
     }));
-    // Clear error for this field when user types
     if (errors[id]) {
       setErrors(prev => ({ ...prev, [id]: "" }));
     }
     if (submitError) setSubmitError("");
   }, [errors, submitError]);
 
-  // Toggle password visibility
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword(prev => !prev);
   }, []);
@@ -548,7 +577,6 @@ function AuthPage() {
     setShowConfirmPassword(prev => !prev);
   }, []);
 
-  // Validation
   const validateForm = useCallback(() => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -585,7 +613,6 @@ function AuthPage() {
     return Object.keys(newErrors).length === 0;
   }, [formData, isSignup]);
 
-  // Handle form submission
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -593,20 +620,43 @@ function AuthPage() {
     setIsLoading(true);
     setSubmitError("");
 
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log("Form submitted:", formData);
-      // On success, you might redirect or show a success message
-      alert(`${isSignup ? "Sign up" : "Login"} successful! (demo)`);
+      const normalizedEmail = formData.email.trim().toLowerCase();
+
+      if (isSignup) {
+        await postJson(
+          "/register",
+          {
+            name: formData.name.trim(),
+            email: normalizedEmail,
+            password: formData.password,
+            agreeTerms: formData.agreeTerms,
+          },
+          "Sign up failed"
+        );
+      }
+
+      const loginData = await postJson(
+        "/login",
+        {
+          email: normalizedEmail,
+          password: formData.password,
+        },
+        "Authentication failed"
+      );
+
+      localStorage.setItem("auth_token", loginData.access_token);
+      localStorage.setItem("auth_user_id", loginData.user_id);
+      localStorage.setItem("auth_email", normalizedEmail);
+
+      navigate("/dashboard");
     } catch (error) {
-      setSubmitError("An error occurred. Please try again.");
+      setSubmitError(error.message || "Network error. Please try again.");
     } finally {
       setIsLoading(false);
     }
-  }, [formData, isSignup, validateForm]);
+  }, [formData, isSignup, validateForm, navigate]);
 
-  // Handle toggle between login and signup
   const handleModeChange = useCallback((newMode) => {
     setMode(newMode);
     setErrors({});
@@ -615,11 +665,9 @@ function AuthPage() {
       ...prev,
       password: "",
       confirmPassword: "",
-      // Don't reset name/email to preserve user input when toggling? Maybe reset for demo.
       name: "",
-      email: prev.email, // Keep email maybe
+      email: prev.email, // keep email if you want
     }));
-    // Focus first field after mode change for accessibility
     setTimeout(() => {
       if (firstFieldRef.current) {
         firstFieldRef.current.focus();

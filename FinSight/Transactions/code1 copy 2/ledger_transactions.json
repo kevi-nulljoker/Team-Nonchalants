@@ -1,0 +1,3881 @@
+[
+  {
+    "date": "2026-02-27",
+    "description": "test txn",
+    "amount": 123.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.475,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-01",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-02",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-03",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-04",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-05",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-06",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-07",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-08",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-09",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-10",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-11",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-12",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-13",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-14",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-15",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-16",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-17",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-18",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-19",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-20",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-21",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-22",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-23",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-24",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-25",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-26",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-27",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-28",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-01",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-02",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-03",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-04",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-05",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNdf",
+    "amount": 950.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.756,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electronics shopping TXNd",
+    "amount": 8965185.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.843,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXNb",
+    "amount": 6001238.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.762,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNd@ece",
+    "amount": 2.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.851,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNQbf",
+    "amount": 5169.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mutual fund SIP TXNfa",
+    "amount": 148.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.78,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXNcea",
+    "amount": 36075.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.769,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN",
+    "amount": 56076784.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.881,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN@bebf",
+    "amount": 1.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.693,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXNbdb",
+    "amount": 6379.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.782,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Movie ticket booking TXNfef",
+    "amount": 48.0,
+    "type": "debit",
+    "category": "entertainment",
+    "confidence": 0.611,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Home loan EMI TXNfddfe",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.838,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXNecb",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXNefa",
+    "amount": 6049.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.845,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNebdbc",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.727,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Cafe coffee TXNa",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.79,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNcad@ceb",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.753,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Exam fee TXNfddca",
+    "amount": 8.0,
+    "type": "debit",
+    "category": "education",
+    "confidence": 0.784,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Amazon purchase TXNcf",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.666,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online shopping payment TXNcdddf",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.692,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNccc",
+    "amount": 29243.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.704,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNfbdf",
+    "amount": 82.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.741,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online course subscription TXNbbbff",
+    "amount": 8.0,
+    "type": "credit",
+    "category": "education",
+    "confidence": 0.869,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNfed",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.737,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNc@cb",
+    "amount": 1.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.789,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNaaccf",
+    "amount": 40.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.721,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Ola cab TXNeb",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.751,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNbaa",
+    "amount": 4246.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.814,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Car loan EMI TXNcbc",
+    "amount": 1735.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Personal loan installment TXNbd",
+    "amount": 154.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.815,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electricity bill payment TXNbfebb",
+    "amount": 2.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.735,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Hotel bookina TXNb",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.485,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-01",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-02",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-03",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-04",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-05",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-06",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-07",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-08",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-09",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-10",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-11",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-12",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-13",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-14",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-15",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-16",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-17",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-18",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-19",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-20",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-21",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-22",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-23",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-24",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-25",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-26",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-27",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-28",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-01",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-02",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-03",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-04",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-05",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNdf",
+    "amount": 950.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.756,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electronics shopping TXNd",
+    "amount": 8965185.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.843,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXNb",
+    "amount": 6001238.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.762,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNd@ece",
+    "amount": 2.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.851,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNQbf",
+    "amount": 5169.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mutual fund SIP TXNfa",
+    "amount": 148.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.78,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXNcea",
+    "amount": 36075.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.769,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN",
+    "amount": 56076784.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.881,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN@bebf",
+    "amount": 1.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.693,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXNbdb",
+    "amount": 6379.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.782,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Movie ticket booking TXNfef",
+    "amount": 48.0,
+    "type": "debit",
+    "category": "entertainment",
+    "confidence": 0.611,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Home loan EMI TXNfddfe",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.838,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXNecb",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXNefa",
+    "amount": 6049.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.845,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNebdbc",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.727,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Cafe coffee TXNa",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.79,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNcad@ceb",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.753,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Exam fee TXNfddca",
+    "amount": 8.0,
+    "type": "debit",
+    "category": "education",
+    "confidence": 0.784,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Amazon purchase TXNcf",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.666,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online shopping payment TXNcdddf",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.692,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNccc",
+    "amount": 29243.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.704,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNfbdf",
+    "amount": 82.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.741,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online course subscription TXNbbbff",
+    "amount": 8.0,
+    "type": "credit",
+    "category": "education",
+    "confidence": 0.869,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNfed",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.737,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNc@cb",
+    "amount": 1.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.789,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNaaccf",
+    "amount": 40.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.721,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Ola cab TXNeb",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.751,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNbaa",
+    "amount": 4246.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.814,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Car loan EMI TXNcbc",
+    "amount": 1735.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Personal loan installment TXNbd",
+    "amount": 154.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.815,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electricity bill payment TXNbfebb",
+    "amount": 2.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.735,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Hotel bookina TXNb",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.485,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-01",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-02",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-03",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-04",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-05",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-06",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-07",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-08",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-09",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-10",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-11",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-12",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-13",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-14",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-15",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-16",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-17",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-18",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-19",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-20",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-21",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-22",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-23",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-24",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-25",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-26",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-27",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-28",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-01",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-02",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-03",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-04",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-05",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNdf",
+    "amount": 950.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.756,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electronics shopping TXNd",
+    "amount": 8965185.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.843,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXNb",
+    "amount": 6001238.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.762,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNd@ece",
+    "amount": 2.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.851,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNQbf",
+    "amount": 5169.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mutual fund SIP TXNfa",
+    "amount": 148.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.78,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXNcea",
+    "amount": 36075.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.769,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN",
+    "amount": 56076784.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.881,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN@bebf",
+    "amount": 1.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.693,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXNbdb",
+    "amount": 6379.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.782,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Movie ticket booking TXNfef",
+    "amount": 48.0,
+    "type": "debit",
+    "category": "entertainment",
+    "confidence": 0.611,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Home loan EMI TXNfddfe",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.838,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXNecb",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXNefa",
+    "amount": 6049.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.845,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNebdbc",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.727,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Cafe coffee TXNa",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.79,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNcad@ceb",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.753,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Exam fee TXNfddca",
+    "amount": 8.0,
+    "type": "debit",
+    "category": "education",
+    "confidence": 0.784,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Amazon purchase TXNcf",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.666,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online shopping payment TXNcdddf",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.692,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNccc",
+    "amount": 29243.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.704,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNfbdf",
+    "amount": 82.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.741,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online course subscription TXNbbbff",
+    "amount": 8.0,
+    "type": "credit",
+    "category": "education",
+    "confidence": 0.869,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNfed",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.737,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNc@cb",
+    "amount": 1.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.789,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNaaccf",
+    "amount": 40.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.721,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Ola cab TXNeb",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.751,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNbaa",
+    "amount": 4246.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.814,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Car loan EMI TXNcbc",
+    "amount": 1735.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Personal loan installment TXNbd",
+    "amount": 154.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.815,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electricity bill payment TXNbfebb",
+    "amount": 2.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.735,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Hotel bookina TXNb",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.485,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-01",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-02",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-03",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-04",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-05",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-06",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-07",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-08",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-09",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-10",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-11",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-12",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-13",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-14",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-15",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-16",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-17",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-18",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-19",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-20",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-21",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-22",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-23",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-24",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-25",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-26",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-27",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-28",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-01",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-02",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-03",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-04",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-05",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNdf",
+    "amount": 950.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.756,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electronics shopping TXNd",
+    "amount": 8965185.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.843,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXNb",
+    "amount": 6001238.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.762,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNd@ece",
+    "amount": 2.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.851,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNQbf",
+    "amount": 5169.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mutual fund SIP TXNfa",
+    "amount": 148.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.78,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXNcea",
+    "amount": 36075.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.769,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN",
+    "amount": 56076784.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.881,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN@bebf",
+    "amount": 1.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.693,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXNbdb",
+    "amount": 6379.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.782,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Movie ticket booking TXNfef",
+    "amount": 48.0,
+    "type": "debit",
+    "category": "entertainment",
+    "confidence": 0.611,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Home loan EMI TXNfddfe",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.838,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXNecb",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXNefa",
+    "amount": 6049.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.845,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNebdbc",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.727,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Cafe coffee TXNa",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.79,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNcad@ceb",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.753,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Exam fee TXNfddca",
+    "amount": 8.0,
+    "type": "debit",
+    "category": "education",
+    "confidence": 0.784,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Amazon purchase TXNcf",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.666,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online shopping payment TXNcdddf",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.692,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNccc",
+    "amount": 29243.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.704,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNfbdf",
+    "amount": 82.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.741,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online course subscription TXNbbbff",
+    "amount": 8.0,
+    "type": "credit",
+    "category": "education",
+    "confidence": 0.869,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNfed",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.737,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNc@cb",
+    "amount": 1.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.789,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNaaccf",
+    "amount": 40.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.721,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Ola cab TXNeb",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.751,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNbaa",
+    "amount": 4246.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.814,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Car loan EMI TXNcbc",
+    "amount": 1735.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Personal loan installment TXNbd",
+    "amount": 154.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.815,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electricity bill payment TXNbfebb",
+    "amount": 2.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.735,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Hotel bookina TXNb",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.485,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "M NEA al",
+    "amount": 42.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "Za Swiggy %",
+    "amount": 360.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.736,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "SADGURU KRUPA SNACK...",
+    "amount": 100.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "EKNATH BABAN MANJARE",
+    "amount": 115.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "GAURAV YADAV %",
+    "amount": 20.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "A Nitya Jain",
+    "amount": 750.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "Feh Dehited from",
+    "amount": 2028.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-01",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-02",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-03",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-04",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-05",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-06",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-07",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-08",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-09",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-10",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-11",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-12",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-13",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-14",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-15",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-16",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-17",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-18",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-19",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-20",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-21",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-22",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-23",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-24",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-25",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-26",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-27",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-02-28",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-01",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-02",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-03",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-04",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": "2026-03-05",
+    "description": "Transaction",
+    "amount": 2026.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.155,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNdf",
+    "amount": 950.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.756,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electronics shopping TXNd",
+    "amount": 8965185.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.843,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXNb",
+    "amount": 6001238.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.762,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNd@ece",
+    "amount": 2.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.851,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNQbf",
+    "amount": 5169.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mutual fund SIP TXNfa",
+    "amount": 148.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.78,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXNcea",
+    "amount": 36075.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.769,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN",
+    "amount": 56076784.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.881,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN@bebf",
+    "amount": 1.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.693,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXNbdb",
+    "amount": 6379.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.782,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Movie ticket booking TXNfef",
+    "amount": 48.0,
+    "type": "debit",
+    "category": "entertainment",
+    "confidence": 0.611,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Home loan EMI TXNfddfe",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.838,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXNecb",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXNefa",
+    "amount": 6049.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.845,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNebdbc",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.727,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Cafe coffee TXNa",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.79,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNcad@ceb",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.753,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Exam fee TXNfddca",
+    "amount": 8.0,
+    "type": "debit",
+    "category": "education",
+    "confidence": 0.784,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Amazon purchase TXNcf",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.666,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online shopping payment TXNcdddf",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.692,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNccc",
+    "amount": 29243.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.704,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNfbdf",
+    "amount": 82.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.741,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online course subscription TXNbbbff",
+    "amount": 8.0,
+    "type": "credit",
+    "category": "education",
+    "confidence": 0.869,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNfed",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.737,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNc@cb",
+    "amount": 1.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.789,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNaaccf",
+    "amount": 40.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.721,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Ola cab TXNeb",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.751,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNbaa",
+    "amount": 4246.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.814,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Car loan EMI TXNcbc",
+    "amount": 1735.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Personal loan installment TXNbd",
+    "amount": 154.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.815,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electricity bill payment TXNbfebb",
+    "amount": 2.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.735,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Hotel bookina TXNb",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "others",
+    "confidence": 0.485,
+    "uncertain": true
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXN684df950",
+    "amount": 950.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.887,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electronics shopping TXNd8965185",
+    "amount": 8965185.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.926,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN6001238b",
+    "amount": 6001238.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.865,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNd99@2ece",
+    "amount": 2.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.935,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNQ8b5169f",
+    "amount": 5169.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mutual fund SIP TXN5f48a148",
+    "amount": 148.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.858,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXN36075cea",
+    "amount": 36075.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.943,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN56076784",
+    "amount": 56076784.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.955,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN59@beb1f",
+    "amount": 1.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.865,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXN5bdb6379",
+    "amount": 6379.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.943,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Movie ticket booking TXNf886e48f",
+    "amount": 48.0,
+    "type": "debit",
+    "category": "entertainment",
+    "confidence": 0.828,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Home loan EMI TXNf2dd0f9e",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.965,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN6e527cb3",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.955,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN3ef6049a",
+    "amount": 6049.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.955,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNe9bdb6c3",
+    "amount": 3.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.903,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Cafe coffee TXN9928a005",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.837,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNcad@ceb9",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.753,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Exam fee TXNfd80dca8",
+    "amount": 8.0,
+    "type": "debit",
+    "category": "education",
+    "confidence": 0.954,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Amazon purchase TXN6c7924f6",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.782,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online shopping payment TXNcddd81f9",
+    "amount": 9.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.849,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNccc29243",
+    "amount": 29243.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.887,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNf6b7df82",
+    "amount": 82.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.903,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online course subscription TXN44bbbf8f",
+    "amount": 8.0,
+    "type": "credit",
+    "category": "education",
+    "confidence": 0.869,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXN12f5e2d5",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.903,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNc115@1cb",
+    "amount": 1.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.897,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXN5aac40cf",
+    "amount": 40.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Ola cab TXNe12501b6",
+    "amount": 6.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.888,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNba1a4246",
+    "amount": 4246.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.935,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Car loan EMI TXNc01735bc",
+    "amount": 1735.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.964,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Personal loan installment TXNb668d154",
+    "amount": 154.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.931,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electricity bill payment TXNb9f4e2bb",
+    "amount": 2.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.908,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Hotel bookina TXN537898b5",
+    "amount": 5.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.727,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXN684df950",
+    "amount": 22831.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.887,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electronics shopping TXNd8965185",
+    "amount": 28634.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.926,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN6001238b",
+    "amount": 33127.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.865,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNd99@2ece",
+    "amount": 33532.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.935,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNQ8b5169f",
+    "amount": 44652.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mutual fund SIP TXN5f48a148",
+    "amount": 13070.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.858,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXN36075cea",
+    "amount": 39432.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.943,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN56076784",
+    "amount": 34820.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.955,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN59@beb1f",
+    "amount": 34990.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.865,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXN5bdb6379",
+    "amount": 15151.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.943,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Movie ticket booking TXNf886e48f",
+    "amount": 24591.0,
+    "type": "debit",
+    "category": "entertainment",
+    "confidence": 0.828,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Home loan EMI TXNf2dd0f9e",
+    "amount": 44640.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.965,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN6e527cb3",
+    "amount": 14878.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.955,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN3ef6049a",
+    "amount": 40005.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.955,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNe9bdb6c3",
+    "amount": 18296.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.903,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Cafe coffee TXN9928a005",
+    "amount": 19481.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.837,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNcad@ceb9",
+    "amount": 31280.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.753,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Exam fee TXNfd80dca8",
+    "amount": 8970.0,
+    "type": "debit",
+    "category": "education",
+    "confidence": 0.954,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Amazon purchase TXN6c7924f6",
+    "amount": 4956.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.782,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online shopping payment TXNcddd81f9",
+    "amount": 43835.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.849,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNccc29243",
+    "amount": 48118.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.887,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Uber ride TXNd6d7b0aa",
+    "amount": 49540.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNf6b7df82",
+    "amount": 9473.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.903,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online course subscription TXN44bbbf8f",
+    "amount": 15940.0,
+    "type": "credit",
+    "category": "education",
+    "confidence": 0.869,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXN12f5e2d5",
+    "amount": 42391.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.903,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNc115@1cb",
+    "amount": 38809.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.897,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXN5aac40cf",
+    "amount": 23014.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Ola cab TXNe12501b6",
+    "amount": 18152.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.888,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNba1a4246",
+    "amount": 8141.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.935,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Car loan EMI TXNc01735bc",
+    "amount": 29107.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.964,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Personal loan installment TXNb668d154",
+    "amount": 49895.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.931,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electricity bill payment TXNb9f4e2bb",
+    "amount": 41780.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.908,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Hotel bookina TXN537898b5",
+    "amount": 20442.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.727,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXN684df950",
+    "amount": 22831.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.887,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electronics shopping TXNd8965185",
+    "amount": 28634.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.926,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN6001238b",
+    "amount": 33127.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.865,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNd99@2ece",
+    "amount": 33532.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.935,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXNQ8b5169f",
+    "amount": 44652.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mutual fund SIP TXN5f48a148",
+    "amount": 13070.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.858,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXN36075cea",
+    "amount": 39432.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.943,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN56076784",
+    "amount": 34820.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.955,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Netflix subscription TXN59@beb1f",
+    "amount": 34990.0,
+    "type": "credit",
+    "category": "entertainment",
+    "confidence": 0.865,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Mobile recharge TXN5bdb6379",
+    "amount": 15151.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.943,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Movie ticket booking TXNf886e48f",
+    "amount": 24591.0,
+    "type": "debit",
+    "category": "entertainment",
+    "confidence": 0.828,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Home loan EMI TXNf2dd0f9e",
+    "amount": 44640.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.965,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN6e527cb3",
+    "amount": 14878.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.955,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Bike loan EMI TXN3ef6049a",
+    "amount": 40005.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.955,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNe9bdb6c3",
+    "amount": 18296.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.903,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Cafe coffee TXN9928a005",
+    "amount": 19481.0,
+    "type": "debit",
+    "category": "food",
+    "confidence": 0.837,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNcad@ceb9",
+    "amount": 31280.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.753,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Exam fee TXNfd80dca8",
+    "amount": 8970.0,
+    "type": "debit",
+    "category": "education",
+    "confidence": 0.954,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Amazon purchase TXN6c7924f6",
+    "amount": 4956.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.782,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online shopping payment TXNcddd81f9",
+    "amount": 43835.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.849,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Flipkart order TXNccc29243",
+    "amount": 48118.0,
+    "type": "debit",
+    "category": "shopping",
+    "confidence": 0.887,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Uber ride TXNd6d7b0aa",
+    "amount": 49540.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.85,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXNf6b7df82",
+    "amount": 9473.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.903,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Online course subscription TXN44bbbf8f",
+    "amount": 15940.0,
+    "type": "credit",
+    "category": "education",
+    "confidence": 0.869,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Doctor consultation TXN12f5e2d5",
+    "amount": 42391.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.903,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Medical test charges TXNc115@1cb",
+    "amount": 38809.0,
+    "type": "debit",
+    "category": "healthcare",
+    "confidence": 0.897,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Stock purchase TXN5aac40cf",
+    "amount": 23014.0,
+    "type": "debit",
+    "category": "investment",
+    "confidence": 0.915,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Ola cab TXNe12501b6",
+    "amount": 18152.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.888,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Credit card EMI TXNba1a4246",
+    "amount": 8141.0,
+    "type": "credit",
+    "category": "emi",
+    "confidence": 0.935,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Car loan EMI TXNc01735bc",
+    "amount": 29107.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.964,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Personal loan installment TXNb668d154",
+    "amount": 49895.0,
+    "type": "debit",
+    "category": "emi",
+    "confidence": 0.931,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Electricity bill payment TXNb9f4e2bb",
+    "amount": 41780.0,
+    "type": "debit",
+    "category": "utilities",
+    "confidence": 0.908,
+    "uncertain": false
+  },
+  {
+    "date": null,
+    "description": "Hotel bookina TXN537898b5",
+    "amount": 20442.0,
+    "type": "debit",
+    "category": "travel",
+    "confidence": 0.727,
+    "uncertain": false
+  }
+]

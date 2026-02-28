@@ -151,8 +151,6 @@ const TXN_API_BASE = (
   'http://127.0.0.1:8000'
 ).replace(/\/$/, '');
 
-const READ_ENDPOINTS = ['/transactions', '/ledger'];
-
 async function readErrorMessage(res, fallback) {
   try {
     const payload = await res.json();
@@ -177,11 +175,7 @@ const Transactions = () => {
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState('');
-
-  // Fetch transactions on mount and after upload
-  useEffect(() => {
-    fetchTransactions();
-  }, [token]);
+  const [pipelineStatus, setPipelineStatus] = useState('');
 
   const fetchTransactions = async () => {
     if (!token) {
@@ -195,22 +189,15 @@ const Transactions = () => {
     setError('');
     try {
       const authHeader = { Authorization: `Bearer ${token}` };
-      let data = null;
-      let lastError = 'Failed to fetch transactions';
-
-      for (const endpoint of READ_ENDPOINTS) {
-        const res = await fetch(`${TXN_API_BASE}${endpoint}`, { headers: authHeader });
-        if (res.ok) {
-          const parsed = await res.json();
-          data = Array.isArray(parsed)
-            ? parsed
-            : (Array.isArray(parsed?.transactions) ? parsed.transactions : []);
-          break;
-        }
-        lastError = await readErrorMessage(res, `${lastError} (${endpoint})`);
+      const res = await fetch(`${TXN_API_BASE}/transactions`, { headers: authHeader });
+      if (!res.ok) {
+        const message = await readErrorMessage(res, 'Failed to fetch transactions');
+        throw new Error(message);
       }
-
-      if (!data) throw new Error(lastError);
+      const parsed = await res.json();
+      const data = Array.isArray(parsed)
+        ? parsed
+        : (Array.isArray(parsed?.transactions) ? parsed.transactions : []);
       setTransactions(data);
       setFiltered(data);
     } catch (err) {
@@ -243,9 +230,8 @@ const Transactions = () => {
     }
 
     const isImage = file.type.startsWith('image/');
-    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-    if (!isImage && !isPdf) {
-      setError('Please upload an image or PDF file');
+    if (!isImage) {
+      setError('Please upload an image file');
       return;
     }
 
@@ -253,8 +239,9 @@ const Transactions = () => {
     formData.append('file', file);
     setUploading(true);
     setError('');
+    setPipelineStatus('Uploading image and running extraction pipeline...');
     try {
-      const res = await fetch(`${TXN_API_BASE}/upload`, {
+      const res = await fetch(`${TXN_API_BASE}/upload/process`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -263,12 +250,13 @@ const Transactions = () => {
         const message = await readErrorMessage(res, 'Upload failed');
         throw new Error(message);
       }
-      await res.json();
-      // After upload, refresh transactions
-      await fetchTransactions();
-      // Optionally show success message
+      const payload = await res.json();
+      const count = Number(payload?.total_transactions || 0);
+      setPipelineStatus(`Done. ${count} transaction(s) imported to MongoDB for your account.`);
+      window.dispatchEvent(new CustomEvent('finsight:transactions-updated'));
     } catch (err) {
       setError(err.message);
+      setPipelineStatus('');
     } finally {
       setUploading(false);
     }
@@ -285,11 +273,10 @@ const Transactions = () => {
     const file = e.dataTransfer.files[0];
     if (!file) return;
     const isImage = file.type.startsWith('image/');
-    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-    if (isImage || isPdf) {
+    if (isImage) {
       handleUpload(file);
     } else {
-      setError('Please drop an image or PDF file');
+      setError('Please drop an image file');
     }
   };
 
@@ -334,16 +321,16 @@ const Transactions = () => {
           <input
             id="file-input"
             type="file"
-            accept="image/*,.pdf,application/pdf"
+            accept="image/*"
             onChange={onFileSelect}
             style={{ display: 'none' }}
           />
           <div style={{ fontSize: 40, marginBottom: 12 }}>📸</div>
           <p style={{ fontSize: 16, fontWeight: 600, color: P.navy, marginBottom: 4 }}>
-            {uploading ? 'Processing...' : 'Upload a bank statement or receipt'}
+            {uploading ? 'Processing...' : 'Upload a transaction image'}
           </p>
           <p style={{ fontSize: 12, color: P.muted }}>
-            Drag & drop an image/PDF here, or click to browse
+            Drag & drop an image here, or click to browse
           </p>
           {uploading && (
             <div style={{ marginTop: 12 }}>
@@ -352,6 +339,18 @@ const Transactions = () => {
               </div>
             </div>
           )}
+        </div>
+
+        {pipelineStatus && (
+          <div style={{ marginTop: 16, padding: 12, background: P.tealLight, border: `1px solid ${P.teal}`, borderRadius: 12, color: P.teal, fontSize: 13 }}>
+            {pipelineStatus}
+          </div>
+        )}
+
+        <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-start' }}>
+          <button className="btn-primary" onClick={fetchTransactions} disabled={loading || uploading || !token}>
+            {loading ? 'Fetching...' : 'Show Transactions'}
+          </button>
         </div>
 
         {/* Error message */}

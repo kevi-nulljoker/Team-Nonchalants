@@ -507,9 +507,8 @@ body {
 
 const CONFIGURED_API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/$/, "");
 const DIRECT_API_BASE_URL = (import.meta.env.VITE_API_TARGET || "http://127.0.0.1:8001").replace(/\/$/, "");
-const TXN_BACKEND_FALLBACK_URL = (import.meta.env.VITE_TXN_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
 const API_BASE_URLS = Array.from(
-  new Set([CONFIGURED_API_BASE_URL, DIRECT_API_BASE_URL, TXN_BACKEND_FALLBACK_URL].filter(Boolean))
+  new Set([CONFIGURED_API_BASE_URL, DIRECT_API_BASE_URL].filter(Boolean))
 );
 
 const getErrorMessage = (data, fallback, rawText = "") => {

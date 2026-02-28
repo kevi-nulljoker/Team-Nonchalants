@@ -500,6 +500,7 @@ export default function Dashboard() {
   const [transactionsLoaded, setTransactionsLoaded] = useState(false);
   const [transactionsFetchError, setTransactionsFetchError] = useState(false);
   const [noTxPopupShown, setNoTxPopupShown] = useState(false);
+  const [transactionsReloadKey, setTransactionsReloadKey] = useState(0);
   const hasAuthToken = !!(localStorage.getItem("auth_token") || localStorage.getItem("token"));
 
   // Gamification State
@@ -569,6 +570,12 @@ export default function Dashboard() {
     return () => {
       mounted = false;
     };
+  }, []);
+
+  useEffect(() => {
+    const onTransactionsUpdated = () => setTransactionsReloadKey((v) => v + 1);
+    window.addEventListener("finsight:transactions-updated", onTransactionsUpdated);
+    return () => window.removeEventListener("finsight:transactions-updated", onTransactionsUpdated);
   }, []);
 
   useEffect(() => {
@@ -657,7 +664,7 @@ export default function Dashboard() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [transactionsReloadKey]);
 
   useEffect(() => {
     if (!hasAuthToken || !transactionsLoaded || noTxPopupShown || transactionsFetchError) return;

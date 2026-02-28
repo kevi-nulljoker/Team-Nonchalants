@@ -9,6 +9,7 @@ Supported input shapes:
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 from datetime import datetime, timezone
@@ -79,7 +80,7 @@ def _extract_transactions(payload: Any) -> list[dict[str, Any]]:
     return flattened
 
 
-def import_json_to_mongo(file_path: Path) -> bool:
+def import_json_to_mongo(file_path: Path, user_id: str | None = None) -> bool:
     """Read JSON file and insert all normalized transactions into MongoDB."""
     try:
         data = json.loads(file_path.read_text(encoding="utf-8"))
@@ -102,11 +103,17 @@ def import_json_to_mongo(file_path: Path) -> bool:
         row["created_at"] = now
         row.setdefault("source", "json_import")
         row.setdefault("source_file", file_path.name)
+        if user_id:
+            row["user_id"] = user_id
         prepared.append(row)
 
     client: MongoClient | None = None
     try:
-        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)
+        client = MongoClient(
+            MONGO_URI,
+            serverSelectionTimeoutMS=10000,
+            tlsAllowInvalidCertificates=True,
+        )
         db = client[DB_NAME]
         collection = db[COLLECTION_NAME]
 
@@ -126,18 +133,39 @@ def import_json_to_mongo(file_path: Path) -> bool:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Import converted transaction JSON into MongoDB")
+    parser.add_argument("--user-id", dest="user_id", default="", help="Attach transactions to a specific user id")
+    parser.add_argument(
+        "--source-file",
+        dest="source_file",
+        default="",
+        help="Specific JSON file to import (absolute path or name inside Transactions/output)",
+    )
+    args = parser.parse_args()
+
     if not MONGO_URI:
         print("ERROR: MONGO_URI is missing. Set it in scripts/.env")
         return
 
-    print("Looking for latest JSON file...")
-    latest = get_latest_json_file(OUTPUT_FOLDER)
+    latest: Path | None = None
+    if args.source_file:
+        candidate = Path(args.source_file)
+        if not candidate.is_absolute():
+            candidate = OUTPUT_FOLDER / candidate
+        if not candidate.exists():
+            print(f"ERROR: source file not found: {candidate}")
+            return
+        latest = candidate
+    else:
+        print("Looking for latest JSON file...")
+        latest = get_latest_json_file(OUTPUT_FOLDER)
+
     if latest is None:
         return
 
     modified = datetime.fromtimestamp(latest.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
     print(f"Found: {latest.name} (modified {modified})")
-    import_json_to_mongo(latest)
+    import_json_to_mongo(latest, user_id=(args.user_id or "").strip() or None)
 
 
 if __name__ == "__main__":

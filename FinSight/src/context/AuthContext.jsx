@@ -6,10 +6,9 @@ export const AuthContext = createContext();
 // API base URL from environment variable
 const API_URL = (
   import.meta.env.VITE_AUTH_API_URL ||
-  import.meta.env.VITE_TXN_API_URL ||
-  import.meta.env.VITE_API_URL ||
   import.meta.env.VITE_API_BASE_URL ||
-  'http://localhost:8000'
+  import.meta.env.VITE_API_TARGET ||
+  'http://127.0.0.1:8001'
 ).replace(/\/$/, '');
 
 export const AuthProvider = ({ children }) => {

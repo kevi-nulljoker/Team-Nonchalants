@@ -5,21 +5,30 @@ import json
 import re
 import shutil
 import statistics
+import subprocess
 import sys
 import tempfile
+import base64
 from collections import Counter, defaultdict
 from datetime import date as DateType
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
+from uuid import uuid4
 
 import pytesseract
-from fastapi import Body, FastAPI, File, HTTPException, UploadFile
+from fastapi import Body, FastAPI, File, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image, UnidentifiedImageError
+from pymongo import MongoClient, errors
 from pydantic import BaseModel, Field
 
 from model_utils import predict_transaction
+
+try:
+    import jwt  # type: ignore
+except Exception:
+    jwt = None
 
 app = FastAPI(title="Transaction OCR + Classifier API", version="4.0.0")
 
@@ -58,7 +67,15 @@ LEDGER_PATH = BASE_DIR / "ledger_transactions.json"
 WORKSPACE_DIR = BASE_DIR.parent
 IMAGES_DIR = WORKSPACE_DIR / "images"
 OUTPUTS_DIR = WORKSPACE_DIR / "output"
+SCRIPTS_DIR = BASE_DIR.parent.parent / "scripts"
+IMPORT_SCRIPT_PATH = SCRIPTS_DIR / "import_json.py"
 SUPPORTED_IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".bmp", ".webp", ".tif", ".tiff"}
+
+MONGO_URI = os.getenv("MONGO_URI", "").strip()
+DB_NAME = os.getenv("DB_NAME", "Users").strip() or "Users"
+COLLECTION_NAME = os.getenv("COLLECTION_NAME", "transactions").strip() or "transactions"
+JWT_SECRET = os.getenv("JWT_SECRET_KEY", "c84d3aa356344f5e0b93915b9d16b073f")
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 
 class ManualRequest(BaseModel):
@@ -647,6 +664,96 @@ def convert_latest_images_to_json(count: int = 1) -> dict[str, Any]:
     }
 
 
+def _extract_user_id_from_auth(authorization: Optional[str]) -> str:
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Missing Authorization header")
+    if not authorization.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="Invalid Authorization header")
+
+    token = authorization.split(" ", 1)[1].strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="Invalid bearer token")
+
+    if jwt is not None:
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        except jwt.ExpiredSignatureError as exc:
+            raise HTTPException(status_code=401, detail="Token expired") from exc
+        except jwt.InvalidTokenError as exc:
+            raise HTTPException(status_code=401, detail="Invalid token") from exc
+    elif token.startswith("devjwt."):
+        try:
+            encoded = token.split(".", 2)[1]
+            padded = encoded + "=" * (-len(encoded) % 4)
+            payload = json.loads(base64.urlsafe_b64decode(padded.encode("utf-8")).decode("utf-8"))
+        except Exception as exc:
+            raise HTTPException(status_code=401, detail="Invalid token") from exc
+    else:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    user_id = str(payload.get("sub", "")).strip()
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Token does not include user id")
+    return user_id
+
+
+def _save_uploaded_image(file: UploadFile) -> Path:
+    filename = file.filename or "upload.png"
+    suffix = Path(filename).suffix.lower() or ".png"
+    if suffix not in SUPPORTED_IMAGE_SUFFIXES:
+        raise HTTPException(status_code=400, detail="Only image files are supported")
+
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+    output_name = f"upload_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{uuid4().hex[:8]}{suffix}"
+    output_path = IMAGES_DIR / output_name
+
+    try:
+        with output_path.open("wb") as f:
+            f.write(file.file.read())
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to save uploaded image: {exc}") from exc
+    finally:
+        file.file.close()
+
+    return output_path
+
+
+def _run_import_script(user_id: str, source_file: str) -> None:
+    if not IMPORT_SCRIPT_PATH.exists():
+        raise HTTPException(status_code=500, detail=f"Import script missing: {IMPORT_SCRIPT_PATH}")
+
+    cmd = [
+        sys.executable,
+        str(IMPORT_SCRIPT_PATH),
+        "--user-id",
+        user_id,
+        "--source-file",
+        source_file,
+    ]
+    completed = subprocess.run(cmd, capture_output=True, text=True, cwd=str(BASE_DIR.parent.parent))
+    if completed.returncode != 0:
+        err = (completed.stderr or completed.stdout or "import_json.py failed").strip()
+        raise HTTPException(status_code=500, detail=f"Import failed: {err[:500]}")
+
+
+def _serialize_db_transaction(doc: dict[str, Any]) -> dict[str, Any]:
+    created_at = doc.get("created_at")
+    tx_date = doc.get("date")
+    return {
+        "_id": str(doc.get("_id")),
+        "user_id": str(doc.get("user_id", "")),
+        "date": tx_date.isoformat() if isinstance(tx_date, DateType) else tx_date,
+        "description": doc.get("description", ""),
+        "amount": float(doc.get("amount", 0) or 0),
+        "type": doc.get("type", ""),
+        "category": doc.get("category", ""),
+        "confidence": doc.get("confidence"),
+        "uncertain": bool(doc.get("uncertain", False)),
+        "source_file": doc.get("source_file", ""),
+        "created_at": created_at.isoformat() if hasattr(created_at, "isoformat") else created_at,
+    }
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
@@ -705,6 +812,64 @@ def upload_statement(file: UploadFile = File(...)) -> list[PredictedTransaction]
 
     _store_transactions(output)
     return output
+
+
+@app.post("/upload/process")
+def upload_process_and_import(
+    file: UploadFile = File(...),
+    authorization: Optional[str] = Header(default=None, alias="Authorization"),
+) -> dict[str, Any]:
+    user_id = _extract_user_id_from_auth(authorization)
+
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Only image files are supported")
+
+    saved_path = _save_uploaded_image(file)
+    conversion = convert_latest_images_to_json(count=1)
+    output_file = str(conversion.get("output_file", "")).strip()
+    if not output_file:
+        raise HTTPException(status_code=500, detail="Conversion failed: output JSON not generated")
+
+    _run_import_script(user_id=user_id, source_file=output_file)
+    return {
+        "status": "ok",
+        "user_id": user_id,
+        "saved_image": saved_path.name,
+        "output_file": output_file,
+        "total_transactions": int(conversion.get("total_transactions", 0) or 0),
+    }
+
+
+@app.get("/transactions")
+def list_user_transactions(
+    limit: int = 500,
+    authorization: Optional[str] = Header(default=None, alias="Authorization"),
+) -> dict[str, Any]:
+    user_id = _extract_user_id_from_auth(authorization)
+    if not MONGO_URI:
+        raise HTTPException(status_code=500, detail="MONGO_URI is missing on transaction service")
+
+    limit = max(1, min(int(limit), 2000))
+    client: Optional[MongoClient] = None
+    try:
+        client = MongoClient(
+            MONGO_URI,
+            serverSelectionTimeoutMS=10000,
+            tlsAllowInvalidCertificates=True,
+        )
+        docs = (
+            client[DB_NAME][COLLECTION_NAME]
+            .find({"user_id": user_id})
+            .sort("created_at", -1)
+            .limit(limit)
+        )
+        rows = [_serialize_db_transaction(doc) for doc in docs]
+        return {"transactions": rows}
+    except errors.PyMongoError as exc:
+        raise HTTPException(status_code=500, detail=f"Database error while fetching transactions: {exc}") from exc
+    finally:
+        if client is not None:
+            client.close()
 
 
 @app.post("/convert/latest-local")

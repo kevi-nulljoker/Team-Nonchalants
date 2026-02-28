@@ -5,3 +5,5 @@ pytesseract
 Pillow
 scikit-learn
 joblib
+pymongo
+PyJWT

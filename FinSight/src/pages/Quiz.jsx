@@ -9,15 +9,15 @@ import { useNavigate } from "react-router-dom";
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const T = {
   // Background
-  bg:          "#EAF0F8",
+  bg:          "#ECF6F2",
   bgCard:      "#FFFFFF",
-  bgDeep:      "#1A2B3C",
+  bgDeep:      "#0F2233",
 
-  // Primary – orange (LearnIQ CTA colour)
-  orange:      "#F97316",
-  orangeLight: "#FFF1E6",
-  orangeDark:  "#C2570C",
-  orangeGlow:  "rgba(249,115,22,0.22)",
+  // Primary – FinSight green/teal
+  orange:      "#0E9F79",
+  orangeLight: "#E9F8F2",
+  orangeDark:  "#0B7D61",
+  orangeGlow:  "rgba(14,159,121,0.22)",
 
   // Accent – teal
   teal:        "#0B8A8A",
@@ -36,14 +36,14 @@ const T = {
   // Option card accent colours (like LearnIQ pastel cards)
   mint:        "#E8F8F4",
   mintBorder:  "#9EDDD0",
-  peach:       "#FFF0EC",
-  peachBorder: "#F9C4B0",
-  lavender:    "#F0EDFF",
-  lavBorder:   "#C4BAFF",
+  peach:       "#EDF9F6",
+  peachBorder: "#A7DED1",
+  lavender:    "#F0FAF7",
+  lavBorder:   "#B6E7DA",
   sky:         "#E8F3FF",
   skyBorder:   "#A9C8F5",
-  lemon:       "#FEFCE8",
-  lemonBorder: "#F0D960",
+  lemon:       "#F5FCF9",
+  lemonBorder: "#C7EBDD",
 
   green:       "#15803D",
   greenLight:  "#DCFCE7",
@@ -57,10 +57,50 @@ const CARD_PALETTES = [
   { bg: T.lemon,    border: T.lemonBorder    },
 ];
 
+const CONFIGURED_API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/$/, "");
+const DIRECT_API_BASE_URL = (import.meta.env.VITE_API_TARGET || "http://127.0.0.1:8001").replace(/\/$/, "");
+const API_BASE_URLS = Array.from(new Set([CONFIGURED_API_BASE_URL, DIRECT_API_BASE_URL].filter(Boolean)));
+
+const postJson = async (path, payload, fallbackMessage) => {
+  for (const baseUrl of API_BASE_URLS) {
+    let response;
+    try {
+      response = await fetch(`${baseUrl}${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch {
+      continue;
+    }
+
+    const text = await response.text();
+    let data = {};
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = {};
+      }
+    }
+
+    if (!response.ok) {
+      const shouldTryFallback =
+        baseUrl.startsWith("/") &&
+        API_BASE_URLS.length > 1 &&
+        [404, 502, 503].includes(response.status);
+      if (shouldTryFallback) continue;
+      throw new Error(data?.detail || fallbackMessage);
+    }
+    return data || {};
+  }
+  throw new Error(fallbackMessage);
+};
+
 const GLOBAL_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: ${T.bg}; }
 
   @keyframes fadeSlideUp {
     from { opacity: 0; transform: translateY(18px); }
@@ -256,6 +296,40 @@ const GLOBAL_CSS = `
     position: absolute; border-radius: 50%;
     filter: blur(60px); pointer-events: none; z-index: 0;
     animation: orb 12s ease-in-out infinite;
+  }
+
+  .quiz-shell {
+    position: relative;
+    z-index: 1;
+    width: min(1220px, 96vw);
+    min-height: calc(100vh - 170px);
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .quiz-side {
+    background: linear-gradient(160deg, #0F2233 0%, #16364B 100%);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 28px 24px;
+    color: #d6e7f3;
+    box-shadow: 0 4px 32px rgba(15,34,51,0.24);
+  }
+
+  .quiz-main {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  @media (max-width: 980px) {
+    .quiz-shell {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
+    .quiz-side { display: none; }
   }
 `;
 
@@ -495,7 +569,7 @@ function QuestionCard({ question, selectedValue, onSelect, questionIndex, totalQ
       borderRadius: 24,
       padding: "36px 40px",
       boxShadow: "0 4px 40px rgba(13,37,53,0.1), 0 1px 0 rgba(255,255,255,0.8) inset",
-      width: "100%", maxWidth: 560,
+      width: "100%", maxWidth: 840, minHeight: "70vh",
       position: "relative", overflow: "hidden",
     }}>
       {/* Subtle top accent line */}
@@ -605,7 +679,7 @@ function QuestionCard({ question, selectedValue, onSelect, questionIndex, totalQ
 }
 
 // ─── COMPLETION SCREEN ────────────────────────────────────────────────────────
-function CompletionScreen({ profile, onContinue }) {
+function CompletionScreen({ profile, onContinue, saving }) {
   const items = useMemo(() => buildSummaryItems(profile), [profile]);
   const situationLabel = {
     student:      "Student",
@@ -620,7 +694,7 @@ function CompletionScreen({ profile, onContinue }) {
       borderRadius: 24,
       padding: "44px 40px",
       boxShadow: "0 4px 40px rgba(13,37,53,0.1)",
-      width: "100%", maxWidth: 560,
+      width: "100%", maxWidth: 840, minHeight: "70vh",
       textAlign: "center",
       position: "relative", overflow: "hidden",
     }}>
@@ -725,8 +799,9 @@ function CompletionScreen({ profile, onContinue }) {
         className="cta-btn"
         style={{ width: "100%", justifyContent: "center", fontSize: 15.5, padding: "15px" }}
         onClick={onContinue}
+        disabled={saving}
       >
-        Go to my Dashboard
+        {saving ? "Saving profile..." : "Go to my Dashboard"}
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="M3 8H13M13 8L8.5 3.5M13 8L8.5 12.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
@@ -769,6 +844,8 @@ export default function FinancialQuiz({ onComplete }) {
   const [history, setHistory]           = useState([]);
   const [done, setDone]                 = useState(false);
   const [profile, setProfile]           = useState(null);
+  const [saveError, setSaveError]       = useState("");
+  const [saving, setSaving]             = useState(false);
   const [animKey, setAnimKey]           = useState(0);
 
   const currentQuestion = QUESTIONS[currentId];
@@ -817,11 +894,28 @@ export default function FinancialQuiz({ onComplete }) {
     setAnimKey(k => k + 1);
   };
 
-  const handleContinue = () => {
-    if (profile) {
+  const handleContinue = async () => {
+    if (!profile) return;
+
+    const userId = localStorage.getItem("auth_user_id");
+    setSaving(true);
+    setSaveError("");
+
+    try {
+      if (userId) {
+        await postJson(
+          `/users/${userId}/quiz-results`,
+          { profile, answers },
+          "Unable to save quiz results"
+        );
+      }
       window.dispatchEvent(new CustomEvent("finsight:quiz:complete", { detail: profile }));
+      navigate("/dashboard");
+    } catch (error) {
+      setSaveError(error?.message || "Unable to save quiz results");
+    } finally {
+      setSaving(false);
     }
-    navigate("/dashboard");
   };
 
   return (
@@ -829,13 +923,13 @@ export default function FinancialQuiz({ onComplete }) {
       <style>{GLOBAL_CSS}</style>
 
       <div style={{
-        minHeight: "100vh",
+        minHeight: "100vh", width: "100vw",
         background: `radial-gradient(ellipse at 70% 10%, rgba(249,115,22,0.06) 0%, transparent 50%),
                      radial-gradient(ellipse at 10% 80%, rgba(11,138,138,0.07) 0%, transparent 50%),
                      ${T.bg}`,
         display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
-        padding: "28px 16px",
+        padding: "24px 16px",
         fontFamily: "'Plus Jakarta Sans', sans-serif",
         position: "relative", overflow: "hidden",
       }}>
@@ -868,22 +962,54 @@ export default function FinancialQuiz({ onComplete }) {
         </div>
 
         {/* ── Content ── */}
-        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 560 }}>
-          {done && profile ? (
-            <CompletionScreen profile={profile} onContinue={handleContinue} key="done" />
-          ) : currentQuestion ? (
-            <QuestionCard
-              key={animKey}
-              question={currentQuestion}
-              selectedValue={displayValue}
-              onSelect={handleSelect}
-              questionIndex={Math.max(0, questionIndex)}
-              totalQuestions={Math.max(totalEstimated, questionIndex + 1)}
-              onBack={handleBack}
-              canGoBack={history.length > 0}
-            />
-          ) : null}
+        <div className="quiz-shell">
+          <aside className="quiz-side">
+            <p style={{ fontSize: 11, letterSpacing: 1.2, textTransform: "uppercase", opacity: 0.7, marginBottom: 14 }}>Profile Setup</p>
+            <h3 style={{ fontSize: 26, lineHeight: 1.2, color: "#fff", fontFamily: "'Outfit', sans-serif", marginBottom: 10 }}>
+              Build your personal financial DNA
+            </h3>
+            <p style={{ fontSize: 13.5, lineHeight: 1.7, opacity: 0.86, marginBottom: 18 }}>
+              We use your selections to personalize dashboard insights, learning paths, and spending nudges.
+            </p>
+            <div style={{ height: 1, background: "rgba(255,255,255,0.14)", marginBottom: 16 }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {[
+                "Adaptive question flow",
+                "Stores profile under your account",
+                "Immediate dashboard personalization",
+              ].map((item) => (
+                <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#d2e5ef" }}>
+                  <span style={{ color: "#0E9F79", fontWeight: 800 }}>●</span>
+                  {item}
+                </div>
+              ))}
+            </div>
+          </aside>
+
+          <div className="quiz-main">
+            {done && profile ? (
+              <CompletionScreen profile={profile} onContinue={handleContinue} saving={saving} key="done" />
+            ) : currentQuestion ? (
+              <QuestionCard
+                key={animKey}
+                question={currentQuestion}
+                selectedValue={displayValue}
+                onSelect={handleSelect}
+                questionIndex={Math.max(0, questionIndex)}
+                totalQuestions={Math.max(totalEstimated, questionIndex + 1)}
+                onBack={handleBack}
+                canGoBack={history.length > 0}
+              />
+            ) : null}
+          </div>
         </div>
+
+        {done && saveError && (
+          <p style={{ marginTop: 10, color: "#b91c1c", fontSize: 13, fontWeight: 600, zIndex: 2 }}>{saveError}</p>
+        )}
+        {done && saving && (
+          <p style={{ marginTop: 10, color: T.teal, fontSize: 13, fontWeight: 700, zIndex: 2 }}>Saving your profile...</p>
+        )}
 
         {/* ── Footer ── */}
         <p style={{

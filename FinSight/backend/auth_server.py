@@ -356,6 +356,54 @@ def deduct_points(user_id: str):
     return jsonify(result), 201
 
 
+@app.route('/users/<user_id>/quiz-results', methods=['POST'])
+def save_quiz_results(user_id: str):
+    user_oid = _to_object_id(user_id)
+    if not user_oid:
+        return _json_error('Invalid user_id format', 400)
+
+    data = request.get_json(silent=True) or {}
+    profile = data.get('profile')
+    answers = data.get('answers')
+
+    if not isinstance(profile, dict):
+        return _json_error('profile must be an object', 400)
+    if answers is not None and not isinstance(answers, dict):
+        return _json_error('answers must be an object when provided', 400)
+
+    users_collection, db_error = _get_profiles_collection()
+    if users_collection is None:
+        return _json_error(f'Database unavailable: {db_error}', 503)
+
+    now = datetime.utcnow()
+    try:
+        updated = users_collection.find_one_and_update(
+            {'_id': user_oid},
+            {
+                '$set': {
+                    'quiz_profile': profile,
+                    'quiz_answers': answers or {},
+                    'quiz_completed_at': now,
+                    'updated_at': now,
+                }
+            },
+            return_document=ReturnDocument.AFTER,
+        )
+    except errors.PyMongoError as exc:
+        return _json_error(f'Database error while saving quiz results: {exc}', 500)
+
+    if not updated:
+        return _json_error('User not found', 404)
+
+    return jsonify(
+        {
+            'user_id': user_id,
+            'quiz_profile': updated.get('quiz_profile', {}),
+            'quiz_completed_at': updated.get('quiz_completed_at').isoformat() if updated.get('quiz_completed_at') else None,
+        }
+    ), 200
+
+
 if __name__ == '__main__':
     auth_port = int(os.getenv('AUTH_PORT', '8001'))
     app.run(host='0.0.0.0', port=auth_port, debug=True)

@@ -9,20 +9,20 @@ import { useNavigate } from "react-router-dom";
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const T = {
   // Background
-  bg:          "#ECF6F2",
+  bg:          "#ECF2FF",
   bgCard:      "#FFFFFF",
   bgDeep:      "#0F2233",
 
-  // Primary – FinSight green/teal
-  orange:      "#0E9F79",
-  orangeLight: "#E9F8F2",
-  orangeDark:  "#0B7D61",
-  orangeGlow:  "rgba(14,159,121,0.22)",
+  // Primary – FinSight blue
+  orange:      "#1D4ED8",
+  orangeLight: "#EBF0FE",
+  orangeDark:  "#1E40AF",
+  orangeGlow:  "rgba(37,99,235,0.22)",
 
-  // Accent – teal
-  teal:        "#0B8A8A",
-  tealLight:   "#E2F5F5",
-  tealMid:     "#7ECECE",
+  // Accent – blue
+  teal:        "#2563EB",
+  tealLight:   "#DBEAFE",
+  tealMid:     "#93C5FD",
 
   // Neutrals
   navy:        "#0D2535",
@@ -34,19 +34,19 @@ const T = {
   offWhite:    "#F5F9FC",
 
   // Option card accent colours (like LearnIQ pastel cards)
-  mint:        "#E8F8F4",
-  mintBorder:  "#9EDDD0",
-  peach:       "#EDF9F6",
-  peachBorder: "#A7DED1",
-  lavender:    "#F0FAF7",
-  lavBorder:   "#B6E7DA",
+  mint:        "#EEF4FF",
+  mintBorder:  "#BFD4FF",
+  peach:       "#EFF4FF",
+  peachBorder: "#C5D6FF",
+  lavender:    "#F3F7FF",
+  lavBorder:   "#CBDBFF",
   sky:         "#E8F3FF",
   skyBorder:   "#A9C8F5",
-  lemon:       "#F5FCF9",
-  lemonBorder: "#C7EBDD",
+  lemon:       "#F3F7FF",
+  lemonBorder: "#D0DEFF",
 
-  green:       "#15803D",
-  greenLight:  "#DCFCE7",
+  green:       "#1D4ED8",
+  greenLight:  "#DBEAFE",
 };
 
 const CARD_PALETTES = [
@@ -979,7 +979,7 @@ export default function FinancialQuiz({ onComplete }) {
                 "Immediate dashboard personalization",
               ].map((item) => (
                 <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#d2e5ef" }}>
-                  <span style={{ color: "#0E9F79", fontWeight: 800 }}>●</span>
+                  <span style={{ color: "#1D4ED8", fontWeight: 800 }}>●</span>
                   {item}
                 </div>
               ))}

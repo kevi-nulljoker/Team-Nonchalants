@@ -10,10 +10,10 @@ import AppNavbar from "../components/AppNavbar";
    DESIGN TOKENS — Finsight brand palette
 ───────────────────────────────────────────────────────────────*/
 const G = {
-  primary:      "#22A96A",
-  primaryDk:    "#178050",
-  primaryLt:    "#EAF6F0",
-  primaryMd:    "#B2DEC8",
+  primary:      "#2563EB",
+  primaryDk:    "#1D4ED8",
+  primaryLt:    "#EBF0FE",
+  primaryMd:    "#BFDBFE",
   navy:         "#0E1E2E",
   navyMid:      "#1C3043",
   slate:        "#475569",
@@ -32,6 +32,7 @@ const G = {
   blueLt:       "#EEF5FD",
   shadow:       "0 1px 8px rgba(11,27,53,0.06)",
   shadowMd:     "0 4px 24px rgba(11,27,53,0.10)",
+  greenMid:     "#93C5FD",
 };
 
 /* ─────────────────────────────────────────────────────────────
@@ -615,8 +616,9 @@ export default function GoalsSection() {
   const grandPct    = pct(grandSaved, grandTarget);
 
   return (
-    <div style={{ minHeight:"100vh",width:"100vw", background:G.bg, fontFamily:"'Manrope','DM Sans','Segoe UI',sans-serif", padding:"24px 24px 72px", color:G.navy }}>
-      <AppNavbar />
+    <div style={{ minHeight:"100vh", width:"100vw", background:G.bg, fontFamily:"'Manrope','DM Sans','Segoe UI',sans-serif", padding:"24px 24px 72px", color:G.navy }}>
+      <div style={{ maxWidth: 1320, margin: "0 auto" }}>
+        <AppNavbar />
 
       {/* ── FONTS + GLOBAL STYLES ─────────────────────────────── */}
       <style>{`
@@ -733,6 +735,7 @@ export default function GoalsSection() {
           onClose={closeModal}
         />
       )}
+      </div>
     </div>
   );
 }

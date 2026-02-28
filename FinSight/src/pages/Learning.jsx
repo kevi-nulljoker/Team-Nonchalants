@@ -5,10 +5,10 @@ import { awardPoints, getPointsSummary, getStoredPoints } from "../services/poin
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const C = {
   // Finsight primary greens
-  teal:       "#0E9F79",
-  tealDark:   "#0B7D61",
-  tealLight:  "#E9F8F2",
-  tealMid:    "#BFEADB",
+  teal:       "#1D4ED8",
+  tealDark:   "#1E40AF",
+  tealLight:  "#EBF0FE",
+  tealMid:    "#BFDBFE",
   // Text
   navy:       "#0F2233",
   navyLight:  "#1F3C55",
@@ -20,20 +20,20 @@ const C = {
   goldLight:  "#FFF3D8",
   goldBorder: "#E6B547",
   // Status
-  green:      "#17976E",
-  greenLight: "#E8F7F0",
+  green:      "#2563EB",
+  greenLight: "#DBEAFE",
   red:        "#DC4E4E",
   redLight:   "#FFF2F2",
   // Keep non-purple accents for CTAs
-  indigo:     "#148B7E",
-  indigoLight:"#DCF4EF",
+  indigo:     "#1E40AF",
+  indigoLight:"#DBEAFE",
   amber:      "#CC7A17",
   white:      "#FFFFFF",
   // Backgrounds
   bg:         "#E9EEF6",
   bgCard:     "#FFFFFF",
-  border:     "#D5E8DF",
-  borderSoft: "#EAF4EF",
+  border:     "#D6E2FA",
+  borderSoft: "#EFF4FF",
 };
 
 // ─── CURRICULUM DATA ──────────────────────────────────────────────────────────
@@ -43,8 +43,8 @@ const CURRICULUM = [
     title: "Financial Foundations",
     subtitle: "Start your journey here",
     icon: "🏗️",
-    color: "#2A9D6A",
-    gradient: "linear-gradient(135deg, #1E7A50 0%, #2A9D6A 100%)",
+    color: "#2563EB",
+    gradient: "linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%)",
     level: "Beginner",
     totalPts: 375,
     lock: { type: "open" },
@@ -92,8 +92,8 @@ const CURRICULUM = [
     title: "Budgeting & Expense Tracking",
     subtitle: "Build iron-clad money habits",
     icon: "📋",
-    color: "#1A8C5A",
-    gradient: "linear-gradient(135deg, #0F6640 0%, #1A8C5A 100%)",
+    color: "#1E40AF",
+    gradient: "linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%)",
     level: "Beginner",
     totalPts: 425,
     lock: { type: "open" },
@@ -458,8 +458,8 @@ const initUnlocked = () => {
 
 // ─── UTILS ─────────────────────────────────────────────────────────────────────
 const pct = (n, d) => d === 0 ? 0 : Math.round((n / d) * 100);
-const levelColor = l => ({ Beginner: C.teal, Intermediate: "#127D66", Advanced: "#0C5D4E" }[l] || C.teal);
-const levelBg    = l => ({ Beginner: C.tealLight, Intermediate: "#D8F2E8", Advanced: "#C1E8DB" }[l] || C.tealLight);
+const levelColor = l => ({ Beginner: C.teal, Intermediate: "#1E40AF", Advanced: "#1E3A8A" }[l] || C.teal);
+const levelBg    = l => ({ Beginner: C.tealLight, Intermediate: "#DBEAFE", Advanced: "#BFDBFE" }[l] || C.tealLight);
 
 // ─── ANIMATIONS CSS ────────────────────────────────────────────────────────────
 const STYLES = `
@@ -1921,7 +1921,7 @@ function PointsUnlockModal({ cat, points, canUnlock, onUnlock, onBuyPoints, onCl
             {points + bp.pts >= cat.lock.required ? (
               <button onClick={() => { onUnlock(); }} style={{
                 marginTop: 16, padding: "12px 28px", borderRadius: 11,
-                background: `linear-gradient(135deg,${C.green},#15803D)`,
+                background: `linear-gradient(135deg,${C.green},#1D4ED8)`,
                 color: "white", border: "none", fontWeight: 800, fontSize: 15,
                 cursor: "pointer", fontFamily: "inherit",
               }}>🔓 Unlock Now!</button>
@@ -2016,7 +2016,7 @@ function PointsUnlockModal({ cat, points, canUnlock, onUnlock, onBuyPoints, onCl
               {canUnlock ? (
                 <button onClick={onUnlock} style={{
                   padding: "12px", borderRadius: 11,
-                  background: `linear-gradient(135deg,${C.green},#15803D)`,
+                  background: `linear-gradient(135deg,${C.green},#1D4ED8)`,
                   color: "white", border: "none", fontWeight: 800, fontSize: 15,
                   cursor: "pointer", fontFamily: "inherit",
                 }}>🔓 Unlock with {cat.lock.required.toLocaleString()} Points</button>

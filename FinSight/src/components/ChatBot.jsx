@@ -9,11 +9,12 @@ const QUICK_PROMPTS = [
   "Is SIP better than fixed deposit?",
 ];
 
-async function getBotReply(message) {
+async function getBotReply(message, signal) {
   const res = await fetch(CHAT_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message }),
+    signal,
   });
 
   let data = null;
@@ -49,6 +50,9 @@ export default function ChatBot() {
 
   const listRef = useRef(null);
   const pendingRef = useRef(false);
+  const lastSentRef = useRef({ text: "", at: 0 });
+  const lastReplyRef = useRef({ text: "", at: 0 });
+  const activeAbortRef = useRef(null);
 
   const appendMessage = (next) => {
     setMessages((prev) => {
@@ -65,29 +69,55 @@ export default function ChatBot() {
 
   const submitText = async (rawText) => {
     const text = rawText.trim();
+    const normalizedText = text.toLowerCase();
+    const now = Date.now();
     if (!text || loading || pendingRef.current) return;
+    if (lastSentRef.current.text === normalizedText && now - lastSentRef.current.at < 1200) return;
 
     setInput("");
     appendMessage({ role: "user", text });
     pendingRef.current = true;
+    lastSentRef.current = { text: normalizedText, at: now };
     setLoading(true);
 
     try {
-      const reply = await getBotReply(text);
-      appendMessage({ role: "assistant", text: reply });
+      if (activeAbortRef.current) activeAbortRef.current.abort();
+      const controller = new AbortController();
+      activeAbortRef.current = controller;
+      const timeoutId = window.setTimeout(() => controller.abort(), 25000);
+      let reply = "";
+      try {
+        reply = await getBotReply(text, controller.signal);
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+      const normalizedReply = reply.trim().toLowerCase();
+      const isRapidDuplicate = lastReplyRef.current.text === normalizedReply && Date.now() - lastReplyRef.current.at < 1500;
+      if (!isRapidDuplicate) {
+        appendMessage({ role: "assistant", text: reply });
+        lastReplyRef.current = { text: normalizedReply, at: Date.now() };
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Backend chatbot is unavailable.";
+      const friendlyMessage = message === "The operation was aborted."
+        ? "Response timed out. Please try again."
+        : message;
       appendMessage({
         role: "assistant",
         text:
-          `backend/ChatBot.py error: ${message}\n` +
+          `backend/ChatBot.py error: ${friendlyMessage}\n` +
           "Start backend with: python backend/ChatBot.py",
       });
     } finally {
+      activeAbortRef.current = null;
       pendingRef.current = false;
       setLoading(false);
     }
   };
+
+  useEffect(() => () => {
+    if (activeAbortRef.current) activeAbortRef.current.abort();
+  }, []);
 
   const sendMessage = async (event) => {
     event.preventDefault();
@@ -126,7 +156,7 @@ export default function ChatBot() {
               justifyContent: "space-between",
               gap: 10,
               padding: "12px 14px",
-              background: "linear-gradient(135deg, #0E9F79, #0B7D61)",
+              background: "linear-gradient(135deg, #2563EB, #1D4ED8)",
               color: "#ffffff",
             }}
           >
@@ -216,7 +246,7 @@ export default function ChatBot() {
               flexDirection: "column",
               gap: 10,
               background:
-                "radial-gradient(circle at 90% 10%, rgba(14,159,121,0.08), transparent 30%), #f5faf7",
+                "radial-gradient(circle at 90% 10%, rgba(37,99,235,0.10), transparent 30%), #f5f8ff",
             }}
           >
             {messages.map((m, idx) => {
@@ -235,7 +265,7 @@ export default function ChatBot() {
                       maxWidth: "84%",
                       padding: "9px 11px",
                       borderRadius: isUser ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
-                      background: isUser ? "linear-gradient(135deg, #0E9F79, #0B7D61)" : "#ffffff",
+                      background: isUser ? "linear-gradient(135deg, #2563EB, #1D4ED8)" : "#ffffff",
                       border: isUser ? "none" : "1px solid #dbe8e0",
                       color: isUser ? "#ffffff" : "#122636",
                       fontSize: 13,
@@ -243,7 +273,7 @@ export default function ChatBot() {
                       whiteSpace: "pre-wrap",
                       wordBreak: "break-word",
                       boxShadow: isUser
-                        ? "0 8px 18px rgba(14,159,121,0.28)"
+                        ? "0 8px 18px rgba(37,99,235,0.28)"
                         : "0 3px 10px rgba(16,34,51,0.06)",
                     }}
                   >
@@ -286,6 +316,7 @@ export default function ChatBot() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              disabled={loading}
               placeholder="Ask anything about your money..."
               style={{
                 flex: 1,
@@ -307,7 +338,7 @@ export default function ChatBot() {
                 borderRadius: 11,
                 minWidth: 72,
                 padding: "10px 12px",
-                background: loading ? "#9bc8b9" : "linear-gradient(135deg, #0E9F79, #0B7D61)",
+                background: loading ? "#AFC4F5" : "linear-gradient(135deg, #2563EB, #1D4ED8)",
                 color: "#ffffff",
                 fontWeight: 700,
                 fontSize: 12,
@@ -328,12 +359,12 @@ export default function ChatBot() {
           height: 60,
           borderRadius: "50%",
           border: "none",
-          background: "linear-gradient(135deg, #0E9F79, #0B7D61)",
+          background: "linear-gradient(135deg, #2563EB, #1D4ED8)",
           color: "#fff",
           fontSize: 13,
           fontWeight: 800,
           cursor: "pointer",
-          boxShadow: "0 12px 26px rgba(14, 159, 121, 0.36)",
+          boxShadow: "0 12px 26px rgba(37, 99, 235, 0.36)",
           letterSpacing: 0.2,
         }}
       >

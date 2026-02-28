@@ -5,7 +5,7 @@ import AppNavbar from "../components/AppNavbar";
 // ─── COLOR PALETTE (matches Dashboard) ──────────────────────────────────────
 const P = {
   bg: "#E9EEF6", card: "#FFFFFF", navy: "#0B1B35", navyMid: "#1C304F",
-  blue: "#1A56E8", blueLight: "#EBF0FE", teal: "#0D9488", tealLight: "#ECFDF5",
+  blue: "#1A56E8", blueLight: "#EBF0FE", teal: "#1D4ED8", tealLight: "#EBF0FE",
   amber: "#D97706", amberLight: "#FEF3C7", red: "#DC2626", redLight: "#FEF2F2",
   purple: "#7C3AED", purpleLight: "#F5F3FF", slate: "#64748B", muted: "#94A3B8",
   faint: "#CBD5E1", border: "#E2E8F0", borderSoft: "#F1F5F9",
@@ -14,11 +14,11 @@ const P = {
 
 // Category colours (same as Dashboard)
 const CAT_COLORS = {
-  food: "#16A34A",
+  food: "#2563EB",
   shopping: "#7C3AED",
   education: "#1A56E8",
   emi: "#DC2626",
-  investment: "#0D9488",
+  investment: "#1D4ED8",
   travel: "#D97706",
   healthcare: "#DB2777",
   utilities: "#0284C7",

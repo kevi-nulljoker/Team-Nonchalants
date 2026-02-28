@@ -2,6 +2,8 @@ import React, { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const authStyles = `
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,8 +12,8 @@ const authStyles = `
 
 body {
   margin: 0;
-  font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: #f3f6fb;
+  font-family: "Manrope", "DM Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #e9eef6;
 }
 
 .auth-page {
@@ -27,9 +29,12 @@ body {
   
   color: #ffffff;
   background:
-    linear-gradient(180deg, rgba(3, 81, 60, 0.25), rgba(1, 52, 39, 0.65)),
-    radial-gradient(circle at 20% 20%, rgba(90, 175, 157, 0.65), transparent 45%),
-    linear-gradient(135deg, #81ac9e, #3e7e74 55%, #094a3b);
+    linear-gradient(180deg, rgba(15, 35, 84, 0.42), rgba(10, 21, 54, 0.74)),
+    url("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1800&q=80"),
+    radial-gradient(circle at 20% 20%, rgba(96, 165, 250, 0.5), transparent 45%),
+    linear-gradient(135deg, #94b8ff, #3b82f6 55%, #1e3a8a);
+  background-size: cover, cover, cover, cover;
+  background-position: center, center, center, center;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -46,6 +51,18 @@ body {
   pointer-events: none;
 }
 
+.auth-left::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(191, 219, 254, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(191, 219, 254, 0.18) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.06));
+}
+
 .left-content {
   position: relative;
   z-index: 1;
@@ -60,8 +77,8 @@ body {
   gap: 8px;
   padding: 8px 18px;
   border-radius: 100px;
-  background: rgba(65, 195, 150, 0.25);
-  border: 1px solid rgba(180, 255, 230, 0.3);
+  background: rgba(96, 165, 250, 0.23);
+  border: 1px solid rgba(191, 219, 254, 0.45);
   font-weight: 500;
   font-size: 14px;
   letter-spacing: 0.3px;
@@ -82,7 +99,7 @@ body {
 }
 
 .left-title span {
-  color: #38e4b3;
+  color: #bfdbfe;
 }
 
 .left-sub {
@@ -113,7 +130,7 @@ body {
   display: block;
   font-size: 30px;
   line-height: 1.2;
-  color: #38e4b3;
+  color: #bfdbfe;
   margin-bottom: 4px;
 }
 
@@ -150,7 +167,7 @@ body {
   width: 44px;
   height: 44px;
   border-radius: 14px;
-  background: #09a77d;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #ffffff;
   display: grid;
   place-items: center;
@@ -201,12 +218,12 @@ body {
 
 .toggle button.active {
   background: #ffffff;
-  color: #09a77d;
+  color: #1d4ed8;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .toggle button:focus-visible {
-  outline: 2px solid #09a77d;
+  outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
 
@@ -237,7 +254,7 @@ body {
 .link {
   font-size: 13px;
   font-weight: 500;
-  color: #09a77d;
+  color: #1d4ed8;
   text-decoration: none;
 }
 
@@ -246,7 +263,7 @@ body {
 }
 
 .link:focus-visible {
-  outline: 2px solid #09a77d;
+  outline: 2px solid #2563eb;
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -264,9 +281,9 @@ body {
 }
 
 .input:focus-within {
-  border-color: #09a77d;
+  border-color: #2563eb;
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(9, 167, 125, 0.1);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
 }
 
 .input.error {
@@ -314,7 +331,7 @@ body {
 }
 
 .eye-icon:hover {
-  color: #09a77d;
+  color: #1d4ed8;
 }
 
 .error-message {
@@ -337,7 +354,7 @@ body {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #09a77d;
+  accent-color: #2563eb;
 }
 
 .submit {
@@ -345,7 +362,7 @@ body {
   height: 54px;
   border: 0;
   border-radius: 14px;
-  background: #09a77d;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #ffffff;
   font-size: 16px;
   font-weight: 600;
@@ -360,13 +377,13 @@ body {
 }
 
 .submit:hover:not(:disabled) {
-  background: #078f6b;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
   transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(9, 167, 125, 0.25);
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
 }
 
 .submit:focus-visible {
-  outline: 2px solid #09a77d;
+  outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
 
@@ -442,7 +459,7 @@ body {
 }
 
 .social:focus-visible {
-  outline: 2px solid #09a77d;
+  outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
 

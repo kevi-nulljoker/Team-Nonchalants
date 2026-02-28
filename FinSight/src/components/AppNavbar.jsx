@@ -6,7 +6,7 @@ const P = {
   card: "#FFFFFF",
   navy: "#0B1B35",
   blue: "#1A56E8",
-  teal: "#0D9488",
+  teal: "#1D4ED8",
   purple: "#7C3AED",
   slate: "#64748B",
   muted: "#94A3B8",
@@ -189,4 +189,3 @@ export default function AppNavbar() {
     </div>
   );
 }
-

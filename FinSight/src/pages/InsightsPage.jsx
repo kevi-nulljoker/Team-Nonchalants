@@ -12,6 +12,7 @@ const styles = `
     background: #E9EEF6;
     color: #0B1B35;
     min-height: 100vh;
+    width: 100vw; 
   }
 
   /* ── Page content ── */
@@ -38,7 +39,7 @@ const styles = `
   }
   .badge-red    { background: #fee2e2; color: #dc2626; }
   .badge-amber  { background: #fef3c7; color: #d97706; }
-  .badge-green  { background: #d1fae5; color: #2d6a4f; }
+  .badge-green  { background: #DBEAFE; color: #1D4ED8; }
 
   /* ── Alert Banner ── */
   .alert-banner {
@@ -342,7 +343,6 @@ export default function InsightsPage() {
               <span className="badge badge-red" style={{ marginBottom: 8, display: "inline-flex" }}>
                 ⚠ Score {safeScore}/100
               </span>
-              <p className="period" style={{ marginTop: 4 }}>Darshan Khapekar</p>
             </div>
           </div>
 

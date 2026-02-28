@@ -9,7 +9,7 @@ import {
 // ─── DESIGN TOKENS ───────────────────────────────────────────────────────────
 const P = {
   bg: "#E9EEF6", card: "#FFFFFF", navy: "#0B1B35", navyMid: "#1C304F",
-  blue: "#1A56E8", blueLight: "#EBF0FE", teal: "#0D9488", tealLight: "#ECFDF5",
+  blue: "#1A56E8", blueLight: "#EBF0FE", teal: "#1D4ED8", tealLight: "#EBF0FE",
   amber: "#D97706", amberLight: "#FEF3C7", red: "#DC2626", redLight: "#FEF2F2",
   purple: "#7C3AED", purpleLight: "#F5F3FF", slate: "#64748B", muted: "#94A3B8",
   faint: "#CBD5E1", border: "#E2E8F0", borderSoft: "#F1F5F9",
@@ -17,11 +17,11 @@ const P = {
 };
 
 const CATS = {
-  food: { label: "Food & Dining", color: "#16A34A", icon: "🍜", budget: 25000 },
+  food: { label: "Food & Dining", color: "#2563EB", icon: "🍜", budget: 25000 },
   shopping: { label: "Shopping", color: "#7C3AED", icon: "🛍", budget: 20000 },
   education: { label: "Education", color: "#1A56E8", icon: "📖", budget: 20000 },
   emi: { label: "EMI / Loans", color: "#DC2626", icon: "🏦", budget: 30000 },
-  investment: { label: "Investment", color: "#0D9488", icon: "📈", budget: 35000 },
+  investment: { label: "Investment", color: "#1D4ED8", icon: "📈", budget: 35000 },
   travel: { label: "Travel", color: "#D97706", icon: "✈", budget: 20000 },
   healthcare: { label: "Healthcare", color: "#DB2777", icon: "💊", budget: 15000 },
   utilities: { label: "Utilities", color: "#0284C7", icon: "⚡", budget: 15000 },
@@ -91,7 +91,7 @@ const LEARNING_MODULES = [
 // Point tiers
 const TIERS = [
   { name: "Beginner", min: 0, max: 100, color: "#94A3B8", icon: "🌱" },
-  { name: "Learner", min: 100, max: 300, color: "#16A34A", icon: "📗" },
+  { name: "Learner", min: 100, max: 300, color: "#2563EB", icon: "📗" },
   { name: "Scholar", min: 300, max: 600, color: "#1A56E8", icon: "🎓" },
   { name: "Expert", min: 600, max: 1000, color: "#7C3AED", icon: "🏆" },
   { name: "Master", min: 1000, max: Infinity, color: "#D97706", icon: "👑" },
@@ -127,7 +127,7 @@ const NAV_ITEMS = [
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; width: 100%; }
 
   body {
     background: #E9EEF6;
@@ -301,18 +301,18 @@ const styles = `
     border-radius: 99px;
     border: none;
     cursor: pointer;
-    background: linear-gradient(135deg, #0D9488, #0f766e);
+    background: linear-gradient(135deg, #2563EB, #1D4ED8);
     color: #fff;
     font-size: 11px;
     font-weight: 700;
-    box-shadow: 0 3px 10px rgba(13, 148, 136, 0.35);
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
     transition: all 0.15s;
   }
   .checkin-badge {
     font-size: 11px;
     font-weight: 700;
-    color: #0D9488;
-    background: #ECFDF5;
+    color: #1D4ED8;
+    background: #EBF0FE;
     padding: 6px 12px;
     border-radius: 99px;
   }
@@ -877,15 +877,15 @@ export default function Dashboard() {
           {/* Points badge in nav */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{
-              display: "flex", alignItems: "center", gap: 6,
+              display: "flex", alignItems: "center", gap: 5,
               background: `linear-gradient(135deg,${P.gold}18,${P.goldLight})`,
               border: `1px solid ${P.gold}44`,
-              borderRadius: 99, padding: "6px 12px",
+              borderRadius: 99, padding: "4px 9px",
             }}>
-              <span style={{ fontSize: 14 }}>{currentTier.icon}</span>
+              <span style={{ fontSize: 12 }}>{currentTier.icon}</span>
               <div>
-                <p style={{ fontSize: 11, fontWeight: 800, color: P.navy, lineHeight: 1 }}>{coinPoints.toLocaleString()} coins</p>
-                <p style={{ fontSize: 9, color: P.muted, lineHeight: 1 }}>{currentTier.name}</p>
+                <p style={{ fontSize: 10, fontWeight: 800, color: P.navy, lineHeight: 1 }}>{coinPoints.toLocaleString()} coins</p>
+                <p style={{ fontSize: 8.5, color: P.muted, lineHeight: 1 }}>{currentTier.name}</p>
               </div>
             </div>
             <div style={{

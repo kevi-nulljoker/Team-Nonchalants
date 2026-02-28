@@ -43,6 +43,7 @@ body {
   border-radius: 30px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08));
   border: 1px solid rgba(255, 255, 255, 0.18);
+  pointer-events: none;
 }
 
 .left-content {
@@ -602,13 +603,16 @@ function AuthPage() {
   const submitButtonRef = useRef(null);
 
   const handleChange = useCallback((e) => {
-    const { id, value, type, checked } = e.target;
+    const { id, name, value, type, checked } = e.target;
+    const key = id || name;
+    if (!key) return;
+
     setFormData(prev => ({
       ...prev,
-      [id]: type === "checkbox" ? checked : value
+      [key]: type === "checkbox" ? checked : value
     }));
-    if (errors[id]) {
-      setErrors(prev => ({ ...prev, [id]: "" }));
+    if (errors[key]) {
+      setErrors(prev => ({ ...prev, [key]: "" }));
     }
     if (submitError) setSubmitError("");
   }, [errors, submitError]);
@@ -658,71 +662,81 @@ function AuthPage() {
   }, [formData, isSignup]);
 
   const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  e.preventDefault();
 
-    setIsLoading(true);
-    setSubmitError("");
+  if (!validateForm()) return;
 
-    try {
-      const normalizedEmail = formData.email.trim().toLowerCase();
+  setIsLoading(true);
+  setSubmitError("");
 
-      let authData = null;
+  try {
+    const normalizedEmail = formData.email.trim().toLowerCase();
+    let authData = null;
 
-      if (isSignup) {
-        const registerData = await postJson(
-          "/register",
-          {
-            name: formData.name.trim(),
-            email: normalizedEmail,
-            password: formData.password,
-            agreeTerms: formData.agreeTerms,
-          },
-          "Sign up failed"
-        );
+    if (isSignup) {
+      // 🔹 REGISTER USER
+      const registerData = await postJson(
+        "/register",
+        {
+          name: formData.name.trim(),
+          email: normalizedEmail,
+          password: formData.password,
+          agreeTerms: formData.agreeTerms,
+        },
+        "Sign up failed"
+      );
 
-        authData = registerData?.access_token
-          ? registerData
-          : await postJson(
-              "/login",
-              {
-                email: normalizedEmail,
-                password: formData.password,
-              },
-              "Authentication failed"
-            );
-      } else {
-        authData = await postJson(
-          "/login",
-          {
-            email: normalizedEmail,
-            password: formData.password,
-          },
-          "Authentication failed"
-        );
-      }
-
-      if (!authData?.access_token) {
-        throw new Error("Authentication token missing in server response");
-      }
-
-      localStorage.setItem("auth_token", authData.access_token);
-      localStorage.setItem("token", authData.access_token);
-      localStorage.setItem("auth_user_id", authData.user_id || authData.id || "");
-      localStorage.setItem("auth_email", normalizedEmail);
-      localStorage.setItem("userEmail", normalizedEmail);
-      if (isSignup) {
-        localStorage.setItem("auth_name", formData.name.trim());
-      }
-
-      navigate("/");
-    } catch (error) {
-      setSubmitError(error.message || "Network error. Please try again.");
-    } finally {
-      setIsLoading(false);
+      // Some backends return token directly on register
+      authData = registerData?.access_token
+        ? registerData
+        : await postJson(
+            "/login",
+            {
+              email: normalizedEmail,
+              password: formData.password,
+            },
+            "Authentication failed"
+          );
+    } else {
+      // 🔹 LOGIN USER
+      authData = await postJson(
+        "/login",
+        {
+          email: normalizedEmail,
+          password: formData.password,
+        },
+        "Authentication failed"
+      );
     }
-  }, [formData, isSignup, validateForm, navigate]);
 
+    if (!authData?.access_token) {
+      throw new Error("Authentication token missing in server response");
+    }
+
+    // 🔹 Store authentication data
+    localStorage.setItem("auth_token", authData.access_token);
+    localStorage.setItem("token", authData.access_token);
+    localStorage.setItem("auth_user_id", authData.user_id || authData.id || "");
+    localStorage.setItem("auth_email", normalizedEmail);
+    localStorage.setItem("userEmail", normalizedEmail);
+
+    if (isSignup) {
+      localStorage.setItem("auth_name", formData.name.trim());
+    }
+
+    // 🔥 CONDITIONAL NAVIGATION
+    if (isSignup) {
+      navigate("/quiz");        // After Sign Up → Quiz
+    } else {
+      navigate("/dashboard");   // After Login → Dashboard
+    }
+
+  } catch (error) {
+    setSubmitError(error.message || "Network error. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+}, [formData, isSignup, validateForm, navigate]);
   const handleModeChange = useCallback((newMode) => {
     setMode(newMode);
     setErrors({});
@@ -819,10 +833,12 @@ function AuthPage() {
                   <input
                     ref={isSignup ? firstFieldRef : null}
                     id="name"
+                    name="name"
                     type="text"
                     placeholder="Enter your full name"
                     value={formData.name}
                     onChange={handleChange}
+                    autoComplete="name"
                     aria-invalid={!!errors.name}
                     aria-describedby={errors.name ? "name-error" : undefined}
                   />
@@ -844,10 +860,12 @@ function AuthPage() {
                 <input
                   ref={!isSignup ? firstFieldRef : null}
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
+                  autoComplete="email"
                   aria-invalid={!!errors.email}
                   aria-describedby={errors.email ? "email-error" : undefined}
                 />
@@ -879,10 +897,12 @@ function AuthPage() {
                 <div className="password-input">
                   <input
                     id="password"
+                    name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder={isSignup ? "Create a password" : "Enter your password"}
                     value={formData.password}
                     onChange={handleChange}
+                    autoComplete={isSignup ? "new-password" : "current-password"}
                     aria-invalid={!!errors.password}
                     aria-describedby={errors.password ? "password-error" : undefined}
                   />
@@ -890,11 +910,11 @@ function AuthPage() {
                 <i
                   className={`fa-regular ${showPassword ? "fa-eye-slash" : "fa-eye"} eye-icon`}
                   onClick={togglePasswordVisibility}
-                  role="button"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  tabIndex={0}
-                  onKeyPress={(e) => e.key === "Enter" && togglePasswordVisibility()}
-                ></i>
+                    role="button"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    tabIndex={0}
+                    onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && togglePasswordVisibility()}
+                  ></i>
               </div>
               {errors.password && (
                 <div id="password-error" className="error-message" role="alert">
@@ -913,10 +933,12 @@ function AuthPage() {
                   <div className="password-input">
                     <input
                       id="confirmPassword"
+                      name="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm your password"
                       value={formData.confirmPassword}
                       onChange={handleChange}
+                      autoComplete="new-password"
                       aria-invalid={!!errors.confirmPassword}
                       aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
                     />
@@ -927,7 +949,7 @@ function AuthPage() {
                     role="button"
                     aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     tabIndex={0}
-                    onKeyPress={(e) => e.key === "Enter" && toggleConfirmPasswordVisibility()}
+                    onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggleConfirmPasswordVisibility()}
                   ></i>
                 </div>
                 {errors.confirmPassword && (
@@ -942,6 +964,7 @@ function AuthPage() {
               <label className="check">
                 <input
                   id="remember"
+                  name="remember"
                   type="checkbox"
                   checked={formData.remember}
                   onChange={handleChange}
@@ -955,6 +978,7 @@ function AuthPage() {
                 <label className="check">
                   <input
                     id="agreeTerms"
+                    name="agreeTerms"
                     type="checkbox"
                     checked={formData.agreeTerms}
                     onChange={handleChange}

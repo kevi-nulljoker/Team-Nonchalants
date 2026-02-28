@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const styles = `
 :root {
@@ -669,7 +670,8 @@ a {
 }
 `;
 
-function HeroSection() {     
+function HeroSection() {    
+  const navigate = useNavigate(); 
   return (
     <div className="page">
       <link
@@ -698,10 +700,10 @@ function HeroSection() {
             <span className="moon">
               <i className="fa-regular fa-moon"></i>
             </span>
-            <a href="" className="signin">
+            <a href="/signup" className="signin">
               Sign In
             </a>
-            <button className="get-started-nav">
+            <button className="get-started-nav" onClick={() => navigate("/signup")}>
               Get Started <i className="fa-solid fa-arrow-right"></i>
             </button>
           </div>
@@ -725,7 +727,7 @@ function HeroSection() {
           </p>
 
           <div className="hero-btns">
-            <button className="btn-main">
+            <button className="btn-main" onClick={() => navigate("/signup")}>
               Get Started for Free <i className="fa-solid fa-arrow-right"></i>
             </button>
             <button className="btn-ghost">

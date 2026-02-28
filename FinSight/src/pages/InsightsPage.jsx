@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import generateFinancialInsights from "../services/financialInsightsEngine";
+import AppNavbar from "../components/AppNavbar";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -397,7 +397,6 @@ function InsightCard({ cardClass, icon, title, subtitle, items }) {
 
 // ── Main component ────────────────────────────────────────────────────
 export default function InsightsPage() {
-  const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState("Insights");
   const report = useMemo(() => generateFinancialInsights(MONGO_SAMPLE_INPUT), []);
   const safeScore = Number.isFinite(report?.financialScore) ? report.financialScore : 0;
@@ -407,7 +406,9 @@ export default function InsightsPage() {
     <>
       <style>{styles}</style>
       <div className="fin-root">
-        <Navbar activeNav={activeNav} setActiveNav={setActiveNav} navigate={navigate} />
+        <div style={{ padding: "14px 24px 0" }}>
+          <AppNavbar />
+        </div>
 
         <div className="page-content">
           {/* Page header */}

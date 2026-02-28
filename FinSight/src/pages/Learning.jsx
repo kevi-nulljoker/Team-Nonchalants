@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect, useRef, useCallback } from "react";
+import AppNavbar from "../components/AppNavbar";
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const C = {
@@ -667,6 +668,9 @@ export default function LearningSection() {
   return (
     <div className="learn-page" style={{ minHeight: "100vh", background: C.bg, fontFamily: "'Inter','Segoe UI',sans-serif" }}>
       <style>{STYLES}</style>
+      <div style={{ padding: "16px clamp(14px,2.8vw,28px) 0" }}>
+        <AppNavbar />
+      </div>
 
       {/* ── TOP BAR ─────────────────────────────────────────── */}
       <header style={{

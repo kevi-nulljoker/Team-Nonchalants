@@ -722,6 +722,7 @@ function AuthPage() {
     if (isSignup) {
       localStorage.setItem("auth_name", formData.name.trim());
     }
+    window.dispatchEvent(new Event("finsight:auth-updated"));
 
     // 🔥 CONDITIONAL NAVIGATION
     if (isSignup) {

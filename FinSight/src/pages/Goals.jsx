@@ -4,6 +4,7 @@
  * Features: Add Goal modal, Add Money inline, live progress, status badges
  */
 import { useState, useMemo } from "react";
+import AppNavbar from "../components/AppNavbar";
 
 /* ─────────────────────────────────────────────────────────────
    DESIGN TOKENS — Finsight brand palette
@@ -615,6 +616,7 @@ export default function GoalsSection() {
 
   return (
     <div style={{ minHeight:"100vh", background:G.bg, fontFamily:"'DM Sans','Inter','Segoe UI',sans-serif", padding:"28px 32px 72px", color:G.navy }}>
+      <AppNavbar />
 
       {/* ── FONTS + GLOBAL STYLES ─────────────────────────────── */}
       <style>{`

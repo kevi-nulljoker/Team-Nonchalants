@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import AppNavbar from "../components/AppNavbar";
 
 // ─── COLOR PALETTE (matches Dashboard) ──────────────────────────────────────
 const P = {
@@ -296,6 +297,7 @@ const Transactions = () => {
     <>
       <style>{styles}</style>
       <div className="txn-page">
+        <AppNavbar />
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, color: P.navy, margin: 0 }}>Transactions</h1>

@@ -18,6 +18,15 @@ export const AuthProvider = ({ children }) => {
   );
   const [loading, setLoading] = useState(true);
 
+  const syncFromStorage = () => {
+    const nextToken = localStorage.getItem('token') || localStorage.getItem('auth_token');
+    const nextEmail = localStorage.getItem('userEmail') || localStorage.getItem('auth_email');
+    const nextName = localStorage.getItem('auth_name') || '';
+    setToken(nextToken || null);
+    if (nextEmail) setUser({ email: nextEmail, name: nextName || '' });
+    else if (!nextToken) setUser(null);
+  };
+
   // On mount, if token exists, optionally fetch user profile
   useEffect(() => {
     const loadUser = async () => {
@@ -52,6 +61,17 @@ export const AuthProvider = ({ children }) => {
     };
     loadUser();
   }, [token]);
+
+  useEffect(() => {
+    const onAuthUpdated = () => syncFromStorage();
+    const onStorage = () => syncFromStorage();
+    window.addEventListener('finsight:auth-updated', onAuthUpdated);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener('finsight:auth-updated', onAuthUpdated);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, []);
 
   // Login function
   const login = async (email, password) => {

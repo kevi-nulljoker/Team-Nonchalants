@@ -148,10 +148,11 @@ const styles = `
 // ─── HELPER: format currency ────────────────────────────────────────────────
 const formatINR = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amt);
 
-const TXN_API_BASE = (
-  import.meta.env.VITE_TXN_API_URL ||
-  'http://127.0.0.1:8000'
-).replace(/\/$/, '');
+const TXN_API_BASES = Array.from(new Set([
+  (import.meta.env.VITE_TXN_API_URL || '').replace(/\/$/, ''),
+  'http://127.0.0.1:8000',
+  'http://localhost:8000',
+].filter(Boolean)));
 
 async function readErrorMessage(res, fallback) {
   try {
@@ -165,6 +166,26 @@ async function readErrorMessage(res, fallback) {
       return fallback;
     }
   }
+}
+
+async function requestWithFallback(path, options = {}, fallbackMessage = 'Request failed') {
+  let lastError = null;
+  for (const baseUrl of TXN_API_BASES) {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 12000);
+    try {
+      const res = await fetch(`${baseUrl}${path}`, { ...options, signal: controller.signal });
+      window.clearTimeout(timeoutId);
+      if (res.ok) return res;
+      const message = await readErrorMessage(res, fallbackMessage);
+      lastError = new Error(message);
+      if (![404, 408, 429, 500, 502, 503, 504].includes(res.status)) break;
+    } catch (err) {
+      window.clearTimeout(timeoutId);
+      lastError = err instanceof Error ? err : new Error(fallbackMessage);
+    }
+  }
+  throw lastError || new Error(fallbackMessage);
 }
 
 // ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
@@ -192,12 +213,18 @@ const Transactions = () => {
     setError('');
     try {
       const authHeader = { Authorization: `Bearer ${effectiveToken}` };
-      const res = await fetch(`${TXN_API_BASE}/transactions`, { headers: authHeader });
-      if (!res.ok) {
-        const message = await readErrorMessage(res, 'Failed to fetch transactions');
-        throw new Error(message);
+      let res = null;
+      let parsed = [];
+      for (const endpoint of ['/transactions', '/ledger']) {
+        try {
+          res = await requestWithFallback(endpoint, { headers: authHeader }, 'Failed to fetch transactions');
+          parsed = await res.json();
+          break;
+        } catch {
+          // try next endpoint
+        }
       }
-      const parsed = await res.json();
+      if (!res) throw new Error('Failed to fetch transactions. Ensure transaction service is running on port 8000.');
       const data = Array.isArray(parsed)
         ? parsed
         : (Array.isArray(parsed?.transactions) ? parsed.transactions : []);
@@ -209,6 +236,10 @@ const Transactions = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (effectiveToken) fetchTransactions();
+  }, [effectiveToken]);
 
   // Filter transactions when search changes
   useEffect(() => {
@@ -244,15 +275,11 @@ const Transactions = () => {
     setError('');
     setPipelineStatus('Uploading image and running extraction pipeline...');
     try {
-      const res = await fetch(`${TXN_API_BASE}/upload/process`, {
+      const res = await requestWithFallback('/upload/process', {
         method: 'POST',
         headers: { Authorization: `Bearer ${effectiveToken}` },
         body: formData,
-      });
-      if (!res.ok) {
-        const message = await readErrorMessage(res, 'Upload failed');
-        throw new Error(message);
-      }
+      }, 'Upload failed');
       const payload = await res.json();
       const inserted = Number(payload?.inserted_transactions ?? payload?.total_transactions ?? 0);
       setPipelineStatus(`Done. ${inserted} new transaction(s) imported to MongoDB for your account.`);

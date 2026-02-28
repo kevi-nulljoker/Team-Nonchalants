@@ -682,6 +682,16 @@ export default function Dashboard() {
   }, [transactionsReloadKey]);
 
   useEffect(() => {
+    if (!hasAuthToken) return;
+    if (location.pathname !== "/dashboard") return;
+    const isNewUser = localStorage.getItem("finsight_new_user") === "1";
+    if (!isNewUser) return;
+    localStorage.removeItem("finsight_new_user");
+    window.alert("Welcome! Please upload a transaction file first.");
+    navigate("/transactions");
+  }, [hasAuthToken, navigate, location.pathname]);
+
+  useEffect(() => {
     if (!hasAuthToken || !transactionsLoaded || noTxPopupShown || transactionsFetchError) return;
     if (transactions.length > 0) return;
     if (location.pathname !== "/dashboard") return;

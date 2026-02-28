@@ -524,8 +524,9 @@ body {
 
 const CONFIGURED_API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/$/, "");
 const DIRECT_API_BASE_URL = (import.meta.env.VITE_API_TARGET || "http://127.0.0.1:8001").replace(/\/$/, "");
+const LOCALHOST_API_BASE_URL = "http://localhost:8001";
 const API_BASE_URLS = Array.from(
-  new Set([CONFIGURED_API_BASE_URL, DIRECT_API_BASE_URL].filter(Boolean))
+  new Set([CONFIGURED_API_BASE_URL, DIRECT_API_BASE_URL, LOCALHOST_API_BASE_URL].filter(Boolean))
 );
 
 const getErrorMessage = (data, fallback, rawText = "") => {
@@ -553,16 +554,21 @@ const getErrorMessage = (data, fallback, rawText = "") => {
 const postJson = async (path, payload, fallbackMessage) => {
   for (const baseUrl of API_BASE_URLS) {
     let response;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 12000);
 
     try {
       response = await fetch(`${baseUrl}${path}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
     } catch {
+      window.clearTimeout(timeoutId);
       continue;
     }
+    window.clearTimeout(timeoutId);
 
     const rawText = await response.text();
     let data = null;
@@ -576,9 +582,9 @@ const postJson = async (path, payload, fallbackMessage) => {
 
     if (!response.ok) {
       const shouldTryFallback =
-        baseUrl.startsWith("/") &&
+        (baseUrl.startsWith("/") || response.status >= 500) &&
         API_BASE_URLS.length > 1 &&
-        [404, 502, 503].includes(response.status);
+        [404, 408, 429, 500, 502, 503, 504].includes(response.status);
 
       if (shouldTryFallback) {
         continue;
@@ -738,6 +744,7 @@ function AuthPage() {
 
     if (isSignup) {
       localStorage.setItem("auth_name", formData.name.trim());
+      localStorage.setItem("finsight_new_user", "1");
     }
     window.dispatchEvent(new Event("finsight:auth-updated"));
 

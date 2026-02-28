@@ -481,4 +481,4 @@ def save_quiz_results(user_id: str):
 
 if __name__ == '__main__':
     auth_port = int(os.getenv('AUTH_PORT', '8001'))
-    app.run(host='0.0.0.0', port=auth_port, debug=True)
+    app.run(host='0.0.0.0', port=auth_port, debug=False, use_reloader=False)

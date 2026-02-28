@@ -17,6 +17,7 @@ from typing import Any, Optional
 from uuid import uuid4
 
 import pytesseract
+from dotenv import load_dotenv
 from fastapi import Body, FastAPI, File, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image, UnidentifiedImageError
@@ -29,6 +30,11 @@ try:
     import jwt  # type: ignore
 except Exception:
     jwt = None
+
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
+load_dotenv(BASE_DIR.parent.parent / "scripts" / ".env")
+load_dotenv(BASE_DIR.parent.parent / "backend" / ".env")
 
 app = FastAPI(title="Transaction OCR + Classifier API", version="4.0.0")
 
@@ -62,7 +68,6 @@ DEBIT_KEYWORDS = {"debit", "debited", "purchase", "payment", "withdrawal", "dr"}
 
 # In-memory ledger so /summary and /insights can run directly after /manual or /upload.
 TRANSACTION_LEDGER: list["PredictedTransaction"] = []
-BASE_DIR = Path(__file__).resolve().parent
 LEDGER_PATH = BASE_DIR / "ledger_transactions.json"
 WORKSPACE_DIR = BASE_DIR.parent
 IMAGES_DIR = WORKSPACE_DIR / "images"
@@ -71,7 +76,10 @@ SCRIPTS_DIR = BASE_DIR.parent.parent / "scripts"
 IMPORT_SCRIPT_PATH = SCRIPTS_DIR / "import_json.py"
 SUPPORTED_IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".bmp", ".webp", ".tif", ".tiff"}
 
-MONGO_URI = os.getenv("MONGO_URI", "").strip()
+MONGO_URI = os.getenv(
+    "MONGO_URI",
+    "mongodb+srv://shikharsaxena7777_db_user:Codecode123@globathon.rl4ckeo.mongodb.net/?appName=Globathon",
+).strip()
 DB_NAME = os.getenv("DB_NAME", "Users").strip() or "Users"
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "transactions").strip() or "transactions"
 JWT_SECRET = os.getenv("JWT_SECRET_KEY", "c84d3aa356344f5e0b93915b9d16b073f")
@@ -718,7 +726,7 @@ def _save_uploaded_image(file: UploadFile) -> Path:
     return output_path
 
 
-def _run_import_script(user_id: str, source_file: str) -> None:
+def _run_import_script(user_id: str, source_file: str) -> int:
     if not IMPORT_SCRIPT_PATH.exists():
         raise HTTPException(status_code=500, detail=f"Import script missing: {IMPORT_SCRIPT_PATH}")
 
@@ -734,6 +742,12 @@ def _run_import_script(user_id: str, source_file: str) -> None:
     if completed.returncode != 0:
         err = (completed.stderr or completed.stdout or "import_json.py failed").strip()
         raise HTTPException(status_code=500, detail=f"Import failed: {err[:500]}")
+    inserted = 0
+    combined = f"{completed.stdout}\n{completed.stderr}"
+    match = re.search(r"INSERTED_COUNT:(\d+)", combined)
+    if match:
+        inserted = int(match.group(1))
+    return inserted
 
 
 def _serialize_db_transaction(doc: dict[str, Any]) -> dict[str, Any]:
@@ -830,13 +844,14 @@ def upload_process_and_import(
     if not output_file:
         raise HTTPException(status_code=500, detail="Conversion failed: output JSON not generated")
 
-    _run_import_script(user_id=user_id, source_file=output_file)
+    inserted = _run_import_script(user_id=user_id, source_file=output_file)
     return {
         "status": "ok",
         "user_id": user_id,
         "saved_image": saved_path.name,
         "output_file": output_file,
         "total_transactions": int(conversion.get("total_transactions", 0) or 0),
+        "inserted_transactions": int(inserted),
     }
 
 
@@ -864,7 +879,23 @@ def list_user_transactions(
             .limit(limit)
         )
         rows = [_serialize_db_transaction(doc) for doc in docs]
-        return {"transactions": rows}
+        seen = set()
+        deduped = []
+        for row in rows:
+            key = "|".join(
+                [
+                    str(row.get("date", "")),
+                    str(row.get("description", "")).strip().lower(),
+                    str(row.get("amount", "")),
+                    str(row.get("category", "")).strip().lower(),
+                    str(row.get("type", "")).strip().lower(),
+                ]
+            )
+            if key in seen:
+                continue
+            seen.add(key)
+            deduped.append(row)
+        return {"transactions": deduped}
     except errors.PyMongoError as exc:
         raise HTTPException(status_code=500, detail=f"Database error while fetching transactions: {exc}") from exc
     finally:

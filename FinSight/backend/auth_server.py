@@ -384,6 +384,15 @@ def award_points(user_id: str):
         return _json_error(f'Unsupported action. Allowed actions: {valid}', 400)
 
     amount = ACTION_POINTS[action]
+    points_override = data.get('points_override')
+    if points_override is not None:
+        try:
+            override_value = int(points_override)
+        except (TypeError, ValueError):
+            return _json_error('points_override must be an integer', 400)
+        if override_value <= 0:
+            return _json_error('points_override must be a positive integer', 400)
+        amount = override_value
     metadata = data.get('metadata', {}) if isinstance(data.get('metadata'), dict) else {}
 
     if action.startswith('goal_completed_'):

@@ -72,10 +72,10 @@ const TRANSACTIONS = RAW.map((r,i)=>({
 }));
 
 const GOALS = [
-  {id:1,label:"Emergency Fund",target:150000,saved:62000,icon:"🛡",color:P.teal},
-  {id:2,label:"Goa Trip Fund", target:40000, saved:28500,icon:"🏖",color:P.amber},
-  {id:3,label:"New Laptop", target:80000, saved:45000,icon:"💻",color:P.blue},
-  {id:4,label:"Annual SIP Goal",target:60000,saved:36000,icon:"📈",color:P.purple},
+  {id:1,label:"Emergency Fund",target:150000,saved:62000,icon:"🛡",color:P.teal,deadlineDay:7},
+  {id:2,label:"Goa Trip Fund", target:40000, saved:28500,icon:"🏖",color:P.amber,deadlineDay:14},
+  {id:3,label:"New Laptop", target:80000, saved:45000,icon:"💻",color:P.blue,deadlineDay:21},
+  {id:4,label:"Annual SIP Goal",target:60000,saved:36000,icon:"📈",color:P.purple,deadlineDay:28},
 ];
 
 // Learning modules
@@ -398,7 +398,7 @@ const PointsBurst = ({ points, visible }) => {
   return <div className="points-burst">+{points} pts ✨</div>;
 };
 
-const LearningCalendar = ({ loginDays, learningDays, completedModules, onDayClick, today }) => {
+const LearningCalendar = ({ loginDays, learningDays, completedModules, goalDeadlines, onDayClick, today }) => {
   const [hoveredDay, setHoveredDay] = useState(null);
   const daysOfWeek = ["Su","Mo","Tu","We","Th","Fr","Sa"];
   const startOffset = 2; // Oct 2024 starts on Tuesday
@@ -423,6 +423,8 @@ const LearningCalendar = ({ loginDays, learningDays, completedModules, onDayClic
           const isLearning = learningDays.has(d);
           const isToday = d === today;
           const isFuture = d > today;
+          const goalsOnDay = goalDeadlines[d] || [];
+          const hasGoalDeadline = goalsOnDay.length > 0;
           const modCount = (completedModules[d] || []).length;
 
           let bg = P.borderSoft;
@@ -465,6 +467,18 @@ const LearningCalendar = ({ loginDays, learningDays, completedModules, onDayClic
                   width: 5, height: 5, borderRadius: "50%", background: P.gold,
                 }} />
               )}
+              {hasGoalDeadline && (
+                <span style={{
+                  position: "absolute", top: -3, left: -3,
+                  width: 12, height: 12, borderRadius: "50%",
+                  background: P.amber, color: "#fff",
+                  fontSize: 7, fontWeight: 800,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  border: `1.5px solid ${P.card}`,
+                }}>
+                  G
+                </span>
+              )}
             </div>
           );
         })}
@@ -474,6 +488,7 @@ const LearningCalendar = ({ loginDays, learningDays, completedModules, onDayClic
         {[
           { bg: `linear-gradient(135deg,${P.blue},${P.purple})`, label: "Learned" },
           { bg: P.tealLight, border: `1px solid ${P.teal}44`, label: "Login only" },
+          { bg: P.amber, label: "Goal date" },
           { bg: P.borderSoft, label: "No activity" },
           { bg: P.borderSoft, border: `2px solid ${P.gold}`, label: "Today" },
         ].map(l => (
@@ -716,10 +731,11 @@ export default function Dashboard() {
     return s;
   }, [learningDays, todayLearnedModules]);
 
-  // Current tier
-  const currentTier = TIERS.find(t => totalPoints >= t.min && totalPoints < t.max) || TIERS[TIERS.length - 1];
+  // Current tier based on profile coins
+  const tierCoins = Math.max(0, Number(coinPoints) || 0);
+  const currentTier = TIERS.find(t => tierCoins >= t.min && tierCoins < t.max) || TIERS[TIERS.length - 1];
   const nextTier = TIERS[TIERS.indexOf(currentTier) + 1];
-  const tierProgress = nextTier ? Math.round(((totalPoints - currentTier.min) / (nextTier.min - currentTier.min)) * 100) : 100;
+  const tierProgress = nextTier ? Math.max(0, Math.round(((tierCoins - currentTier.min) / (nextTier.min - currentTier.min)) * 100)) : 100;
 
   const triggerBurst = (pts) => {
     setBurstPoints(pts);
@@ -777,17 +793,37 @@ export default function Dashboard() {
   const topCat = catList[0];
   const recent = useMemo(() => [...transactions].sort((a, b) => b.day - a.day).slice(0, showAll ? 16 : 6), [transactions, showAll]);
   const fmtK = (n) => n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : n >= 1000 ? `₹${(n / 1000).toFixed(1)}k` : `₹${n}`;
+  const goalDeadlines = useMemo(
+    () => GOALS.reduce((acc, goal) => {
+      const day = Number(goal.deadlineDay);
+      if (!Number.isFinite(day) || day < 1 || day > 31) return acc;
+      if (!acc[day]) acc[day] = [];
+      acc[day].push(goal);
+      return acc;
+    }, {}),
+    []
+  );
+  const analysisInsights = useMemo(() => {
+    const saveTone = savRate >= 30 ? { label: "Healthy", color: P.teal } : savRate >= 15 ? { label: "Moderate", color: P.amber } : { label: "Low", color: P.red };
+    const topShare = totalExp > 0 && topCat ? Math.round((topCat.value / totalExp) * 100) : 0;
+    return [
+      { title: "Savings health", value: `${savRate}% (${saveTone.label})`, color: saveTone.color },
+      { title: "Highest expense", value: topCat ? `${topCat.icon} ${topCat.name} (${topShare}%)` : "No transactions yet", color: P.navy },
+      { title: "Goal due this month", value: Object.values(goalDeadlines).flat().length ? `${Object.values(goalDeadlines).flat().length} goal milestones` : "No goal dates set", color: P.navy },
+    ];
+  }, [savRate, totalExp, topCat, goalDeadlines]);
 
   // Selected day details
   const selectedDayInfo = selectedCalDay ? {
     login: loginDays.has(selectedCalDay) || (selectedCalDay === TODAY && todayLoggedIn),
     modules: selectedCalDay === TODAY ? todayLearnedModules : (completedModules[selectedCalDay] || []),
+    goals: goalDeadlines[selectedCalDay] || [],
   } : null;
 
   return (
     <>
       <style>{styles}</style>
-      <div style={{ minHeight: "100vh", width: "100%", background: P.bg, padding: "24px 24px 48px" }}>
+      <div style={{ minHeight: "100vh", width: "100%", background: P.bg, padding: "16px 20px 36px" }}>
         <PointsBurst points={burstPoints} visible={showBurst} />
 
         {/* NAV */}
@@ -991,6 +1027,16 @@ export default function Dashboard() {
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 7, marginTop: 10 }}>
+                  {catList.slice(0, 6).map((c) => (
+                    <div key={`legend-${c.key}`} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ width: 9, height: 9, borderRadius: "50%", background: c.color, flexShrink: 0 }} />
+                      <span style={{ fontSize: 10, color: P.slate, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {c.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </Card>
               <Card style={{ padding: "18px" }}>
                 <Lbl text="Budget Status" sub="Category overview" />
@@ -1065,6 +1111,7 @@ export default function Dashboard() {
                 loginDays={new Set([...loginDays, ...(todayLoggedIn ? [TODAY] : [])])}
                 learningDays={new Set([...learningDays, ...(todayLearnedModules.length > 0 ? [TODAY] : [])])}
                 completedModules={{ ...completedModules, ...(todayLearnedModules.length > 0 ? { [TODAY]: todayLearnedModules } : {}) }}
+                goalDeadlines={goalDeadlines}
                 onDayClick={setSelectedCalDay}
                 today={TODAY}
               />
@@ -1099,6 +1146,11 @@ export default function Dashboard() {
                     ) : (
                       <span style={{ fontSize: 10.5, color: P.muted }}>No learning sessions</span>
                     )}
+                    {selectedDayInfo?.goals?.map((goal) => (
+                      <span key={`goal-date-${goal.id}`} style={{ fontSize: 10.5, fontWeight: 600, padding: "3px 8px", borderRadius: 99, background: `${goal.color}14`, color: goal.color }}>
+                        🎯 Goal target: {goal.label}
+                      </span>
+                    ))}
                   </div>
                 </div>
               )}
@@ -1180,10 +1232,10 @@ export default function Dashboard() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14, position: "relative" }}>
                 <div>
                   <p style={{ fontSize: 9.5, color: "rgba(255,255,255,.4)", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>
-                    Reward Points
+                    Wallet Coins
                   </p>
-                  <p style={{ fontSize: 28, fontWeight: 800, color: P.gold, lineHeight: 1 }}>{totalPoints.toLocaleString()}</p>
-                  <p style={{ fontSize: 10.5, color: "rgba(255,255,255,.5)", marginTop: 2 }}>points earned</p>
+                  <p style={{ fontSize: 28, fontWeight: 800, color: P.gold, lineHeight: 1 }}>{tierCoins.toLocaleString()}</p>
+                  <p style={{ fontSize: 10.5, color: "rgba(255,255,255,.5)", marginTop: 2 }}>coins in profile</p>
                 </div>
                 <div style={{ textAlign: "center" }}>
                   <div style={{ fontSize: 28 }}>{currentTier.icon}</div>
@@ -1205,7 +1257,7 @@ export default function Dashboard() {
                     }} />
                   </div>
                   <p style={{ fontSize: 9, color: "rgba(255,255,255,.3)", marginTop: 4 }}>
-                    {nextTier.min - totalPoints} pts to next tier
+                    {nextTier.min - tierCoins} coins to next tier
                   </p>
                 </div>
               )}
@@ -1231,7 +1283,7 @@ export default function Dashboard() {
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {TIERS.map((tier, i) => {
                   const isActive = tier.name === currentTier.name;
-                  const isPast = totalPoints >= tier.max;
+                  const isPast = tierCoins >= tier.max;
                   return (
                     <div
                       key={tier.name}
@@ -1248,7 +1300,7 @@ export default function Dashboard() {
                           {tier.name}
                         </p>
                         <p style={{ fontSize: 9.5, color: P.muted }}>
-                          {tier.min.toLocaleString()}{tier.max < Infinity ? `–${tier.max.toLocaleString()}` : "+"} pts
+                          {tier.min.toLocaleString()}{tier.max < Infinity ? `–${tier.max.toLocaleString()}` : "+"} coins
                         </p>
                       </div>
                       {isPast && !isActive && <span style={{ fontSize: 12 }}>✅</span>}
@@ -1291,7 +1343,21 @@ export default function Dashboard() {
             </Card>
 
             {/* Monthly Insight */}
-            
+            <Card style={{ padding: "18px" }}>
+              <Lbl text="Monthly Analysis" sub="Auto summary from your data" />
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {analysisInsights.map((item) => (
+                  <div key={item.title} style={{ padding: "10px 11px", borderRadius: 10, border: `1px solid ${P.border}`, background: "#F8FAFC" }}>
+                    <p style={{ fontSize: 10, color: P.muted, marginBottom: 2, textTransform: "uppercase", fontWeight: 700, letterSpacing: 0.3 }}>
+                      {item.title}
+                    </p>
+                    <p style={{ fontSize: 12, color: item.color, fontWeight: 700 }}>
+                      {item.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </Card>
           </div>
         </div>
 

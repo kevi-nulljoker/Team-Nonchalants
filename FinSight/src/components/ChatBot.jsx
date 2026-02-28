@@ -48,6 +48,15 @@ export default function ChatBot() {
   ]);
 
   const listRef = useRef(null);
+  const pendingRef = useRef(false);
+
+  const appendMessage = (next) => {
+    setMessages((prev) => {
+      const last = prev[prev.length - 1];
+      if (last && last.role === next.role && last.text === next.text) return prev;
+      return [...prev, next];
+    });
+  };
 
   useEffect(() => {
     if (!listRef.current) return;
@@ -56,29 +65,28 @@ export default function ChatBot() {
 
   const submitText = async (rawText) => {
     const text = rawText.trim();
-    if (!text || loading) return;
+    if (!text || loading || pendingRef.current) return;
 
     setInput("");
-    setMessages((prev) => [...prev, { role: "user", text }]);
+    appendMessage({ role: "user", text });
+    pendingRef.current = true;
     setLoading(true);
 
     try {
       const reply = await getBotReply(text);
-      setMessages((prev) => [...prev, { role: "assistant", text: reply }]);
+      appendMessage({ role: "assistant", text: reply });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Backend chatbot is unavailable.";
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          text:
-            `backend/ChatBot.py error: ${message}\n` +
-            "Start backend with: python backend/ChatBot.py",
-        },
-      ]);
+      appendMessage({
+        role: "assistant",
+        text:
+          `backend/ChatBot.py error: ${message}\n` +
+          "Start backend with: python backend/ChatBot.py",
+      });
+    } finally {
+      pendingRef.current = false;
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const sendMessage = async (event) => {

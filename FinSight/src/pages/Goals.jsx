@@ -19,10 +19,10 @@ const G = {
   slate:        "#475569",
   muted:        "#8898AA",
   faint:        "#CBD5E1",
-  bg:           "#F3F8F5",
+  bg:           "#E9EEF6",
   card:         "#FFFFFF",
-  border:       "#DDE9E3",
-  borderSoft:   "#ECF4EF",
+  border:       "#E2E8F0",
+  borderSoft:   "#F1F5F9",
   red:          "#E8404A",
   redLt:        "#FDF0F1",
   amber:        "#E8900A",
@@ -30,8 +30,8 @@ const G = {
   amberMd:      "#F9D29A",
   blue:         "#2E74D9",
   blueLt:       "#EEF5FD",
-  shadow:       "0 1px 8px rgba(14,30,46,0.06)",
-  shadowMd:     "0 4px 24px rgba(14,30,46,0.10)",
+  shadow:       "0 1px 8px rgba(11,27,53,0.06)",
+  shadowMd:     "0 4px 24px rgba(11,27,53,0.10)",
 };
 
 /* ─────────────────────────────────────────────────────────────
@@ -615,12 +615,12 @@ export default function GoalsSection() {
   const grandPct    = pct(grandSaved, grandTarget);
 
   return (
-    <div style={{ minHeight:"100vh", background:G.bg, fontFamily:"'DM Sans','Inter','Segoe UI',sans-serif", padding:"28px 32px 72px", color:G.navy }}>
+    <div style={{ minHeight:"100vh",width:"100vw", background:G.bg, fontFamily:"'Manrope','DM Sans','Segoe UI',sans-serif", padding:"24px 24px 72px", color:G.navy }}>
       <AppNavbar />
 
       {/* ── FONTS + GLOBAL STYLES ─────────────────────────────── */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
         ::placeholder { color: ${G.faint}; }
         ::-webkit-scrollbar { width:4px; }
@@ -647,7 +647,7 @@ export default function GoalsSection() {
         </p>
         <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", flexWrap:"wrap", gap:12 }}>
           <div>
-            <h1 style={{ fontSize:24, fontWeight:700, color:G.navy, letterSpacing:-0.4, fontFamily:"'DM Serif Display',serif", marginBottom:4 }}>
+            <h1 style={{ fontSize:24, fontWeight:700, color:G.navy, letterSpacing:-0.4, fontFamily:"'Manrope','DM Sans','Segoe UI',sans-serif", marginBottom:4 }}>
               Savings Goals
             </h1>
             <p style={{ fontSize:13, color:G.muted }}>

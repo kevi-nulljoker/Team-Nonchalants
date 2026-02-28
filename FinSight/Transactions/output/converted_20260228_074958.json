@@ -1,0 +1,78 @@
+{
+  "generated_at": "2026-02-28T07:49:58",
+  "images_folder": "/Users/dipanshu/Novonmesh/NEW/Team-Nonchalants/FinSight/Transactions/images",
+  "images_processed": [
+    "upload_20260228_074958_9c97efa1.jpeg"
+  ],
+  "results": [
+    {
+      "image": "upload_20260228_074958_9c97efa1.jpeg",
+      "transaction_count": 7,
+      "transactions": [
+        {
+          "date": null,
+          "description": "4: M NEA al",
+          "amount": 42.0,
+          "type": "debit",
+          "category": "others",
+          "confidence": 0.155,
+          "uncertain": true
+        },
+        {
+          "date": null,
+          "description": "As Swiggy %",
+          "amount": 360.0,
+          "type": "debit",
+          "category": "food",
+          "confidence": 0.736,
+          "uncertain": false
+        },
+        {
+          "date": null,
+          "description": "SADGURU KRUPA SNACK...",
+          "amount": 100.0,
+          "type": "debit",
+          "category": "others",
+          "confidence": 0.155,
+          "uncertain": true
+        },
+        {
+          "date": null,
+          "description": "EKNATH BABAN MANJARE",
+          "amount": 115.0,
+          "type": "debit",
+          "category": "others",
+          "confidence": 0.155,
+          "uncertain": true
+        },
+        {
+          "date": null,
+          "description": "GAURAV YADAV %",
+          "amount": 20.0,
+          "type": "debit",
+          "category": "others",
+          "confidence": 0.155,
+          "uncertain": true
+        },
+        {
+          "date": null,
+          "description": "A Nitya Jain %",
+          "amount": 50.0,
+          "type": "debit",
+          "category": "others",
+          "confidence": 0.155,
+          "uncertain": true
+        },
+        {
+          "date": null,
+          "description": "17 Feh Dehited from",
+          "amount": 2028.0,
+          "type": "debit",
+          "category": "others",
+          "confidence": 0.155,
+          "uncertain": true
+        }
+      ]
+    }
+  ]
+}

@@ -31,10 +31,12 @@ const styles = `
 
   .txn-page {
     min-height: 100vh;
+    width: 100vw;
     background: ${P.bg};
     font-family: 'Manrope', sans-serif;
     padding: 24px;
     color: ${P.navy};
+    box-sizing: border-box;
   }
 
   .txn-card {
@@ -148,7 +150,6 @@ const formatINR = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', c
 
 const TXN_API_BASE = (
   import.meta.env.VITE_TXN_API_URL ||
-  import.meta.env.VITE_API_URL ||
   'http://127.0.0.1:8000'
 ).replace(/\/$/, '');
 
@@ -169,6 +170,7 @@ async function readErrorMessage(res, fallback) {
 // ─── MAIN COMPONENT ─────────────────────────────────────────────────────────
 const Transactions = () => {
   const { token } = useContext(AuthContext);
+  const effectiveToken = token || localStorage.getItem('auth_token') || localStorage.getItem('token') || '';
   const [transactions, setTransactions] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState('');
@@ -179,7 +181,7 @@ const Transactions = () => {
   const [pipelineStatus, setPipelineStatus] = useState('');
 
   const fetchTransactions = async () => {
-    if (!token) {
+    if (!effectiveToken) {
       setTransactions([]);
       setFiltered([]);
       setError('Please log in to view transactions');
@@ -189,7 +191,7 @@ const Transactions = () => {
     setLoading(true);
     setError('');
     try {
-      const authHeader = { Authorization: `Bearer ${token}` };
+      const authHeader = { Authorization: `Bearer ${effectiveToken}` };
       const res = await fetch(`${TXN_API_BASE}/transactions`, { headers: authHeader });
       if (!res.ok) {
         const message = await readErrorMessage(res, 'Failed to fetch transactions');
@@ -225,7 +227,7 @@ const Transactions = () => {
   // Handle file upload
   const handleUpload = async (file) => {
     if (!file) return;
-    if (!token) {
+    if (!effectiveToken) {
       setError('Please log in to upload files');
       return;
     }
@@ -244,7 +246,7 @@ const Transactions = () => {
     try {
       const res = await fetch(`${TXN_API_BASE}/upload/process`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${effectiveToken}` },
         body: formData,
       });
       if (!res.ok) {
@@ -252,8 +254,8 @@ const Transactions = () => {
         throw new Error(message);
       }
       const payload = await res.json();
-      const count = Number(payload?.total_transactions || 0);
-      setPipelineStatus(`Done. ${count} transaction(s) imported to MongoDB for your account.`);
+      const inserted = Number(payload?.inserted_transactions ?? payload?.total_transactions ?? 0);
+      setPipelineStatus(`Done. ${inserted} new transaction(s) imported to MongoDB for your account.`);
       window.dispatchEvent(new CustomEvent('finsight:transactions-updated'));
     } catch (err) {
       setError(err.message);
@@ -350,7 +352,7 @@ const Transactions = () => {
         )}
 
         <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-start' }}>
-          <button className="btn-primary" onClick={fetchTransactions} disabled={loading || uploading || !token}>
+          <button className="btn-primary" onClick={fetchTransactions} disabled={loading || uploading || !effectiveToken}>
             {loading ? 'Fetching...' : 'Show Transactions'}
           </button>
         </div>

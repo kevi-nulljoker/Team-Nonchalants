@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect, useRef, useCallback } from "react";
 import AppNavbar from "../components/AppNavbar";
+import { awardPoints, getPointsSummary, getStoredPoints } from "../services/pointsApi";
 
 // ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
 const C = {
@@ -29,7 +30,7 @@ const C = {
   amber:      "#CC7A17",
   white:      "#FFFFFF",
   // Backgrounds
-  bg:         "#F1F8F5",
+  bg:         "#E9EEF6",
   bgCard:     "#FFFFFF",
   border:     "#D5E8DF",
   borderSoft: "#EAF4EF",
@@ -462,14 +463,12 @@ const levelBg    = l => ({ Beginner: C.tealLight, Intermediate: "#D8F2E8", Advan
 
 // ─── ANIMATIONS CSS ────────────────────────────────────────────────────────────
 const STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
   *, *::before, *::after { box-sizing: border-box }
   body {
     margin: 0;
-    background:
-      radial-gradient(circle at 6% 0%, rgba(14,159,121,0.14), transparent 40%),
-      radial-gradient(circle at 94% 100%, rgba(15,92,120,0.12), transparent 36%),
-      linear-gradient(180deg, #F5FBF8 0%, #EEF7F3 100%);
+    background: #E9EEF6;
+    font-family: 'Manrope', 'DM Sans', 'Segoe UI', sans-serif;
   }
   .learn-page {
     min-height: 100vh;
@@ -580,7 +579,11 @@ function Toast({ msg, type, onDone }) {
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function LearningSection() {
-  const [points, setPoints]     = useState(480);
+  const userId = localStorage.getItem("auth_user_id");
+  const [points, setPoints]     = useState(() => {
+    const stored = userId ? getStoredPoints(userId) : null;
+    return typeof stored === "number" ? stored : 480;
+  });
   const [progress, setProgress] = useState(initProgress);
   const [unlocked, setUnlocked] = useState(initUnlocked);
   const [view, setView]         = useState("categories"); // categories | detail | lesson
@@ -590,6 +593,22 @@ export default function LearningSection() {
   const [payModal, setPayModal] = useState(null);   // category
   const [unlockModal, setUnlockModal] = useState(null); // category
   const [search, setSearch]     = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    if (!userId) return () => { mounted = false; };
+    (async () => {
+      try {
+        const summary = await getPointsSummary(userId);
+        if (mounted && typeof summary?.total_points === "number") setPoints(summary.total_points);
+      } catch {
+        // Keep current local points if backend unavailable
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [userId]);
 
   const showToast = (msg, type = "success") => { setToast({ msg, type }); };
 
@@ -666,93 +685,24 @@ export default function LearningSection() {
     : CURRICULUM;
 
   return (
-    <div className="learn-page" style={{ minHeight: "100vh", background: C.bg, fontFamily: "'Inter','Segoe UI',sans-serif" }}>
+    <div className="learn-page" style={{ minHeight: "100vh", background: C.bg, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif" }}>
       <style>{STYLES}</style>
       <div style={{ padding: "16px clamp(14px,2.8vw,28px) 0" }}>
         <AppNavbar />
       </div>
 
-      {/* ── TOP BAR ─────────────────────────────────────────── */}
-      <header style={{
-        background: C.white,
-        borderBottom: `1px solid ${C.border}`,
-        padding: "10px clamp(14px,2.8vw,28px)", minHeight: 68, height: "auto", display: "flex", alignItems: "center",
-        justifyContent: "space-between", position: "sticky", top: 0, zIndex: 300, flexWrap: "wrap", rowGap: 10,
-        boxShadow: "0 6px 18px rgba(16,34,51,0.07)", backdropFilter: "blur(8px)",
-      }}>
-        {/* Logo + breadcrumbs */}
-        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", minWidth: 0 }}>
-          <button onClick={() => { setView("categories"); setActiveCat(null); setActiveCourse(null); }} style={{
-            background: "none", border: "none", cursor: "pointer",
-            display: "flex", alignItems: "center", gap: 9,
-          }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 9,
-              background: `linear-gradient(135deg,${C.teal},${C.tealDark})`,
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16,
-            }}>🎓</div>
-            <span style={{ color: C.navy, fontWeight: 700, fontSize: 15, fontFamily: "'Lora',serif" }}>
-              Fin<span style={{ color: C.teal }}>Sight</span> Learn
-            </span>
-          </button>
-
-          {/* Breadcrumb */}
-          {view !== "categories" && (
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ color: C.faint, fontSize: 12 }}>›</span>
-              <button onClick={() => { if (view === "lesson") setView("detail"); else setView("categories"); setActiveCourse(null); }} style={{
-                background: "none", border: "none", cursor: "pointer",
-                color: view === "lesson" ? C.muted : C.teal,
-                fontSize: 12, fontWeight: 600, fontFamily: "inherit",
-                padding: "2px 7px", borderRadius: 5,
-                transition: "color 0.2s",
-              }}>{activeCat?.title}</button>
-              {view === "lesson" && activeCourse && (
-                <>
-                  <span style={{ color: C.faint, fontSize: 12 }}>›</span>
-                  <span style={{ color: C.teal, fontSize: 12, fontWeight: 600 }}>{activeCourse.title}</span>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Right side */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", justifyContent: "flex-end" }}>
-          {/* Points display */}
-          <div style={{
-            background: "rgba(201,151,10,0.12)", border: `1.5px solid rgba(201,151,10,0.35)`,
-            borderRadius: 99, padding: "5px 14px",
-            display: "flex", alignItems: "center", gap: 6,
-            animation: "pulse 4s ease-in-out infinite",
-          }}>
-            <span style={{ fontSize: 14 }}>⭐</span>
-            <span style={{ fontWeight: 800, color: C.gold, fontSize: 14 }}>{points.toLocaleString()}</span>
-            <span style={{ color: "rgba(201,151,10,0.6)", fontSize: 11, fontWeight: 600 }}>pts</span>
-          </div>
-
-          {/* Back button */}
+      <div style={{ padding: "0 clamp(14px,2.8vw,28px) 10px", display: "flex", justifyContent: "flex-end" }}>
+        {view !== "categories" && (
           <button onClick={goBack} style={{
             background: C.tealLight, border: `1px solid ${C.border}`,
             color: C.teal, borderRadius: 8, padding: "6px 14px",
             fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-            display: view === "categories" ? "none" : "flex", alignItems: "center", gap: 6,
-            transition: "all 0.2s",
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = C.tealMid; }}
-          onMouseLeave={e => { e.currentTarget.style.background = C.tealLight; }}
-          >← Back</button>
-
-          {/* Avatar */}
-          <div style={{
-            width: 34, height: 34, borderRadius: "50%",
-            background: `linear-gradient(135deg,${C.teal},${C.tealDark})`,
-            border: `2px solid ${C.tealMid}`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "white", fontWeight: 800, fontSize: 12, cursor: "pointer",
-          }}>JD</div>
-        </div>
-      </header>
+            display: "flex", alignItems: "center", gap: 6,
+          }}>
+            ← Back
+          </button>
+        )}
+      </div>
 
       {/* ── VIEWS ───────────────────────────────────────────── */}
       {view === "categories" && (
@@ -794,13 +744,11 @@ export default function LearningSection() {
             const cat = CURRICULUM.find(c => c.id === activeCat.id);
             const course = cat?.courses.find(c => c.id === cid);
             if (!progress[cid].videoWatched && course) {
-              const earn = Math.round(course.pts * 0.4);
               setProgress(p => ({ ...p, [cid]: { ...p[cid], videoWatched: true } }));
-              setPoints(pt => pt + earn);
-              showToast(`+${earn} pts for watching the video! 📹`);
+              showToast("Video marked complete ✅");
             }
           }}
-          onQuizPass={(score) => {
+          onQuizPass={async (score) => {
             const cid = activeCourse.id;
             const cat = CURRICULUM.find(c => c.id === activeCat.id);
             const course = cat?.courses.find(c => c.id === cid);
@@ -809,6 +757,19 @@ export default function LearningSection() {
               setProgress(p => ({ ...p, [cid]: { ...p[cid], quizScore: score, passed: true } }));
               setPoints(pt => pt + earn);
               showToast(`Quiz passed! +${earn} pts earned! 🏆`);
+              if (userId) {
+                try {
+                  const res = await awardPoints(userId, "quiz_completed", {
+                    points_override: earn,
+                    metadata: { course_id: cid, category_id: cat?.id || "", score },
+                  });
+                  if (typeof res?.total_points === "number") {
+                    setPoints(res.total_points);
+                  }
+                } catch {
+                  // Keep local points even if profile sync fails
+                }
+              }
             } else {
               setProgress(p => ({ ...p, [cid]: { ...p[cid], quizScore: score } }));
             }
@@ -878,7 +839,7 @@ function CategoriesView({ categories, search, setSearch, unlocked, progress, poi
         </div>
         <h1 style={{
           margin: "0 0 12px", fontSize: "clamp(24px,3.5vw,40px)",
-          fontWeight: 800, color: C.navy, fontFamily: "'Lora',serif", letterSpacing: -0.5, lineHeight: 1.2,
+          fontWeight: 800, color: C.navy, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif", letterSpacing: -0.5, lineHeight: 1.2,
         }}>
           Master Your <em style={{ color: C.teal, fontStyle: "normal" }}>Financial Life</em>
         </h1>
@@ -1085,7 +1046,7 @@ function CategoryCard({ cat, index, isUnlocked, cpct, completedCount, points, ca
             <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
               <span style={{
                 fontSize: 14, fontWeight: 700, color: isUnlocked ? C.navy : C.slate,
-                fontFamily: "'Lora',serif",
+                fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif",
                 whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
               }}>{cat.title}</span>
               <LevelChip level={cat.level} />
@@ -1149,7 +1110,7 @@ function CategoryDetailView({ cat, progress, unlocked, onLesson, catProgress }) 
             padding: "28px 32px", display: "flex", flexDirection: "column", justifyContent: "flex-end",
           }}>
             <LevelChip level={cat.level} />
-            <h1 style={{ margin: "8px 0 4px", color: "white", fontSize: 26, fontFamily: "'Lora',serif" }}>
+            <h1 style={{ margin: "8px 0 4px", color: "white", fontSize: 26, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif" }}>
               {cat.title}
             </h1>
             <p style={{ margin: 0, color: "rgba(255,255,255,0.75)", fontSize: 13 }}>{cat.subtitle}</p>
@@ -1195,7 +1156,7 @@ function CategoryDetailView({ cat, progress, unlocked, onLesson, catProgress }) 
       </div>
 
       {/* Lessons */}
-      <h2 className="fade-up" style={{ margin: "0 0 16px", fontSize: 17, fontWeight: 700, color: C.navy, fontFamily: "'Lora',serif", animationDelay: "130ms" }}>
+      <h2 className="fade-up" style={{ margin: "0 0 16px", fontSize: 17, fontWeight: 700, color: C.navy, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif", animationDelay: "130ms" }}>
         Course Lessons
       </h2>
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -1405,7 +1366,7 @@ function LessonView({ cat, course, prog, allCourses, onVideoComplete, onQuizPass
               fontSize: 11, fontWeight: 600, padding: "2px 10px", borderRadius: 99,
             }}>Lesson {currentIdx + 1} of {allCourses.length}</span>
           </div>
-          <h1 style={{ margin: "0 0 6px", color: "white", fontSize: 20, fontFamily: "'Lora',serif", lineHeight: 1.3 }}>
+          <h1 style={{ margin: "0 0 6px", color: "white", fontSize: 20, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif", lineHeight: 1.3 }}>
             {course.title}
           </h1>
           <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
@@ -1491,7 +1452,7 @@ function LessonView({ cat, course, prog, allCourses, onVideoComplete, onQuizPass
               {/* Big icon */}
               <div style={{ fontSize: 64, opacity: videoPlaying ? 0.4 : 0.9 }}>{course.video.thumb}</div>
               <h3 style={{
-                color: "white", fontSize: 18, fontFamily: "'Lora',serif",
+                color: "white", fontSize: 18, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif",
                 margin: 0, opacity: videoPlaying ? 0.5 : 0.9, textAlign: "center", padding: "0 20px",
               }}>{course.title}</h3>
 
@@ -1563,7 +1524,7 @@ function LessonView({ cat, course, prog, allCourses, onVideoComplete, onQuizPass
             background: C.bgCard, border: `1px solid ${C.border}`,
             borderRadius: 13, padding: "20px 24px", marginBottom: 18,
           }}>
-            <h3 style={{ margin: "0 0 10px", fontSize: 15, fontWeight: 700, color: C.navy, fontFamily: "'Lora',serif" }}>
+            <h3 style={{ margin: "0 0 10px", fontSize: 15, fontWeight: 700, color: C.navy, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif" }}>
               About This Lesson
             </h3>
             <p style={{ margin: 0, color: C.slate, fontSize: 14, lineHeight: 1.8 }}>
@@ -1680,7 +1641,7 @@ function QuizIntro({ course, videoWatched, catColor, onStart, previousScore }) {
       borderRadius: 14, padding: "32px 28px", textAlign: "center",
     }}>
       <div style={{ fontSize: 48, marginBottom: 16 }}>❓</div>
-      <h2 style={{ margin: "0 0 8px", fontSize: 20, color: C.navy, fontFamily: "'Lora',serif" }}>
+      <h2 style={{ margin: "0 0 8px", fontSize: 20, color: C.navy, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif" }}>
         {course.title} — Quiz
       </h2>
       <p style={{ color: C.slate, fontSize: 14, lineHeight: 1.7, maxWidth: 400, margin: "0 auto 20px" }}>
@@ -1748,7 +1709,7 @@ function QuizPlayer({ course, answers, submitted, revealAns, quizResult, catColo
         borderRadius: 14, padding: "28px", textAlign: "center",
       }}>
         <div style={{ fontSize: 48, marginBottom: 12 }}>🏆</div>
-        <h2 style={{ margin: "0 0 6px", color: C.green, fontFamily: "'Lora',serif" }}>Already Passed!</h2>
+        <h2 style={{ margin: "0 0 6px", color: C.green, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif" }}>Already Passed!</h2>
         <p style={{ color: C.slate, fontSize: 14 }}>
           You scored <strong style={{ color: C.green }}>{previousScore}%</strong> on this quiz.
         </p>
@@ -1775,7 +1736,7 @@ function QuizPlayer({ course, answers, submitted, revealAns, quizResult, catColo
           <h2 style={{
             margin: "0 0 6px", fontSize: 22,
             color: quizResult.passed ? C.green : C.red,
-            fontFamily: "'Lora',serif",
+            fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif",
           }}>
             {quizResult.passed ? "Quiz Passed!" : "Not Passed — Try Again"}
           </h2>
@@ -1955,7 +1916,7 @@ function PointsUnlockModal({ cat, points, canUnlock, onUnlock, onBuyPoints, onCl
         {buyStep === "done" ? (
           <div style={{ textAlign: "center", padding: "16px 0" }}>
             <div style={{ fontSize: 52, marginBottom: 12 }}>🎉</div>
-            <h2 style={{ margin: "0 0 8px", color: C.green, fontFamily: "'Lora',serif" }}>Points Added!</h2>
+            <h2 style={{ margin: "0 0 8px", color: C.green, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif" }}>Points Added!</h2>
             <p style={{ color: C.slate, fontSize: 14 }}>+{bp.pts} pts have been added to your account.</p>
             {points + bp.pts >= cat.lock.required ? (
               <button onClick={() => { onUnlock(); }} style={{
@@ -1980,7 +1941,7 @@ function PointsUnlockModal({ cat, points, canUnlock, onUnlock, onBuyPoints, onCl
         ) : buyStep === "confirm" ? (
           <>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-              <h2 style={{ margin: 0, fontSize: 18, color: C.navy, fontFamily: "'Lora',serif" }}>Buy Extra Points</h2>
+              <h2 style={{ margin: 0, fontSize: 18, color: C.navy, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif" }}>Buy Extra Points</h2>
               <button onClick={() => setBuyStep(null)} style={{ background: "none", border: "none", fontSize: 18, cursor: "pointer", color: C.muted }}>✕</button>
             </div>
             <div style={{ background: C.bg, borderRadius: 12, padding: "16px 18px", marginBottom: 18 }}>
@@ -2028,7 +1989,7 @@ function PointsUnlockModal({ cat, points, canUnlock, onUnlock, onBuyPoints, onCl
               <div style={{ fontSize: 46, marginBottom: 10 }}>
                 {canUnlock ? "🔓" : "🔒"}
               </div>
-              <h2 style={{ margin: "0 0 6px", fontSize: 19, color: C.navy, fontFamily: "'Lora',serif" }}>
+              <h2 style={{ margin: "0 0 6px", fontSize: 19, color: C.navy, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif" }}>
                 {cat.title}
               </h2>
               <p style={{ color: C.slate, fontSize: 13, margin: 0 }}>
@@ -2120,7 +2081,7 @@ function PayModal({ cat, onPay, onClose }) {
               <p style={{ margin: "0 0 4px", color: "rgba(255,255,255,0.65)", fontSize: 11, fontWeight: 700, letterSpacing: 1.5 }}>
                 UNLOCK PREMIUM
               </p>
-              <h2 style={{ margin: 0, color: "white", fontSize: 18, fontFamily: "'Lora',serif" }}>{cat.title}</h2>
+              <h2 style={{ margin: 0, color: "white", fontSize: 18, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif" }}>{cat.title}</h2>
             </div>
             <div style={{ textAlign: "right" }}>
               <div style={{ fontSize: 26, fontWeight: 900, color: "white" }}>₹{cat.lock.price}</div>
@@ -2254,7 +2215,7 @@ function PayModal({ cat, onPay, onClose }) {
           {step === "success" && (
             <div style={{ textAlign: "center", padding: "16px 0" }}>
               <div style={{ fontSize: 52, marginBottom: 14, animation: "bounce 1s ease infinite" }}>🎉</div>
-              <h2 style={{ margin: "0 0 6px", color: C.green, fontFamily: "'Lora',serif" }}>Payment Successful!</h2>
+              <h2 style={{ margin: "0 0 6px", color: C.green, fontFamily: "'Manrope','DM Sans','Segoe UI',sans-serif" }}>Payment Successful!</h2>
               <p style={{ color: C.slate, fontSize: 14 }}>Unlocking "{cat.title}"…</p>
               <div style={{
                 width: 40, height: 40, borderRadius: "50%",

@@ -10,6 +10,7 @@ Supported input shapes:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from datetime import datetime, timezone
@@ -18,6 +19,7 @@ from typing import Any
 
 from dotenv import load_dotenv
 from pymongo import MongoClient, errors
+from pymongo.operations import UpdateOne
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
@@ -80,21 +82,35 @@ def _extract_transactions(payload: Any) -> list[dict[str, Any]]:
     return flattened
 
 
-def import_json_to_mongo(file_path: Path, user_id: str | None = None) -> bool:
+def _tx_key(row: dict[str, Any], user_id: str | None) -> str:
+    material = "|".join(
+        [
+            str(user_id or row.get("user_id", "")),
+            str(row.get("date", "")),
+            str(row.get("description", "")).strip().lower(),
+            str(row.get("amount", "")),
+            str(row.get("category", "")).strip().lower(),
+            str(row.get("type", "")).strip().lower(),
+        ]
+    )
+    return hashlib.sha1(material.encode("utf-8")).hexdigest()
+
+
+def import_json_to_mongo(file_path: Path, user_id: str | None = None) -> int:
     """Read JSON file and insert all normalized transactions into MongoDB."""
     try:
         data = json.loads(file_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         print(f"ERROR: JSON decode error in {file_path.name}: {exc}")
-        return False
+        return 0
     except OSError as exc:
         print(f"ERROR: Failed to read {file_path.name}: {exc}")
-        return False
+        return 0
 
     transactions = _extract_transactions(data)
     if not transactions:
         print("ERROR: No transactions found in JSON payload.")
-        return False
+        return 0
 
     now = datetime.now(timezone.utc)
     prepared: list[dict[str, Any]] = []
@@ -105,6 +121,7 @@ def import_json_to_mongo(file_path: Path, user_id: str | None = None) -> bool:
         row.setdefault("source_file", file_path.name)
         if user_id:
             row["user_id"] = user_id
+        row["tx_key"] = _tx_key(row, user_id)
         prepared.append(row)
 
     client: MongoClient | None = None
@@ -116,17 +133,34 @@ def import_json_to_mongo(file_path: Path, user_id: str | None = None) -> bool:
         )
         db = client[DB_NAME]
         collection = db[COLLECTION_NAME]
+        collection.create_index([("user_id", 1), ("tx_key", 1)], unique=True, name="user_tx_key_unique")
 
-        result = collection.insert_many(prepared)
-        print(f"OK: Inserted {len(result.inserted_ids)} transactions from {file_path.name}")
-        return True
+        ops = []
+        for row in prepared:
+            uid = row.get("user_id", "")
+            tx_key = row.get("tx_key", "")
+            ops.append(
+                UpdateOne(
+                    {"user_id": uid, "tx_key": tx_key},
+                    {"$setOnInsert": row},
+                    upsert=True,
+                )
+            )
+        if not ops:
+            print("INFO: No valid transactions to insert.")
+            return 0
+
+        result = collection.bulk_write(ops, ordered=False)
+        inserted = int(result.upserted_count or 0)
+        print(f"OK: Inserted {inserted} new transaction(s) from {file_path.name}")
+        return inserted
 
     except errors.BulkWriteError as exc:
         print(f"ERROR: Bulk write error: {exc.details}")
-        return False
+        return 0
     except errors.PyMongoError as exc:
         print(f"ERROR: MongoDB error: {exc}")
-        return False
+        return 0
     finally:
         if client is not None:
             client.close()
@@ -165,7 +199,8 @@ def main() -> None:
 
     modified = datetime.fromtimestamp(latest.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
     print(f"Found: {latest.name} (modified {modified})")
-    import_json_to_mongo(latest, user_id=(args.user_id or "").strip() or None)
+    inserted = import_json_to_mongo(latest, user_id=(args.user_id or "").strip() or None)
+    print(f"INSERTED_COUNT:{inserted}")
 
 
 if __name__ == "__main__":

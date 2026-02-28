@@ -3,108 +3,30 @@ import generateFinancialInsights from "../services/financialInsightsEngine";
 import AppNavbar from "../components/AppNavbar";
 
 const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   .fin-root {
-    font-family: 'DM Sans', sans-serif;
-    background: #f7f6f2;
-    color: #1a1a1a;
+    font-family: 'Manrope', 'DM Sans', 'Segoe UI', sans-serif;
+    background: #E9EEF6;
+    color: #0B1B35;
     min-height: 100vh;
   }
 
-  /* ── Navbar ── */
-  .navbar {
-    background: #f7f6f2;
-    padding: 14px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  .nav-logo-icon {
-    width: 42px; height: 42px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; color: white; font-weight: 700;
-    box-shadow: 0 4px 12px rgba(29,78,216,0.25);
-  }
-  .nav-logo-name { font-weight: 700; font-size: 0.95rem; color: #1a1a1a; line-height: 1.1; letter-spacing: -0.01em; }
-  .nav-logo-sub  { font-size: 0.65rem; color: #6b7280; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
-
-  .nav-center {
-    background: white; border-radius: 999px;
-    padding: 8px 10px; display: flex; align-items: center; gap: 4px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.07); border: 1px solid #e5e7eb;
-  }
-  .nav-btn {
-    display: flex; align-items: center; justify-content: center;
-    width: 40px; height: 40px; border-radius: 999px; cursor: pointer;
-    transition: background 0.18s; color: #6b7280; font-size: 1.05rem;
-    border: none; background: none;
-  }
-  .nav-btn:hover { background: #f3f4f6; color: #1a1a1a; }
-  .nav-btn.active { background: #1a1a2e; color: white; }
-
-  .nav-right { display: flex; align-items: center; gap: 10px; }
-
-  .pts-badge {
-    display: flex; align-items: center; gap: 6px;
-    background: white; border: 1px solid #e5e7eb; border-radius: 999px;
-    padding: 6px 14px 6px 10px; font-size: 0.82rem; font-weight: 600; color: #1a1a1a;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.06); cursor: pointer;
-    transition: box-shadow 0.18s;
-  }
-  .pts-badge:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
-  .pts-num   { font-weight: 700; font-size: 0.82rem; }
-  .pts-label { font-size: 0.68rem; color: #6b7280; font-weight: 500; }
-
-  .nav-bell {
-    position: relative; width: 40px; height: 40px;
-    background: white; border: 1px solid #e5e7eb; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 1rem;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.06); transition: box-shadow 0.18s;
-  }
-  .nav-bell:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
-  .bell-dot {
-    position: absolute; top: 8px; right: 9px;
-    width: 7px; height: 7px;
-    background: #dc2626; border-radius: 50%; border: 1.5px solid white;
-  }
-  .nav-avatar {
-    width: 40px; height: 40px;
-    background: linear-gradient(135deg, #7c3aed, #4f46e5);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 700; font-size: 0.9rem; cursor: pointer;
-    box-shadow: 0 2px 8px rgba(79,70,229,0.3);
-  }
-
   /* ── Page content ── */
-  .page-content { padding: 32px 24px 40px; }
+  .page-content { padding: 8px 0 32px; max-width: 1200px; margin: 0 auto; }
 
   .page-header {
-    max-width: 1100px; margin: 0 auto 40px;
+    max-width: 1120px; margin: 0 auto 26px;
     display: flex; align-items: flex-end; justify-content: space-between;
-    border-bottom: 2px solid #1a1a1a; padding-bottom: 20px;
+    border-bottom: 2px solid #0B1B35; padding: 0 4px 16px;
   }
   .page-header h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 3rem; line-height: 1; letter-spacing: -0.02em;
+    font-size: 2.6rem; line-height: 1; letter-spacing: -0.02em; font-weight: 800;
   }
   .period {
-    font-size: 0.85rem; color: #6b7280; font-weight: 500;
+    font-size: 0.82rem; color: #64748B; font-weight: 600;
     letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px;
   }
 
@@ -120,7 +42,7 @@ const styles = `
 
   /* ── Alert Banner ── */
   .alert-banner {
-    max-width: 1100px; margin: 0 auto 32px;
+    max-width: 1120px; margin: 0 auto 20px;
     background: #fff5f5; border: 1.5px solid #fecaca;
     border-left: 5px solid #dc2626; border-radius: 12px;
     padding: 18px 24px; display: flex; align-items: flex-start; gap: 16px;
@@ -139,24 +61,23 @@ const styles = `
   }
   .alert-text  { font-size: 0.88rem; color: #7f1d1d; line-height: 1.5; }
   .score-panel {
-    max-width: 1100px; margin: 0 auto 20px;
-    background: #ffffff; border: 1.5px solid #dbeafe; border-left: 5px solid #1d4ed8;
+    max-width: 1120px; margin: 0 auto 16px;
+    background: #ffffff; border: 1.5px solid #E2E8F0; border-left: 5px solid #1A56E8;
     border-radius: 12px; padding: 16px 20px;
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
   }
   .score-title {
     font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: #1d4ed8; margin-bottom: 4px;
+    text-transform: uppercase; color: #1A56E8; margin-bottom: 4px;
   }
   .score-value {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2.1rem; line-height: 1; color: #0f172a;
+    font-size: 2.1rem; line-height: 1; color: #0B1B35; font-weight: 800;
   }
   .score-subtext { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
 
   /* ── Grid ── */
   .grid {
-    max-width: 1100px; margin: 0 auto;
+    max-width: 1120px; margin: 0 auto;
     display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;
   }
   @media (max-width: 900px) {
@@ -166,17 +87,17 @@ const styles = `
 
   /* ── Cards ── */
   .card {
-    background: white; border-radius: 16px; padding: 28px;
-    border: 1.5px solid #e5e7eb; position: relative; overflow: hidden;
+    background: white; border-radius: 16px; padding: 22px;
+    border: 1.5px solid #E2E8F0; position: relative; overflow: hidden;
     animation: fadeUp 0.5s ease both;
   }
   .card:nth-child(1) { animation-delay: 0.1s; }
   .card:nth-child(2) { animation-delay: 0.2s; }
   .card:nth-child(3) { animation-delay: 0.3s; }
 
-  .card.insights-card { background: #f0fdf4; border-color: #86efac; }
-  .card.savings-card  { background: #fffbeb; border-color: #fcd34d; }
-  .card.reco-card     { background: #eff6ff; border-color: #93c5fd; }
+  .card.insights-card { background: #ECFDF5; border-color: #86EFAC; }
+  .card.savings-card  { background: #FFFBEB; border-color: #FDE68A; }
+  .card.reco-card     { background: #EFF6FF; border-color: #BFDBFE; }
 
   .accent-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; }
   .insights-card .accent-bar { background: linear-gradient(90deg, #2d6a4f, #6ee7b7); }
@@ -185,7 +106,7 @@ const styles = `
 
   .card-icon     { font-size: 1.5rem; margin-bottom: 14px; display: block; }
   .card-title    {
-    font-family: 'DM Serif Display', serif; font-size: 1.25rem; margin-bottom: 6px;
+    font-size: 1.15rem; margin-bottom: 6px; font-weight: 800;
     display: flex; align-items: center; gap: 8px;
   }
   .card-subtitle {
@@ -406,7 +327,7 @@ export default function InsightsPage() {
     <>
       <style>{styles}</style>
       <div className="fin-root">
-        <div style={{ padding: "14px 24px 0" }}>
+        <div style={{ padding: "16px 20px 0" }}>
           <AppNavbar />
         </div>
 

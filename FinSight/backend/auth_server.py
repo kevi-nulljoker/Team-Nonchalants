@@ -272,6 +272,38 @@ def get_points(user_id: str):
     return jsonify({'user_id': user_id, 'total_points': total_points})
 
 
+@app.route('/users/<user_id>/profile', methods=['GET'])
+def get_profile(user_id: str):
+    user_oid = _to_object_id(user_id)
+    if not user_oid:
+        return _json_error('Invalid user_id format', 400)
+
+    users_collection, db_error = _get_profiles_collection()
+    if users_collection is None:
+        return _json_error(f'Database unavailable: {db_error}', 503)
+
+    try:
+        user = users_collection.find_one(
+            {'_id': user_oid},
+            {'name': 1, 'email': 1, 'total_points': 1, 'points': 1}
+        )
+    except errors.PyMongoError as exc:
+        return _json_error(f'Database error while fetching profile: {exc}', 500)
+
+    if not user:
+        return _json_error('User not found', 404)
+
+    total_points = int(user.get('total_points', user.get('points', INITIAL_USER_POINTS)))
+    return jsonify(
+        {
+            'user_id': user_id,
+            'name': user.get('name', ''),
+            'email': user.get('email', ''),
+            'total_points': total_points,
+        }
+    )
+
+
 @app.route('/users/<user_id>/point-transactions', methods=['GET'])
 def list_point_transactions(user_id: str):
     user_oid = _to_object_id(user_id)

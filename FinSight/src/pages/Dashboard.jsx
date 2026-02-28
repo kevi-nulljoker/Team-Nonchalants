@@ -1,4 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getPointsSummary } from "../services/pointsApi";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell,
@@ -100,6 +102,26 @@ const INITIAL_LOGIN_DAYS = new Set([1,2,3,4,5,6,7,8,9,10,11,12,14,15,16,17]);
 const INITIAL_LEARNING_DAYS = new Set([1,3,5,6,8,10,11,13,14,16,17]);
 const INITIAL_COMPLETED_MODULES = { 1: ["budgeting","investing"], 3: ["tax"], 5: ["budgeting"], 6: ["debt"], 8: ["investing","credit"], 10: ["emergency"], 11: ["tax","budgeting"], 13: ["debt"], 14: ["investing"], 16: ["credit"], 17: ["emergency","tax"] };
 const TODAY = 18; // Oct 18
+
+const TXN_API_BASE = (
+  import.meta.env.VITE_TXN_API_URL ||
+  import.meta.env.VITE_API_URL ||
+  "http://127.0.0.1:8000"
+).replace(/\/$/, "");
+const AUTH_API_BASES = Array.from(new Set([
+  (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/$/, ""),
+  (import.meta.env.VITE_API_TARGET || "http://127.0.0.1:8001").replace(/\/$/, ""),
+].filter(Boolean)));
+const READ_ENDPOINTS = ["/transactions", "/ledger"];
+
+const NAV_ITEMS = [
+  { id: "dashboard", label: "Dashboard", to: "/dashboard", Icon: "grid" },
+  { id: "transactions", label: "Transactions", to: "/transactions", Icon: "bar" },
+  { id: "insights", label: "Insights", to: "/insights", Icon: "trend" },
+  { id: "goals", label: "Goals", to: "/goals", Icon: "target" },
+  { id: "learning", label: "Learning", to: "/learning", Icon: "book" },
+  { id: "profile", label: "Profile", to: "/signup", Icon: "user" },
+];
 
 // ─── STATIC STYLES (CSS classes) ─────────────────────────────────────────────
 const styles = `
@@ -467,8 +489,18 @@ const LearningCalendar = ({ loginDays, learningDays, completedModules, onDayClic
 
 // ─── MAIN DASHBOARD ───────────────────────────────────────────────────────────
 export default function Dashboard() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState("dashboard");
   const [showAll, setShowAll] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [userInitial, setUserInitial] = useState("U");
+  const [coinPoints, setCoinPoints] = useState(0);
+  const [transactions, setTransactions] = useState([]);
+  const [transactionsLoaded, setTransactionsLoaded] = useState(false);
+  const [transactionsFetchError, setTransactionsFetchError] = useState(false);
+  const [noTxPopupShown, setNoTxPopupShown] = useState(false);
+  const hasAuthToken = !!(localStorage.getItem("auth_token") || localStorage.getItem("token"));
 
   // Gamification State
   const [loginDays, setLoginDays] = useState(INITIAL_LOGIN_DAYS);
@@ -479,6 +511,162 @@ export default function Dashboard() {
   const [showBurst, setShowBurst] = useState(false);
   const [burstPoints, setBurstPoints] = useState(0);
   const [selectedCalDay, setSelectedCalDay] = useState(null);
+
+  useEffect(() => {
+    const found = NAV_ITEMS.find((i) => location.pathname.startsWith(i.to));
+    setActiveNav(found?.id || "dashboard");
+  }, [location.pathname]);
+
+  useEffect(() => {
+    let mounted = true;
+    const userId = localStorage.getItem("auth_user_id");
+    const storedName = (localStorage.getItem("auth_name") || "").trim();
+    const storedEmail = (localStorage.getItem("auth_email") || localStorage.getItem("userEmail") || "").trim();
+    const fallbackName = storedName || storedEmail || "User";
+
+    setUserName(fallbackName);
+    setUserInitial(fallbackName.charAt(0).toUpperCase() || "U");
+
+    if (!userId) return () => { mounted = false; };
+
+    (async () => {
+      for (const baseUrl of AUTH_API_BASES) {
+        try {
+          const res = await fetch(`${baseUrl}/users/${userId}/profile`);
+          if (!res.ok) continue;
+          const data = await res.json();
+          const dbName = (data?.name || data?.email || fallbackName || "User").trim();
+          if (mounted) {
+            setUserName(dbName);
+            setUserInitial(dbName.charAt(0).toUpperCase() || "U");
+          }
+          return;
+        } catch {
+          // Try next base URL
+        }
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    const userId = localStorage.getItem("auth_user_id");
+    if (!userId) return;
+
+    (async () => {
+      try {
+        const points = await getPointsSummary(userId);
+        if (mounted && typeof points?.total_points === "number") setCoinPoints(points.total_points);
+      } catch {
+        // Keep silent fallback
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    const token = localStorage.getItem("auth_token") || localStorage.getItem("token");
+    const userId = localStorage.getItem("auth_user_id");
+
+    if (!token) {
+      setTransactions([]);
+      setTransactionsLoaded(true);
+      setTransactionsFetchError(false);
+      return;
+    }
+
+    const normalizeCategoryKey = (rawCategory = "", description = "") => {
+      const raw = `${rawCategory} ${description}`.toLowerCase();
+      if (raw.includes("food") || raw.includes("swiggy") || raw.includes("zomato") || raw.includes("restaurant") || raw.includes("cafe")) return "food";
+      if (raw.includes("shop") || raw.includes("amazon") || raw.includes("flipkart") || raw.includes("clothing") || raw.includes("electronic")) return "shopping";
+      if (raw.includes("educat") || raw.includes("course") || raw.includes("library") || raw.includes("exam") || raw.includes("college")) return "education";
+      if (raw.includes("emi") || raw.includes("loan")) return "emi";
+      if (raw.includes("invest") || raw.includes("fund") || raw.includes("stock") || raw.includes("ppf") || raw.includes("sip") || raw.includes("crypto")) return "investment";
+      if (raw.includes("travel") || raw.includes("uber") || raw.includes("ola") || raw.includes("flight") || raw.includes("hotel") || raw.includes("ticket") || raw.includes("cab")) return "travel";
+      if (raw.includes("health") || raw.includes("doctor") || raw.includes("medical") || raw.includes("pharmacy") || raw.includes("hospital")) return "healthcare";
+      if (raw.includes("utilit") || raw.includes("electricity") || raw.includes("internet") || raw.includes("water") || raw.includes("gas") || raw.includes("recharge") || raw.includes("bill")) return "utilities";
+      if (raw.includes("entertain") || raw.includes("movie") || raw.includes("netflix") || raw.includes("concert") || raw.includes("game")) return "entertainment";
+      return "shopping";
+    };
+
+    const normalizeDate = (value) => {
+      if (!value) return { day: 1, date: "Oct 01" };
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return { day: 1, date: "Oct 01" };
+      const day = d.getDate();
+      return {
+        day,
+        date: d.toLocaleDateString("en-IN", { month: "short", day: "2-digit" }),
+      };
+    };
+
+    (async () => {
+      try {
+        setTransactionsFetchError(false);
+        const authHeader = { Authorization: `Bearer ${token}` };
+        let parsedPayload = [];
+        for (const endpoint of READ_ENDPOINTS) {
+          const res = await fetch(`${TXN_API_BASE}${endpoint}`, { headers: authHeader });
+          if (!res.ok) continue;
+          const parsed = await res.json();
+          parsedPayload = Array.isArray(parsed) ? parsed : (Array.isArray(parsed?.transactions) ? parsed.transactions : []);
+          break;
+        }
+
+        const userFiltered = parsedPayload.filter((tx) => {
+          if (!userId) return true;
+          return String(tx.user_id) === String(userId);
+        });
+
+        const normalized = userFiltered.map((tx, i) => {
+          const amountNum = Math.abs(Number(tx?.amount || 0));
+          const description = tx?.description || tx?.desc || tx?.merchant || "Transaction";
+          const categoryKey = normalizeCategoryKey(tx?.category || tx?.cat || "", description);
+          const dateInfo = normalizeDate(tx?.date || tx?.created_at || tx?.timestamp);
+          return {
+            id: tx?.id || tx?._id || `${i}_${description}`,
+            desc: description,
+            txnId: tx?.txnId || tx?.transaction_id || "",
+            cat: categoryKey,
+            amount: Number.isFinite(amountNum) ? amountNum : 0,
+            day: dateInfo.day,
+            date: dateInfo.date,
+            meta: CATS[categoryKey] || CATS.shopping,
+          };
+        });
+
+        if (mounted) setTransactions(normalized);
+      } catch {
+        if (mounted) {
+          setTransactions([]);
+          setTransactionsFetchError(true);
+        }
+      } finally {
+        if (mounted) setTransactionsLoaded(true);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasAuthToken || !transactionsLoaded || noTxPopupShown || transactionsFetchError) return;
+    if (transactions.length > 0) return;
+    if (location.pathname !== "/dashboard") return;
+    setNoTxPopupShown(true);
+    window.alert("Please upload a transaction file first.");
+    navigate("/transactions");
+  }, [hasAuthToken, transactionsLoaded, transactions.length, noTxPopupShown, transactionsFetchError, navigate, location.pathname]);
 
   // Calculate total points
   const totalPoints = useMemo(() => {
@@ -554,7 +742,6 @@ export default function Dashboard() {
   };
 
   // Finance data
-  const transactions = TRANSACTIONS;
   const income = INCOME;
   const totalExp = useMemo(() => transactions.reduce((s, t) => s + t.amount, 0), [transactions]);
   const savings = income - totalExp;
@@ -592,9 +779,8 @@ export default function Dashboard() {
 
   return (
     <>
-    <div style={{ display: "grid", gridTemplateColumns: "1.2fr 2.5fr 1.2fr", gap: 16, width: "100vw"}}></div>
       <style>{styles}</style>
-      <div style={{ minHeight: "100vh", background: P.bg, padding: "24px 24px 48px" }}>
+      <div style={{ minHeight: "100vh", width: "100%", background: P.bg, padding: "24px 24px 48px" }}>
         <PointsBurst points={burstPoints} visible={showBurst} />
 
         {/* NAV */}
@@ -617,23 +803,33 @@ export default function Dashboard() {
             background: P.card, borderRadius: 99, padding: "8px 10px",
             border: `1px solid ${P.border}`, boxShadow: "0 2px 8px rgba(11,27,53,.06)"
           }}>
-            {[
-              { id: "dashboard", label: "Dashboard", Icon: NavIcons.grid },
-              { id: "insights", label: "Insights", Icon: NavIcons.bar },
-              { id: "goals", label: "Goals", Icon: NavIcons.target },
-              { id: "learning", label: "Learning", Icon: NavIcons.book },
-              { id: "invest", label: "Investment", Icon: NavIcons.trend },
-              { id: "profile", label: "Profile", Icon: NavIcons.user },
-            ].map(({ id, label, Icon }) => (
-              <button
-                key={id}
-                title={label}
-                onClick={() => setActiveNav(id)}
-                className={`nav-btn ${activeNav === id ? "active" : ""}`}
-              >
-                <Icon />
-              </button>
-            ))}
+            {NAV_ITEMS.map(({ id, label, to, Icon }) => {
+              const IconComponent = NavIcons[Icon];
+              return (
+                <Link
+                  key={id}
+                  to={to}
+                  title={label}
+                  style={{
+                    height: 34,
+                    borderRadius: 999,
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "0 11px",
+                    fontSize: 11.5,
+                    fontWeight: 700,
+                    color: activeNav === id ? "#fff" : P.slate,
+                    background: activeNav === id ? P.navy : "transparent",
+                    border: "none",
+                  }}
+                >
+                  <IconComponent />
+                  <span>{label}</span>
+                </Link>
+              );
+            })}
           </div>
           {/* Points badge in nav */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -645,7 +841,7 @@ export default function Dashboard() {
             }}>
               <span style={{ fontSize: 14 }}>{currentTier.icon}</span>
               <div>
-                <p style={{ fontSize: 11, fontWeight: 800, color: P.navy, lineHeight: 1 }}>{totalPoints.toLocaleString()} pts</p>
+                <p style={{ fontSize: 11, fontWeight: 800, color: P.navy, lineHeight: 1 }}>{coinPoints.toLocaleString()} coins</p>
                 <p style={{ fontSize: 9, color: P.muted, lineHeight: 1 }}>{currentTier.name}</p>
               </div>
             </div>
@@ -667,7 +863,7 @@ export default function Dashboard() {
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 15, color: "white", fontWeight: 700, cursor: "pointer"
             }}>
-              A
+              {userInitial}
             </div>
           </div>
         </div>
@@ -682,7 +878,7 @@ export default function Dashboard() {
                 October 2024
               </p>
               <h2 style={{ fontSize: 20, fontWeight: 800, color: "#fff", lineHeight: 1.2, marginBottom: 4 }}>
-                Welcome back, Arjun 👋
+                Welcome back, {userName} 👋
               </h2>
               <p style={{ fontSize: 11.5, color: "rgba(255,255,255,.55)", marginBottom: 16 }}>
                 Here's your financial snapshot

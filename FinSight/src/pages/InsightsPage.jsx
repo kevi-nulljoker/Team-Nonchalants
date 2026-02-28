@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import generateFinancialInsights from "../services/financialInsightsEngine";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -136,6 +138,21 @@ const styles = `
     padding: 3px 10px; border-radius: 999px; letter-spacing: 0.04em; text-transform: lowercase;
   }
   .alert-text  { font-size: 0.88rem; color: #7f1d1d; line-height: 1.5; }
+  .score-panel {
+    max-width: 1100px; margin: 0 auto 20px;
+    background: #ffffff; border: 1.5px solid #dbeafe; border-left: 5px solid #1d4ed8;
+    border-radius: 12px; padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .score-title {
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #1d4ed8; margin-bottom: 4px;
+  }
+  .score-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.1rem; line-height: 1; color: #0f172a;
+  }
+  .score-subtext { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
 
   /* ── Grid ── */
   .grid {
@@ -221,19 +238,53 @@ const NAV_ITEMS = [
   { icon: "✦", label: "Insights" },
   { icon: "👤", label: "Profile" },
 ];
+const NAV_ROUTE_BY_LABEL = {
+  Dashboard: "/dashboard",
+  Transactions: "/transactions",
+  Goals: "/goals",
+  Learn: "/learning",
+  Insights: "/insights",
+  Profile: "/signup",
+};
 
-const CARDS = [
+const MONGO_SAMPLE_INPUT = {
+  quizData: {
+    income: 120000,
+    stabilityScore: 72,
+    fixedExpenses: { rent: 25000, emi: 35000, other: 12000 },
+    behavior: { foodScore: 68, impulseScore: 62, trackingScore: 58, moneyStress: 64 },
+    riskProfile: { riskTolerance: 45 },
+  },
+  transactions: [
+    { amount: 120000, category: "salary", type: "credit", date: new Date("2026-02-01") },
+    { amount: 32000, category: "food", type: "debit", date: new Date("2026-02-05") },
+    { amount: 18000, category: "shopping", type: "debit", date: new Date("2026-02-08") },
+    { amount: 21000, category: "emi", type: "debit", date: new Date("2026-02-10") },
+    { amount: 9000, category: "travel", type: "debit", date: new Date("2026-02-12") },
+    { amount: 6500, category: "entertainment", type: "debit", date: new Date("2026-02-14") },
+  ],
+  budgets: {
+    food: 25000,
+    shopping: 12000,
+    emi: 30000,
+    travel: 15000,
+    entertainment: 10000,
+  },
+  goals: [
+    { name: "Emergency Fund", targetAmount: 150000, currentAmount: 65000, deadline: new Date("2026-10-31") },
+    { name: "Goa Vacation", targetAmount: 50000, currentAmount: 14000, deadline: new Date("2026-07-31") },
+    { name: "New Laptop", targetAmount: 90000, currentAmount: 30000, deadline: new Date("2026-09-30") },
+  ],
+};
+
+const buildCardsFromReport = (report) => [
   {
     id: "insights",
     cardClass: "insights-card",
     icon: "💡",
     title: "🟢 Spending Insights",
     subtitle: "Where your money is going",
-    items: [
-      <>You have a healthy net surplus of <span className="surplus-highlight">≈₹97,100</span> over the past two months, but a large share (≈55%) is on frequent food delivery, transportation rides, and entertainment subscriptions.</>,
-      <>Your effective savings rate is about <strong>79%</strong> of total income, indicating strong cash-flow discipline — yet the combined shortfall for all three goals (≈₹1,43,000) exceeds the current surplus.</>,
-      <>The Emergency Fund is only <strong>45% funded</strong>. Completing this safety net should be the top priority before allocating funds to discretionary goals.</>,
-    ],
+    items: [...report.insights, ...report.spendingInsights].slice(0, 5),
   },
   {
     id: "savings",
@@ -241,11 +292,7 @@ const CARDS = [
     icon: "🐷",
     title: "🌟 Saving Opportunities",
     subtitle: "Quick wins to cut costs",
-    items: [
-      <>Reduce food-delivery orders (Swiggy / Zomato) by cooking at home — potential saving of ≈₹2,000 / month.<span className="saving-amount">save ₹2,000</span></>,
-      <>Consolidate entertainment subscriptions (Netflix, movies) to a single plan — potential saving of ≈₹200 / month.<span className="saving-amount">save ₹200</span></>,
-      <>Switch to a monthly public-transport pass or car-pooling to cut ride-share costs — potential saving of ≈₹300 / month.<span className="saving-amount">save ₹300</span></>,
-    ],
+    items: report.savingOpportunities.slice(0, 5),
   },
   {
     id: "reco",
@@ -253,20 +300,16 @@ const CARDS = [
     icon: "🏆",
     title: "⭐ Recommendations",
     subtitle: "Action plan for your goals",
-    items: [
-      <>Direct a fixed <strong>≈₹20,000 / month</strong> to the Emergency Fund until it reaches the ₹1,00,000 target (≈5 months).</>,
-      <>Once the emergency fund is complete, allocate <strong>≈₹12,000</strong> monthly to the iPhone 16 goal and <strong>≈₹10,000</strong> monthly to the Goa vacation to meet both targets within 5–6 months.</>,
-      <>Invest any remaining surplus in low-risk instruments (e.g., 1–2 year fixed deposit or short-term debt mutual funds) to earn interest and accelerate all goal timelines.</>,
-    ],
+    items: report.recommendations.slice(0, 5),
   },
 ];
 
 // ── Sub-components ────────────────────────────────────────────────────
-function Navbar({ activeNav, setActiveNav }) {
+function Navbar({ activeNav, setActiveNav, navigate }) {
   return (
     <nav className="navbar">
       {/* Logo */}
-      <div className="nav-logo">
+      <div className="nav-logo" onClick={() => navigate("/")}>
         <div className="nav-logo-icon">📈</div>
         <div>
           <div className="nav-logo-name">FinSight</div>
@@ -281,7 +324,11 @@ function Navbar({ activeNav, setActiveNav }) {
             key={item.label}
             className={`nav-btn${activeNav === item.label ? " active" : ""}`}
             title={item.label}
-            onClick={() => setActiveNav(item.label)}
+            onClick={() => {
+              setActiveNav(item.label);
+              const route = NAV_ROUTE_BY_LABEL[item.label];
+              if (route) navigate(route);
+            }}
           >
             {item.icon}
           </button>
@@ -307,24 +354,23 @@ function Navbar({ activeNav, setActiveNav }) {
   );
 }
 
-function AlertBanner() {
+function AlertBanner({ report }) {
+  const alertText = report.insights[0] || "No major risk alerts for the selected period.";
+
   return (
     <div className="alert-banner">
       <div className="alert-icon">🚨</div>
       <div>
         <div className="alert-title">
-          Irregular Spending / Savings Alert
+          Financial Risk Alert
           <span className="badge badge-red">LOWSAVINGS</span>
         </div>
         <div className="alert-tags">
-          <span className="tag">entertainment</span>
-          <span className="tag">food</span>
+          {(report.metrics.topSavingsImpactCategories || []).map((cat) => (
+            <span key={cat} className="tag">{cat}</span>
+          ))}
         </div>
-        <p className="alert-text">
-          Your current savings are <strong>₹–74,193</strong> vs expected{" "}
-          <strong>₹–20,674</strong> (–259%). Consider controlling discretionary
-          expenses to get back on track.
-        </p>
+        <p className="alert-text">{alertText}</p>
       </div>
     </div>
   );
@@ -351,35 +397,50 @@ function InsightCard({ cardClass, icon, title, subtitle, items }) {
 
 // ── Main component ────────────────────────────────────────────────────
 export default function InsightsPage() {
+  const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState("Insights");
+  const report = useMemo(() => generateFinancialInsights(MONGO_SAMPLE_INPUT), []);
+  const safeScore = Number.isFinite(report?.financialScore) ? report.financialScore : 0;
+  const cards = useMemo(() => buildCardsFromReport(report), [report]);
 
   return (
     <>
       <style>{styles}</style>
       <div className="fin-root">
-        <Navbar activeNav={activeNav} setActiveNav={setActiveNav} />
+        <Navbar activeNav={activeNav} setActiveNav={setActiveNav} navigate={navigate} />
 
         <div className="page-content">
           {/* Page header */}
           <div className="page-header">
             <div>
-              <p className="period">October 2024 · Monthly Report</p>
+              <p className="period">February 2026 · Monthly Report</p>
               <h1>Insights</h1>
             </div>
             <div style={{ textAlign: "right" }}>
               <span className="badge badge-red" style={{ marginBottom: 8, display: "inline-flex" }}>
-                ⚠ Low Savings
+                ⚠ Score {safeScore}/100
               </span>
               <p className="period" style={{ marginTop: 4 }}>Darshan Khapekar</p>
             </div>
           </div>
 
+          <div className="score-panel">
+            <div>
+              <p className="score-title">Financial Health Score</p>
+              <p className="score-value">{safeScore}/100</p>
+              <p className="score-subtext">Calculated from savings, EMI load, emergency fund, goals, discipline, and stability.</p>
+            </div>
+            <span className={`badge ${safeScore >= 75 ? "badge-green" : safeScore >= 50 ? "badge-amber" : "badge-red"}`}>
+              {safeScore >= 75 ? "Healthy" : safeScore >= 50 ? "Moderate" : "Needs Attention"}
+            </span>
+          </div>
+
           {/* Alert */}
-          <AlertBanner />
+          <AlertBanner report={report} />
 
           {/* Cards grid */}
           <div className="grid">
-            {CARDS.map((card) => (
+            {cards.map((card) => (
               <InsightCard key={card.id} {...card} />
             ))}
           </div>
